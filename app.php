@@ -9,6 +9,7 @@ SeasLog::setBasePath("./data/logs");
 SeasLog::setLogger("/mabang-arch-demo");
 
 
+
 use Galaxy\Core\Server;
 use Galaxy\Core\PoolServer;
 $opts = array('env:','user:','password:','dataId:','group:','url:');

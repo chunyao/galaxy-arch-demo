@@ -13,6 +13,7 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
         'decc78cc4436b1292c6c0d151b19445c' => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib/bootstrap.php',
         'bbeb7603826cb9296dde3ca1a840af47' => __DIR__ . '/..' . '/hyperf/utils/src/Functions.php',
+        '253c157292f75eb38082b5acb06f3f01' => __DIR__ . '/..' . '/nikic/fast-route/src/functions.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -39,12 +40,19 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         'M' => 
         array (
             'Monolog\\' => 8,
+            'Mix\\View\\' => 9,
+            'Mix\\Vega\\' => 9,
             'Mix\\Validator\\' => 14,
             'Mix\\Redis\\Subscriber\\' => 21,
             'Mix\\Redis\\' => 10,
             'Mix\\ObjectPool\\' => 15,
+            'Mix\\Http\\Message\\' => 17,
             'Mix\\Grpc\\' => 9,
             'Mix\\Database\\' => 13,
+        ),
+        'L' => 
+        array (
+            'Lukasoppermann\\Httpstatus\\' => 26,
         ),
         'H' => 
         array (
@@ -63,6 +71,10 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
             'Grpc\\' => 5,
             'Google\\Protobuf\\' => 16,
             'GPBMetadata\\Google\\Protobuf\\' => 28,
+        ),
+        'F' => 
+        array (
+            'FastRoute\\' => 10,
         ),
         'D' => 
         array (
@@ -108,6 +120,14 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         array (
             0 => __DIR__ . '/..' . '/monolog/monolog/src/Monolog',
         ),
+        'Mix\\View\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/mix/view/src',
+        ),
+        'Mix\\Vega\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/mix/vega/src',
+        ),
         'Mix\\Validator\\' => 
         array (
             0 => __DIR__ . '/..' . '/mix/validator/src',
@@ -124,6 +144,10 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         array (
             0 => __DIR__ . '/..' . '/mix/object-pool/src',
         ),
+        'Mix\\Http\\Message\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/mix/http-message/src',
+        ),
         'Mix\\Grpc\\' => 
         array (
             0 => __DIR__ . '/..' . '/mix/grpc/src',
@@ -131,6 +155,10 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         'Mix\\Database\\' => 
         array (
             0 => __DIR__ . '/..' . '/mix/database/src',
+        ),
+        'Lukasoppermann\\Httpstatus\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/lukasoppermann/http-status/src',
         ),
         'Hyperf\\Utils\\' => 
         array (
@@ -179,6 +207,10 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         'GPBMetadata\\Google\\Protobuf\\' => 
         array (
             0 => __DIR__ . '/..' . '/google/protobuf/src/GPBMetadata/Google/Protobuf',
+        ),
+        'FastRoute\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/nikic/fast-route/src',
         ),
         'Doctrine\\Inflector\\' => 
         array (

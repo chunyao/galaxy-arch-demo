@@ -7,6 +7,7 @@ namespace App\Http\Controller\Helloword;
 use Galaxy\Core\BaseController;
 use Galaxy\Core\Log;
 use App\Service\MsgService;
+use Mix\Vega\Context;
 
 class Helloword extends BaseController
 {
@@ -17,14 +18,22 @@ class Helloword extends BaseController
         $this->msgSevice = new MsgService();
     }
 
-    public function handler()
+    public function helloword(Context $ctx)
     {
 
         $id = rand(1, 239368);
         $data = $this->msgSevice->findById($id);
 
-        $echo_string = datajson("10200", $data, "success", $cache = false);
-        return $echo_string;
+        $echo_string = datajson(10200, $data, "success", $cache = false);
+        /* 写法1*/
+      //  $ctx->string(200, $echo_string);
+        /* 写法2*/
+        $ctx->JSON(200, [
+            'code' => 10200,
+            'message' => 'success',
+            'data' => $data
+        ]);
+
     }
 
     public function __destruct()

@@ -2,14 +2,13 @@
 
 namespace Galaxy\Core;
 
+
 use Swoole;
 use Hyperf\Nacos\Application;
 use Hyperf\Nacos\Config;
 use \GuzzleHttp;
 use Galaxy\Common\Handler\InnerServer;
 use Galaxy\Common\Configur\CoreDB;
-use App\Config\Stock;
-use App\Config\RDS;
 use Galaxy\Common\Configur\CoreRDS;
 
 class Server
@@ -35,6 +34,7 @@ class Server
     public function __construct($bootConfig)
     {
         Log::init();
+
         self::$httpClient = new GuzzleHttp\Client();
         $this->url = 'http://127.0.0.1:8081/rabbitmq';
         $this->headers = ["Content-Type" => 'application/json'];
@@ -74,12 +74,25 @@ class Server
         }
 
         $this->appName = $this->config['app.name'];
-
+        $vega = Vega::new($this->appName);
         /* http server */
         $this->server = new Swoole\Http\Server("0.0.0.0", 8080);
         /* http server 健康检测 */
         $health = $this->server->addListener('0.0.0.0', 8081, SWOOLE_SOCK_TCP);
+        echo <<<EOL
+                ___                           _           
+  /\/\   __ _  / __\ __ _ _ __   __ _   _ __ | |__  _ __  
+ /    \ / _` |/__\/// _` | '_ \ / _` | | '_ \| '_ \| '_ \ 
+/ /\/\ \ (_| / \/  \ (_| | | | | (_| | | |_) | | | | |_) |
+\/    \/\__,_\_____/\__,_|_| |_|\__, | | .__/|_| |_| .__/ 
+                                |___/  |_|         |_| 
 
+EOL;
+        printf("System    Name:       %s\n", strtolower(PHP_OS));
+        printf("PHP       Version:    %s\n", PHP_VERSION);
+        printf("Swoole    Version:    %s\n", swoole_version());
+        printf("Listen    Addr:       http://%s:%d\n", "0.0.0.0", "8080");
+        Log::info('Start http server');
         $this->server->set(array(
             'reactor_num' => swoole_cpu_num(),
             'worker_num' => $this->config['worker.num'],
@@ -149,7 +162,7 @@ class Server
         });
         $this->server->on('WorkerExit', array($this, 'onWorkerExit'));
         $this->server->on('WorkerError', array($this, 'onWorkerError'));
-        $this->server->on('Request', array($this, 'onRequest'));
+        $this->server->on('Request', $vega->handler());
 
 
     }
@@ -181,6 +194,7 @@ class Server
 
     public function onWorkerStart($server, $worker_id)
     {
+
         CoreDB::init($this->coreConfig);
         CoreDB::enableCoroutine();
         CoreRDS::init($this->coreConfig);
@@ -194,43 +208,5 @@ class Server
         }
     }
 
-    public function onRequest($request, $response)
-    {
-        if ($request->server['path_info'] == '/favicon.ico' || $request->server['request_uri'] == '/favicon.ico') {
-            $response->end();
-            return;
-        }
-        $_SERVER = $request->server ?? array();
-        $_HEADER = $request->header ?? array();
-        $_COOKIE = $request->cookie ?? array();
-        $_GET = $request->get ?? array();
-        $_POST = $request->post ?? array();
-        $_FILES = $request->files ?? array();
-        if (isset($_HEADER['content-type']) && strpos($_HEADER['content-type'], "json")) {
-            $_POST = $request->rawContent() != "" ? json_decode($request->rawContent(), 1) : array();
-            //   Log::info("json post:" . $request->rawContent());
-        }
-        $echo_string = "500";
-        if ($_SERVER['request_uri'] != "") {
-            $action = $_SERVER['request_uri'];
-        }
 
-
-        try {
-
-            $class = Action::getapi($action, $this->appName);
-            $http = new $class();
-            $echo_string = $http->handler();
-        } catch (\Throwable $e) {
-            echo $e->getMessage();
-            echo $e->getCode();
-            $echo_string = "500";
-            $response->status(500);
-            $response->end($echo_string);
-            return null;
-        }
-        $response->header("Content-type", "application/json;charset=utf-8");
-
-        $response->end($echo_string);
-    }
 }

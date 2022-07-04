@@ -2,23 +2,26 @@
 
 namespace App\Service;
 
+use App\Repository\Cache\MsgCache;
 use App\Repository\Model\MsgModel;
 
 class MsgService
 {
     private MsgModel $msgModel;
+    private MsgCache $msgCache;
 
     public function __construct()
     {
 
         $this->msgModel = new MsgModel();
+        $this->msgCache = new MsgCache();
 
     }
 
     public function findById($id)
     {
 
-        $return = $this->msgModel->findById($id);
+        $return = $this->msgCache->findByIdByCache($id);
         return $return;
     }
 
@@ -33,5 +36,6 @@ class MsgService
     public function __destruct()
     {
         unset($this->msgModel);
+        unset($this->msgCache);
     }
 }

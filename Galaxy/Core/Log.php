@@ -60,6 +60,7 @@ class Log
      */
     public static function debug($message = "", $data = [], $module = "")
     {
+
         if (class_exists("SeasLog")) {
             self::log(SEASLOG_DEBUG, $message, $data, $module);
         }
