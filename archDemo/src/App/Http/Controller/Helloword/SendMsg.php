@@ -3,7 +3,7 @@
 namespace App\Http\Controller\Helloword;
 
 use App\Config\MQ;
-use App\Service\MsgService;
+
 
 class SendMsg
 {
@@ -22,7 +22,7 @@ class SendMsg
         $data['test'] = "testetst" . $id;
         $data['id'] = $id;
 
-        MQ::instance()->publish("sdf", $this->exchange,$this->routekey);
+        MQ::instance()->publish(json_encode($data), $this->exchange,$this->routekey);
         return "200";
     }
 

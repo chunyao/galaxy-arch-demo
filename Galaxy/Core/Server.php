@@ -219,15 +219,13 @@ class Server
         try {
 
             $class = Action::getapi($action, $this->appName);
-            echo $class;
             $http = new $class();
             $echo_string = $http->handler();
         } catch (\Throwable $e) {
             echo $e->getMessage();
             echo $e->getCode();
-            $echo_string = "404";
-
-            $response->status(404);
+            $echo_string = "500";
+            $response->status(500);
             $response->end($echo_string);
             return null;
         }

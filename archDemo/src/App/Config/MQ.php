@@ -10,7 +10,7 @@ class MQ
 {
 
     /**
-     * @var Database
+     * @var MQ
      */
     private static $instance;
 
@@ -34,7 +34,7 @@ class MQ
     }
 
     /**
-     * @return Database
+     * @return MQ
      */
     public static function instance(): Rabbitmq
     {
@@ -43,8 +43,8 @@ class MQ
 
         $username = self::$config['rabbitmq.username'];
         $password = self::$config['rabbitmq.password'];
-
-        $mq = new Rabbitmq($host, $port, $username, $password, "arch", null);
+        $vhost = self::$config['rabbitmq.send.vhost'][0];
+        $mq = new Rabbitmq($host, $port, $username, $password, $vhost, null);
 
         self::$instance = $mq;
         return self::$instance;

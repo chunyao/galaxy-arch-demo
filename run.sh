@@ -14,5 +14,5 @@ fi
 if [ "$1" = "prod" ];
 then
   echo "prod"
-  php app.php --env=prod --url=https://dev-nacos.mabangerp.com --user=$NACOSUSER --password=$NACOSPASSWORD --dataId=mico_service --group=V2SYSTEM_GROUP
+  php app.php --env=prod --url=https://dev-nacos.mabangerp.com --dataId=mico_service --group=V2SYSTEM_GROUP
 fi
