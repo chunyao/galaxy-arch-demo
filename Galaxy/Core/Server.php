@@ -198,6 +198,7 @@ class Server
     {
         if ($request->server['path_info'] == '/favicon.ico' || $request->server['request_uri'] == '/favicon.ico') {
             $response->end();
+            return;
         }
         $_SERVER = $request->server ?? array();
         $_HEADER = $request->header ?? array();
@@ -216,8 +217,9 @@ class Server
 
 
         try {
-            $response->header("Content-type", "application/json;charset=utf-8");
+
             $class = Action::getapi($action, $this->appName);
+            echo $class;
             $http = new $class();
             $echo_string = $http->handler();
         } catch (\Throwable $e) {
@@ -229,7 +231,7 @@ class Server
             $response->end($echo_string);
             return null;
         }
-
+        $response->header("Content-type", "application/json;charset=utf-8");
 
         $response->end($echo_string);
     }
