@@ -79,6 +79,7 @@ class Server
         $this->server = new Swoole\Http\Server("0.0.0.0", 8080);
         /* http server 健康检测 */
         $health = $this->server->addListener('0.0.0.0', 8081, SWOOLE_SOCK_TCP);
+        $tcp = $this->server->addListener('0.0.0.0', 9595, SWOOLE_SOCK_TCP);
         echo <<<EOL
                 ___                           _           
   /\/\   __ _  / __\ __ _ _ __   __ _   _ __ | |__  _ __  
@@ -91,7 +92,9 @@ EOL;
         printf("System    Name:       %s\n", strtolower(PHP_OS));
         printf("PHP       Version:    %s\n", PHP_VERSION);
         printf("Swoole    Version:    %s\n", swoole_version());
-        printf("Listen    Addr:       http://%s:%d\n", "0.0.0.0", "8080");
+        printf("Http   Listen    Addr:       http://%s:%d\n", "0.0.0.0", "8080");
+        printf("Health Listen    Addr:       http://%s:%d\n", "0.0.0.0", "8081");
+        printf("gRPC   Listen    Addr:       http://%s:%d\n", "0.0.0.0", "9595");
         Log::info('Start http server');
         $this->server->set(array(
             'reactor_num' => swoole_cpu_num(),
@@ -107,8 +110,7 @@ EOL;
         $health->on('Receive', array($this, 'onReceive'));
         $health->on('Request', function ($request, $response) {
 
-
-            $_SERVER = isset($request->server) ? $request->server : array();
+        $_SERVER = isset($request->server) ? $request->server : array();
             if ($_SERVER['request_uri'] != "") {
                 $action = $_SERVER['request_uri'];
             }
@@ -122,17 +124,14 @@ EOL;
                     echo sprintf("%s %s", $k, $v) . "\n";
                 }
                 $response->header("Content-type", "application/json;charset=utf-8");
-
                 $response->end(datajson("10200", $metrics, "success",));
                 return;
             }
             if ($action == "/health") {
                 try {
-
                 } catch (Exception $e) {
                     $this->server->shutdown();
                 }
-
                 // if ($rs) {
                 $response->end("UP");
                 //    } else {
@@ -205,6 +204,7 @@ EOL;
         foreach ($configs as $key => $val) {
             $val::init($this->config);
             $val::enableCoroutine();
+
         }
     }
 
