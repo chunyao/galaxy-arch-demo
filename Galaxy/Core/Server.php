@@ -51,7 +51,7 @@ class Server
                     ],
                 ],
             ]));
-            $application->auth->login($bootConfig['user'], $bootConfig['password']);
+      /*      $application->auth->login($bootConfig['user'], $bootConfig['password']);;*/
             $response = $application->config->get('mico_core_service', 'V2SYSTEM_GROUP');
             $this->coreConfig = parse_ini_string((string)$response->getBody());
             $application = new Application(new Config([
@@ -64,7 +64,7 @@ class Server
                     ],
                 ],
             ]));
-            $application->auth->login($bootConfig['user'], $bootConfig['password']);
+  //          $application->auth->login($bootConfig['user'], $bootConfig['password']);
             $response = $application->config->get($bootConfig['dataId'], $bootConfig['group']);
             $this->config = parse_ini_string((string)$response->getBody());
 
@@ -79,7 +79,6 @@ class Server
 
         /* http server */
         $this->server = new Swoole\Http\Server("0.0.0.0", 8080);
-        $tcp = $this->server->addListener('0.0.0.0', 9595, SWOOLE_SOCK_TCP);
         /* http server 健康检测 */
         $health = $this->server->addListener('0.0.0.0', 8081, SWOOLE_SOCK_TCP);
 
@@ -108,13 +107,6 @@ EOL;
 
         $rabbitMq = new RabbitMqProcess($this->config, 1, $this->url, $this->tcpClient);
         $rabbitMq->handler();
-        $tcp->set([
-            'worker_num' => 4,
-            'open_http2_protocol' => true,
-            'http_compression' => false,
-        ]);
-        $tcp->on('Request', $grpc->handler());
-
 
         $health->on('Request', function ($request, $response) {
 
