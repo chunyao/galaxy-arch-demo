@@ -62,7 +62,7 @@ class Server
             $response = $application->config->get($bootConfig['dataId'], $bootConfig['group']);
             $this->config = parse_ini_string((string)$response->getBody());
 
-            $register = new ServiceRegister();
+            $register = new ServiceRegister($bootConfig['url'], $this->config['app.name'],$this->config['namespace.id'] );
             $register->handle("register");
 
             $process = new Swoole\Process(function ($worker) use ($register) {

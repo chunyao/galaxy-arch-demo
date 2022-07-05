@@ -1,22 +1,22 @@
 <?php return array(
     'root' => array(
-        'pretty_version' => 'dev-master',
-        'version' => 'dev-master',
+        'pretty_version' => 'dev-develop',
+        'version' => 'dev-develop',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '346f60900bd3997915b262e7203edc94d9b25450',
+        'reference' => 'a7a0923b46ac73fa799f5e19a19ab4a2e9ed22b9',
         'name' => '__root__',
         'dev' => true,
     ),
     'versions' => array(
         '__root__' => array(
-            'pretty_version' => 'dev-master',
-            'version' => 'dev-master',
+            'pretty_version' => 'dev-develop',
+            'version' => 'dev-develop',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '346f60900bd3997915b262e7203edc94d9b25450',
+            'reference' => 'a7a0923b46ac73fa799f5e19a19ab4a2e9ed22b9',
             'dev_requirement' => false,
         ),
         'airmanbzh/pheign' => array(
@@ -26,15 +26,6 @@
             'install_path' => __DIR__ . '/../airmanbzh/pheign',
             'aliases' => array(),
             'reference' => 'cb467b4d56aff3d30e7ecab21c10955a2d4bc5b9',
-            'dev_requirement' => false,
-        ),
-        'alibaba/nacos' => array(
-            'pretty_version' => 'v2.0.3',
-            'version' => '2.0.3.0',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../alibaba/nacos',
-            'aliases' => array(),
-            'reference' => 'b186b290dff0f20e85ef9ca66fa1810e3a19e36f',
             'dev_requirement' => false,
         ),
         'curl/curl' => array(
@@ -107,15 +98,6 @@
             'install_path' => __DIR__ . '/../google/protobuf',
             'aliases' => array(),
             'reference' => '374edda06747bb1d6899d11af646ccab38646e65',
-            'dev_requirement' => false,
-        ),
-        'grpc/grpc' => array(
-            'pretty_version' => '1.42.0',
-            'version' => '1.42.0.0',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../grpc/grpc',
-            'aliases' => array(),
-            'reference' => '9fa44f104cb92e924d4da547323a97f3d8aca6d4',
             'dev_requirement' => false,
         ),
         'guzzlehttp/guzzle' => array(
@@ -307,15 +289,6 @@
             'reference' => 'ad416556a3c440bdbc7bbe907efa84ed5d969fa1',
             'dev_requirement' => false,
         ),
-        'monolog/monolog' => array(
-            'pretty_version' => '2.7.0',
-            'version' => '2.7.0.0',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../monolog/monolog',
-            'aliases' => array(),
-            'reference' => '5579edf28aee1190a798bfa5be8bc16c563bd524',
-            'dev_requirement' => false,
-        ),
         'nikic/fast-route' => array(
             'pretty_version' => 'v1.3.0',
             'version' => '1.3.0.0',
@@ -422,21 +395,6 @@
             'dev_requirement' => false,
             'provided' => array(
                 0 => '1.0',
-            ),
-        ),
-        'psr/log' => array(
-            'pretty_version' => '1.1.4',
-            'version' => '1.1.4.0',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../psr/log',
-            'aliases' => array(),
-            'reference' => 'd49695b909c3b7628b6289db5479a1c204601f11',
-            'dev_requirement' => false,
-        ),
-        'psr/log-implementation' => array(
-            'dev_requirement' => false,
-            'provided' => array(
-                0 => '1.0.0 || 2.0.0 || 3.0.0',
             ),
         ),
         'ralouphie/getallheaders' => array(
