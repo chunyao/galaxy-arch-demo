@@ -27,7 +27,7 @@ class Server
 
     protected string $url;
 
-    protected string $appName;
+    protected static string $appName;
 
     protected $tcpClient;
 
@@ -72,7 +72,6 @@ class Server
                     swoole_timer_tick(5000,function() use ($register){
                         try{
                             $register->beat();
-                            echo "注册中心 心跳检测～";
                         }catch (\Throwable $e){
                             //var_dump($e);
                         }
@@ -83,9 +82,9 @@ class Server
             $process->start();
         }
 
-        $this->appName = $this->config['app.name'];
-        $vega = Vega::new($this->appName);
-        $grpc = new \Mix\Grpc\Server();
+        self::$appName = $this->config['app.name'];
+        $vega = Vega::new(self::$appName);
+
 
         /* http server */
         $this->server = new Swoole\Http\Server("0.0.0.0", 8080);
@@ -120,7 +119,7 @@ EOL;
 
         $health->on('Request', function ($request, $response) {
 
-        $_SERVER = isset($request->server) ? $request->server : array();
+        $_SERVER = $request->server ?? array();
             if ($_SERVER['request_uri'] != "") {
                 $action = $_SERVER['request_uri'];
             }

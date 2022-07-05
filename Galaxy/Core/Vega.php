@@ -20,6 +20,7 @@ class Vega
 
         // 500
         $vega->use(function (Context $ctx) {
+
             try {
                 $ctx->next();
             } catch (\Throwable $ex) {
@@ -49,7 +50,7 @@ class Vega
 
         // routes
         $routes = require __DIR__ . '/../../'.$appName.'/src/App/Routes/index.php';
-        $routes($vega);
+        $routes($vega,$appName);
 
         return $vega;
     }
