@@ -1,7 +1,8 @@
 <?php
+require_once __DIR__ . '/../Galaxy/load.php';
 require_once __DIR__ . '/src/App/load.php';
 require_once __DIR__ . '/../vendor/autoload.php';
-require_once __DIR__ . '/../Galaxy/load.php';
+
 ini_set('date.timezone', 'Asia/Shanghai');
 define("ROOT_PATH", dirname(__FILE__));
 ini_set('display_errors', 'On');

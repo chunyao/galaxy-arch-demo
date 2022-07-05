@@ -1,8 +1,6 @@
 <?php
 
 namespace Galaxy\Core;
-
-
 use \Swoole;
 use \Hyperf\Nacos\Application;
 use \Hyperf\Nacos\Config;
