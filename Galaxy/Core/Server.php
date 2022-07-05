@@ -51,7 +51,7 @@ class Server
                     ],
                 ],
             ]));
-            $application->auth->login($bootConfig['user'], $bootConfig['password']);
+//            $application->auth->login($bootConfig['user'], $bootConfig['password']);
             $response = $application->config->get('mico_core_service', 'V2SYSTEM_GROUP');
             $this->coreConfig = parse_ini_string((string)$response->getBody());
             $application = new Application(new Config([
