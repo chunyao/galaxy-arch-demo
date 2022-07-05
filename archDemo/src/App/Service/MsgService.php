@@ -27,7 +27,9 @@ class MsgService
 
     public function saveMsg($msg)
     {
-
+        $convertMsg = $msg;
+        $convertMsg['msg_id'] = $msg['id'];
+        unset($convertMsg['id']);
         $return = $this->msgModel->insertMsg($msg);
 
         return $return;
