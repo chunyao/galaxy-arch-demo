@@ -65,8 +65,8 @@ class Server
             $this->config = parse_ini_string((string)$response->getBody());
 
             $register = new ServiceRegister();
-            $register->handle("register");
-            $register->beat();
+       //     $register->handle("register");
+          //  $register->beat();
         }
 
         $this->appName = $this->config['app.name'];
