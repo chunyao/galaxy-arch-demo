@@ -3,6 +3,7 @@
 namespace App\Http\Controller\Helloword;
 
 use App\Config\DB;
+use App\Config\RDS;
 use Galaxy\Core\Log;
 use Mix\Vega\Context;
 
@@ -48,6 +49,18 @@ class Database
         ];
         $return =  DB::instance()->batchInsert('user', $data)->rowCount();
         var_dump($return);*/
+        $tx = DB::instance()->beginTransaction();
+        try {
+            $data = [
+                'name' => 'foo',
+                'age' => 99,
+            ];
+            $tx->insert('user', $data);
+            $tx->commit();
+        } catch (\Throwable $ex) {
+            $tx->rollback();
+            throw $ex;
+        }
 
         /*使用函数创建*/
         $data = [
@@ -57,6 +70,13 @@ class Database
         ];
         $return =  DB::instance()->insert('user', $data)->lastInsertId();
         var_dump($return);
+
+        DB::instance()->debug(function (\Mix\Database\ConnectionInterface $conn) {
+            var_dump($conn->queryLog()); // array, fields: time, sql, bindings
+        })
+            ->table('user')
+            ->where('id = ?', 1)
+            ->get();
         $return = DB::instance()->table('user')->where('id = ?', 1)->order('id', 'desc')->offset(0)->limit(5)->get();
 
         $ctx->JSON(200, [
@@ -65,6 +85,18 @@ class Database
             'data' => $return
         ]);
 
+    }
+
+    public function redistest(Context $ctx){
+        $tx =  RDS::instance()->multi();
+        $tx->set('foo', 'bar');
+        $tx->set('foo1', 'bar1');
+        $ret = $tx->exec();
+        $ctx->JSON(200, [
+            'code' => 10200,
+            'message' => 'success',
+            'data' => RDS::instance()->get("foo")
+        ]);
     }
 
 }
