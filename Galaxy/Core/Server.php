@@ -3,13 +3,13 @@
 namespace Galaxy\Core;
 
 
-use Swoole;
-use Hyperf\Nacos\Application;
-use Hyperf\Nacos\Config;
+use \Swoole;
+use \Hyperf\Nacos\Application;
+use \Hyperf\Nacos\Config;
 use \GuzzleHttp;
-use Galaxy\Common\Handler\InnerServer;
-use Galaxy\Common\Configur\CoreDB;
-use Galaxy\Common\Configur\CoreRDS;
+use \Galaxy\Common\Handler\InnerServer;
+use \Galaxy\Common\Configur\CoreDB;
+use \Galaxy\Common\Configur\CoreRDS;
 
 class Server
 {
