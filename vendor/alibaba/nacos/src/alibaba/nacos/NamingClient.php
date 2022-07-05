@@ -206,6 +206,7 @@ class NamingClient
         $beatInstanceDiscovery->setBeat($beat);
 
         $response = $beatInstanceDiscovery->doRequest();
+
         $content = $response->getBody()->getContents();
         return Beat::decode($content);
     }
