@@ -1,5 +1,5 @@
 <?php
-
+namespace App\Http\Controller\FeignClient;
 use \Mix\Vega\Context;
 
 class Feign{

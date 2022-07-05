@@ -48,6 +48,7 @@ class Helloword extends BaseController
     public function __destruct()
     {
         unset($this->msgModel);
+        unset($this->sayService);
     }
 
 }

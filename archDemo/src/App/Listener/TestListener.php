@@ -2,6 +2,7 @@
 
 namespace App\Listener;
 
+use App\Service\MsgProxy;
 use Swoole;
 use Galaxy\Core\Log;
 use Galaxy\Service\QueueService;
@@ -20,7 +21,8 @@ class TestListener
 
     private MsgService $msgService;
 
-    private $url;
+    private MsgProxy $msgProxy;
+
 
     public function __construct($msg)
     {
@@ -28,7 +30,7 @@ class TestListener
         $this->queueService = new QueueService();
 
         $this->msgService = new MsgService();
-
+        $this->msgProxy = new MsgProxy();
         $this->msg = $msg;
 
     }
@@ -36,39 +38,23 @@ class TestListener
     /* handler 为固定函数，return true or false，ack 强依赖 */
     public function handler()
     {
-        $convertMsg = $this->msg;
-        $this->url = "http://192.168.2.21:11181/api/default/testSwooleRabbitMq";
-        $convertMsg['msg_id'] = $this->msg['id'];
-        unset($convertMsg['id']);
-        $nameSpace = $this->queueService->findByQueueName(self::$queueName);
-        $this->msgService->saveMsg($convertMsg);
-        $sendMsg = array();
+        /* 整理 接受msseage 消息*/
 
-        $sendMsg['body'] = $this->msg;
+        /* 方案一 自己处理消息*/
 
-        $sendMsg['handler'] = $nameSpace['mq_handler'];
-        $sendMsg['queue'] = $this->msg['queue'];
-        $message = array();
-        $message['msg'] = $sendMsg;
-        $chan = new Swoole\Coroutine\Channel(1);
+        return $this->msgService->saveMsg($this->msg);
 
-        go(function () use ($chan, $message) {
-            $resp = json_decode((string)App::$httpClient->request('POST', $this->url, ['json' => $message])->getBody());
-            $chan->push($resp);
-        });
 
-        // 响应ack
-        $r = $chan->pop();
+        /* 方案二转发消息*/
+        return $this->msgProxy->sendMessage("http://192.168.2.21:11181/api/default/testSwooleRabbitMq", $this->msg);
 
-        if ($r->code == "200") {
-            return true;
-        }
-        return false;
     }
 
     public function __destruct()
     {
         unset($this->msgService);
         unset($this->QueueService);
+        unset($this->msgProxy);
+
     }
 }
