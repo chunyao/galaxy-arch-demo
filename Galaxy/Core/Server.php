@@ -84,12 +84,11 @@ class Server
         $health = $this->server->addListener('0.0.0.0', 8081, SWOOLE_SOCK_TCP);
 
         echo <<<EOL
-                ___                           _           
-  /\/\   __ _  / __\ __ _ _ __   __ _   _ __ | |__  _ __  
- /    \ / _` |/__\/// _` | '_ \ / _` | | '_ \| '_ \| '_ \ 
-/ /\/\ \ (_| / \/  \ (_| | | | | (_| | | |_) | | | | |_) |
-\/    \/\__,_\_____/\__,_|_| |_|\__, | | .__/|_| |_| .__/ 
-                                |___/  |_|         |_| 
+  __  __      ___                        _         
+ |  \/  |__ _| _ ) __ _ _ _  __ _   _ __| |_  _ __ 
+ | |\/| / _` | _ \/ _` | ' \/ _` | | '_ \ ' \| '_ \
+ |_|  |_\__,_|___/\__,_|_||_\__, | | .__/_||_| .__/
+                            |___/  |_|       |_|   
 
 EOL;
         printf("System    Name:       %s\n", strtolower(PHP_OS));
@@ -97,7 +96,6 @@ EOL;
         printf("Swoole    Version:    %s\n", swoole_version());
         printf("Http   Listen    Addr:       http://%s:%d\n", "0.0.0.0", "8080");
         printf("Health Listen    Addr:       http://%s:%d\n", "0.0.0.0", "8081");
-        printf("gRPC   Listen    Addr:       http://%s:%d\n", "0.0.0.0", "9595");
         Log::info('Start http server');
         $this->server->set(array(
             'reactor_num' => swoole_cpu_num(),
