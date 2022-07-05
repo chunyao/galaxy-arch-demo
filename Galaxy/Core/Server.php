@@ -66,12 +66,21 @@ class Server
 
             $register = new ServiceRegister();
             $register->handle("register");
-            try{
-          //      $register->beat();
-            }catch (\Throwable $e){
-                var_dump($e);
-            }
-          //
+
+            $process = new Swoole\Process(function ($worker) use ($register) {
+
+                    swoole_timer_tick(5000,function() use ($register){
+                        try{
+                            $register->beat();
+                            echo "注册中心 心跳检测～";
+                        }catch (\Throwable $e){
+                            //var_dump($e);
+                        }
+
+                    });
+
+            }, false, 0, true);
+            $process->start();
         }
 
         $this->appName = $this->config['app.name'];

@@ -30,7 +30,7 @@ class Naming
             NamingConfig::setPort($port);
             NamingConfig::setNamespaceId($namespaceId);
             NamingConfig::setWeight($weight);
-            NamingConfig::setEphemeral($ephemeral);
+        //    NamingConfig::setEphemeral(true);
 
             $client = new self();
         }
