@@ -14,7 +14,7 @@ class Loader
     {
 
         $file = self::findFile($class);
-        echo $file;
+
         if (file_exists($file)) {
             self::includeFile($file);
         }
@@ -27,7 +27,7 @@ class Loader
     {
 
         $vendor = substr($class, 0, strpos($class, '\\')); // 顶级命名空间
-        echo $vendor;
+
         if (isset(self::$vendorMap[$vendor])) {
             $vendorDir = self::$vendorMap[$vendor];
         } else {
