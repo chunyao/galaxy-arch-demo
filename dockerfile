@@ -6,10 +6,10 @@ ARG environment=dev
 ARG PRO=mabang-arch-demo
 ENV APP_PROFILE=$environment
 USER root
-COPY ./$PRO/php.ini /usr/local/php/etc/
+COPY ./php.ini /usr/local/php/etc/
 RUN mkdir -p /data/web/website/$PRO
 WORKDIR /data/web/website/$PRO
-ADD ./$PRO /data/web/website/$PRO
+ADD . /data/web/website/$PRO
 RUN cd /data/web/website/$PRO
 RUN composer install
 EXPOSE 8080

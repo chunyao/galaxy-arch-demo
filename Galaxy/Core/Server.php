@@ -43,8 +43,6 @@ class Server
         } else {
             $application = new Application(new Config([
                 'base_uri' => $bootConfig['url'],
-                'username' => $bootConfig['user'],
-                'password' => $bootConfig['password'],
                 'guzzle_config' => [
                     'headers' => [
                         'charset' => 'UTF-8',
@@ -56,8 +54,6 @@ class Server
             $this->coreConfig = parse_ini_string((string)$response->getBody());
             $application = new Application(new Config([
                 'base_uri' => $bootConfig['url'],
-                'username' => $bootConfig['user'],
-                'password' => $bootConfig['password'],
                 'guzzle_config' => [
                     'headers' => [
                         'charset' => 'UTF-8',
