@@ -65,7 +65,7 @@ class Server
             $this->config = parse_ini_string((string)$response->getBody());
 
             $register = new ServiceRegister();
-       //     $register->handle("register");
+            $register->handle("register");
           //  $register->beat();
         }
 
