@@ -66,7 +66,12 @@ class Server
 
             $register = new ServiceRegister();
             $register->handle("register");
-          //  $register->beat();
+            try{
+                $register->beat();
+            }catch (\Throwable $e){
+                var_dump($e);
+            }
+          //
         }
 
         $this->appName = $this->config['app.name'];
