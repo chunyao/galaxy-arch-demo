@@ -11,7 +11,6 @@ RUN mkdir -p /data/web/website/$PRO
 WORKDIR /data/web/website/$PRO
 ADD . /data/web/website/$PRO
 RUN cd /data/web/website/$PRO
-RUN composer install
 EXPOSE 8080
 EXPOSE 8081
 CMD ./run.sh $APP_PROFILE
