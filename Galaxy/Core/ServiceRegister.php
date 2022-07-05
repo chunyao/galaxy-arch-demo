@@ -1,63 +1,54 @@
 <?php
+
 namespace Galaxy\Core;
 
 use alibaba\nacos\NacosConfig;
 use alibaba\nacos\Naming;
 
 
-
 class ServiceRegister
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'ServiceRegister {--action=}';
+    private string $host;
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = '服务注册到Nacos';
+    private string $serviceName;
 
-    private $naming;
+    private string $namespaceId;
 
-    protected $config;
+    private string $ip;
 
-    public function __construct()
+    public function __construct($host, $serviceName, $namespaceId)
     {
 
         $ip = swoole_get_local_ip();
-        var_dump($ip);
-        NacosConfig::setHost("https://dev-nacos.mabangerp.com"); //上面如果启用的了域名就用域名，如果用了VIP就用VIP，这里为了测试简单用了简单模式
-
-        $this->naming = Naming::init(
-            "archDemo-service",          //服务的名称，随便取，在Nacos里不重复就可以了，如果重复就代表同一个服务的不同节点，用于高可用
-            "1.1.1.1",   //服务的地址
-            "8080",             //服务的端口号
-            "cc071b13-5746-4061-bbc5-5f2fc220b810",
-            "",
-            true
-        //设置后nacos服务器会自动检测ip和端口匹配的实例是否存活 设置后就无需客户端发送实例心跳了,
-
-        );
-
+        if (isset($ip['en0'])) {
+            $this->ip = $ip['en0'];
+        }
+        if (isset($ip['eth0'])) {
+            $this->ip = $ip['eth0'];
+        }
+        $this->host = $host;
+        $this->serviceName = $serviceName;
+        $this->namespaceId = $namespaceId;
     }
 
-    public function handle($action){
+    public function handle($action)
+    {
         switch ($action) {
             case 'register':
-                $result = $this->naming->register();
-                var_dump($result);
+                $result = $this->register();
                 break;
-            case 'delete':
-                $this->naming->delete();    //测试实例删除返回成功，实际删除不成功，后台一直显示存在
-                break;
+
         }
     }
-    public function beat(){
-        $result = $this->naming->beat();
+
+    public function beat()
+    {
+        $result = $this->register();
+    }
+
+    private function register()
+    {
+        rest_curl($this->host . '/nacos/v1/ns/instance?port=8080&ephemeral=true&healthy=true&ip=' . $this->ip . '&weight=1.0&serviceName=' . $this->serviceName . '&encoding=GBK&namespaceId=' . $this->namespaceId, 'POST');
+
     }
 }

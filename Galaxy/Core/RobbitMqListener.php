@@ -24,7 +24,7 @@ class RobbitMqListener
     public static function rabbitQueueload($appName)
     {
 
-        $dir = ROOT_PATH . DIRECTORY_SEPARATOR .$appName .
+        $dir = ROOT_PATH  .
             DIRECTORY_SEPARATOR."src".DIRECTORY_SEPARATOR."App".
             DIRECTORY_SEPARATOR."Listener".DIRECTORY_SEPARATOR;
 

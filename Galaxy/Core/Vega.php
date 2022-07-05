@@ -20,13 +20,14 @@ class Vega
 
         // 500
         $vega->use(function (Context $ctx) {
+
             try {
                 $ctx->next();
             } catch (\Throwable $ex) {
                 if ($ex instanceof Abort || $ex instanceof NotFoundException) {
                     throw $ex;
                 }
-                var_dump($ex->getTrace()[0]);
+                //var_dump($ex->getTrace()[0]);
                 Log::error(sprintf('%s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));
                 $ctx->string(500, 'Internal Server Error');
                 $ctx->abort();
@@ -49,7 +50,7 @@ class Vega
 
         // routes
         $routes = require __DIR__ . '/../../'.$appName.'/src/App/Routes/index.php';
-        $routes($vega);
+        $routes($vega,$appName);
 
         return $vega;
     }

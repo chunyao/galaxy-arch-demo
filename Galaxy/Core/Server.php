@@ -1,15 +1,13 @@
 <?php
 
 namespace Galaxy\Core;
-
-
-use Swoole;
-use Hyperf\Nacos\Application;
-use Hyperf\Nacos\Config;
+use \Swoole;
+use \Hyperf\Nacos\Application;
+use \Hyperf\Nacos\Config;
 use \GuzzleHttp;
-use Galaxy\Common\Handler\InnerServer;
-use Galaxy\Common\Configur\CoreDB;
-use Galaxy\Common\Configur\CoreRDS;
+use \Galaxy\Common\Handler\InnerServer;
+use \Galaxy\Common\Configur\CoreDB;
+use \Galaxy\Common\Configur\CoreRDS;
 
 class Server
 {
@@ -27,7 +25,7 @@ class Server
 
     protected string $url;
 
-    protected string $appName;
+    protected static string $appName;
 
     protected $tcpClient;
 
@@ -64,14 +62,27 @@ class Server
             $response = $application->config->get($bootConfig['dataId'], $bootConfig['group']);
             $this->config = parse_ini_string((string)$response->getBody());
 
-            /* $register = new ServiceRegister($this->config);
-           $register->run("register");
-            $register->beat();*/
+            $register = new ServiceRegister($bootConfig['url'], $this->config['app.name'],$this->config['namespace.id'] );
+            $register->handle("register");
+
+            $process = new Swoole\Process(function ($worker) use ($register) {
+
+                    swoole_timer_tick(5000,function() use ($register){
+                        try{
+                            $register->beat();
+                        }catch (\Throwable $e){
+                            //var_dump($e);
+                        }
+
+                    });
+
+            }, false, 0, true);
+            $process->start();
         }
 
-        $this->appName = $this->config['app.name'];
-        $vega = Vega::new($this->appName);
-        $grpc = new \Mix\Grpc\Server();
+        self::$appName = $this->config['app.name'];
+        $vega = Vega::new(self::$appName);
+
 
         /* http server */
         $this->server = new Swoole\Http\Server("0.0.0.0", 8080);
@@ -106,7 +117,7 @@ EOL;
 
         $health->on('Request', function ($request, $response) {
 
-        $_SERVER = isset($request->server) ? $request->server : array();
+        $_SERVER = $request->server ?? array();
             if ($_SERVER['request_uri'] != "") {
                 $action = $_SERVER['request_uri'];
             }
