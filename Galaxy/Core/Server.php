@@ -204,10 +204,10 @@ EOL;
     public function onWorkerStart($server, $worker_id)
     {
 
-        CoreDB::init($this->coreConfig);
+      /*  CoreDB::init($this->coreConfig);
         CoreDB::enableCoroutine();
         CoreRDS::init($this->coreConfig);
-        CoreRDS::enableCoroutine();
+        CoreRDS::enableCoroutine();*/
         /*自动加载用户配置*/
 
         $configs = ConfigLoad::findFile($this->config["app.name"]);
