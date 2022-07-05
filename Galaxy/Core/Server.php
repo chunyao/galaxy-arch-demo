@@ -75,11 +75,14 @@ class Server
 
         $this->appName = $this->config['app.name'];
         $vega = Vega::new($this->appName);
+        $grpc = new \Mix\Grpc\Server();
+
         /* http server */
         $this->server = new Swoole\Http\Server("0.0.0.0", 8080);
+        $tcp = $this->server->addListener('0.0.0.0', 9595, SWOOLE_SOCK_TCP);
         /* http server 健康检测 */
         $health = $this->server->addListener('0.0.0.0', 8081, SWOOLE_SOCK_TCP);
-        $tcp = $this->server->addListener('0.0.0.0', 9595, SWOOLE_SOCK_TCP);
+
         echo <<<EOL
                 ___                           _           
   /\/\   __ _  / __\ __ _ _ __   __ _   _ __ | |__  _ __  
@@ -107,7 +110,14 @@ EOL;
 
         $rabbitMq = new RabbitMqProcess($this->config, 1, $this->url, $this->tcpClient);
         $rabbitMq->handler();
-        $health->on('Receive', array($this, 'onReceive'));
+        $tcp->set([
+            'worker_num' => 4,
+            'open_http2_protocol' => true,
+            'http_compression' => false,
+        ]);
+        $tcp->on('Request', $grpc->handler());
+
+
         $health->on('Request', function ($request, $response) {
 
         $_SERVER = isset($request->server) ? $request->server : array();
@@ -162,7 +172,7 @@ EOL;
         $this->server->on('WorkerExit', array($this, 'onWorkerExit'));
         $this->server->on('WorkerError', array($this, 'onWorkerError'));
         $this->server->on('Request', $vega->handler());
-
+        $this->server->on('Receive', array($this, 'onReceive'));
 
     }
 

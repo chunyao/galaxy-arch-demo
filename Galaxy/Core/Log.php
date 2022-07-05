@@ -108,7 +108,7 @@ class Log
     public static function error($message = "", $data = [], $module = "")
     {
         if (class_exists("SeasLog")) {
-            self::log(SEASLOG_ERROE, $message, $data, $module);
+            self::log(SEASLOG_ERROR, $message, $data, $module);
         }
     }
 

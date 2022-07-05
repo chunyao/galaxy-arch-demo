@@ -34,6 +34,7 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
             'Psr\\Log\\' => 8,
             'Psr\\Http\\Message\\' => 17,
             'Psr\\Http\\Client\\' => 16,
+            'Php\\' => 4,
             'PhpAmqpLib\\' => 11,
             'ParagonIE\\ConstantTime\\' => 23,
         ),
@@ -71,6 +72,7 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
             'Grpc\\' => 5,
             'Google\\Protobuf\\' => 16,
             'GPBMetadata\\Google\\Protobuf\\' => 28,
+            'GPBMetadata\\' => 12,
         ),
         'F' => 
         array (
@@ -107,6 +109,10 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         'Psr\\Http\\Client\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/http-client/src',
+        ),
+        'Php\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/archDemoSpi/Php',
         ),
         'PhpAmqpLib\\' => 
         array (
@@ -207,6 +213,10 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         'GPBMetadata\\Google\\Protobuf\\' => 
         array (
             0 => __DIR__ . '/..' . '/google/protobuf/src/GPBMetadata/Google/Protobuf',
+        ),
+        'GPBMetadata\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/archDemoSpi/GPBMetadata',
         ),
         'FastRoute\\' => 
         array (
