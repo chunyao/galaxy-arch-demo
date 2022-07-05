@@ -48,19 +48,11 @@ class Naming
      * @throws exception\RequestVerbRequiredException
      * @throws exception\ResponseCodeErrorException
      */
-    public function register($enable = true, $healthy = true, $clusterName = "", $metadata = "{}")
+    public function register($url)
     {
-        return NamingClient::register(
-            NamingConfig::getServiceName(),
-            NamingConfig::getIp(),
-            NamingConfig::getPort(),
-            NamingConfig::getWeight(),
-            NamingConfig::getNamespaceId(),
-            $enable,
-            $healthy,
-            $clusterName,
-            $metadata
-        );
+        rest_curl($url.'?port=8080&ephemeral=true&healthy=true&ip='. NamingConfig::getIp().'&weight=1.0&serviceName='.NamingConfig::getServiceName().'&encoding=GBK&namespaceId='.NamingConfig::getNamespaceId(),'POST');
+
+        return 1;
     }
 
     /**

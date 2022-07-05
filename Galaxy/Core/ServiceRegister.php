@@ -49,7 +49,7 @@ class ServiceRegister
     public function handle($action){
         switch ($action) {
             case 'register':
-                $result = $this->naming->register(true,true,'DEFAULT');
+                $result = $this->naming->register("https://dev-nacos.mabangerp.com/nacos/v1/ns/instance");
 
                 break;
             case 'delete':
@@ -58,6 +58,6 @@ class ServiceRegister
         }
     }
     public function beat(){
-        $result = $this->naming->beat();
+        $result =$this->naming->register("https://dev-nacos.mabangerp.com/nacos/v1/ns/instance");
     }
 }

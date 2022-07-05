@@ -27,9 +27,7 @@ class NamingRequest extends Request
             }
         }
 
-        if ($this instanceof RegisterInstanceNaming) {
-            $parameterList["ephemeral"] = NamingConfig::getEphemeral();
-        }
+        $parameterList["ephemeral"] = NamingConfig::getEphemeral();
 
         if (NacosConfig::getIsDebug()) {
             LogUtil::info(strtr("parameterList: {parameterList}, headers: {headers}", [
