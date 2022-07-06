@@ -2,18 +2,18 @@
 
 namespace App\Listener;
 
-use App\Service\MsgProxy;
+
+use App\Service\MsgProxyService;
 use Swoole;
 use Galaxy\Core\Log;
 use Galaxy\Service\QueueService;
 use App\Service\MsgService;
-use App;
+
 
 class TestListener
 {
-
     /*变量名固定且必须*/
-    public static $queueName = "JAVA_TEST_1000000001_QUEUE";
+    public static $queueName = "ARCH_TEST_QUEUE";
 
     private QueueService $queueService;
 
@@ -21,16 +21,15 @@ class TestListener
 
     private MsgService $msgService;
 
-    private MsgProxy $msgProxy;
+    private MsgProxyService $msgProxy;
 
 
     public function __construct($msg)
     {
 
         $this->queueService = new QueueService();
-
         $this->msgService = new MsgService();
-        $this->msgProxy = new MsgProxy();
+        $this->msgProxy = new MsgProxyService();
         $this->msg = $msg;
 
     }
@@ -42,12 +41,12 @@ class TestListener
 
         /* 方案一 自己处理消息*/
 
-        return $this->msgService->saveMsg($this->msg);
+      //  return $this->msgService->saveMsg($this->msg);
 
 
         /* 方案二转发消息*/
-        return $this->msgProxy->sendMessage("http://192.168.2.21:11181/api/default/testSwooleRabbitMq", $this->msg);
-
+     //   return $this->msgProxy->sendMessage("http://192.168.2.21:11181/api/default/testSwooleRabbitMq", $this->msg);
+    return true;
     }
 
     public function __destruct()

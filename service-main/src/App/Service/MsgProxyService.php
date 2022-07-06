@@ -4,7 +4,7 @@ namespace App\Service;
 
 use Galaxy\Service\QueueService;
 
-class MsgProxy
+class MsgProxyService
 {
     private $url;
 
@@ -18,19 +18,19 @@ class MsgProxy
         $this->queueService = new QueueService();
     }
 
-    public function sendMessage($url, $msg)
+    public function sendMessage($url, $msg,$queueName)
     {
         $sendMsg = array();
-        $sendMsg['body'] = $this->msg;
-        $nameSpace = $this->queueService->findByQueueName(self::$queueName);
+        $sendMsg['body'] = $msg;
+        $nameSpace = $this->queueService->findByQueueName($queueName);
         $sendMsg['handler'] = $nameSpace['mq_handler'];
         $sendMsg['queue'] = $this->msg['queue'];
         $message = array();
         $message['msg'] = $sendMsg;
         $chan = new Swoole\Coroutine\Channel(1);
 
-        go(function () use ($chan, $message) {
-            $resp = json_decode((string)App::$httpClient->request('POST', $this->url, ['json' => $message])->getBody());
+        go(function () use ($chan, $message,$url) {
+            $resp = json_decode((string)App::$httpClient->request('POST',$url, ['json' => $message])->getBody());
             $chan->push($resp);
         });
 
