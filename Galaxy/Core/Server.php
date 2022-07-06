@@ -82,12 +82,25 @@ class Server
 
         self::$appName = $this->config['app.name'];
         $vega = Vega::new(self::$appName);
-
+        if (isset($bootConfig['server.port'])){
+            $serverPort = $bootConfig['server.port'];
+        }elseif(isset($this->config['server.port'])){
+            $serverPort = $this->config['server.port'];
+        }else{
+            $serverPort = 8080;
+        }
+        if (isset($bootConfig['management.server.port'])){
+            $managementServerPort = $bootConfig['management.server.port'];
+        }elseif(isset($this->config['management.server.port'])){
+            $managementServerPort = $this->config['management.server.port'];
+        }else{
+            $managementServerPort = 8081;
+        }
 
         /* http server */
-        $this->server = new Swoole\Http\Server("0.0.0.0", 8080);
+        $this->server = new Swoole\Http\Server("0.0.0.0", $serverPort);
         /* http server 健康检测 */
-        $health = $this->server->addListener('0.0.0.0', 8081, SWOOLE_SOCK_TCP);
+        $health = $this->server->addListener('0.0.0.0', $managementServerPort, SWOOLE_SOCK_TCP);
 
         echo <<<EOL
   __  __      ___                        _         
@@ -206,6 +219,7 @@ EOL;
         CoreRDS::init($this->coreConfig);
         CoreRDS::enableCoroutine();
         /*自动加载用户配置*/
+
 
         $configs = ConfigLoad::findFile($this->config["app.name"]);
         foreach ($configs as $key => $val) {

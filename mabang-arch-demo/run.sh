@@ -2,7 +2,7 @@
 if [ "$1" = "dev" ];
 then
   echo "dev"
-  php app.php --env=dev --url=https://dev-nacos.mabangerp.com  --dataId=mico_service --group=V2SYSTEM_GROUP
+  php app.php --env=dev --url=https://dev-nacos.mabangerp.com  --dataId=mico_service --group=V2SYSTEM_GROUP --server.port=8080 --management.server.port=8081
 fi
 
 if [ "$1" = "test" ];
