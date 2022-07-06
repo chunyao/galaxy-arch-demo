@@ -94,7 +94,7 @@ class Driver
     public function connect()
     {
         $options = ["connect" => true];
-        $result = new \MongoDB\Client('mongodb://jiagou@192.168.2.20:27017,192.168.2.21:27017/?replicaSet=mongos&authSource=admin', $options);
+        $result = new \MongoClient('mongodb://jiagou@192.168.2.20:27017,192.168.2.21:27017/?replicaSet=mongos&authSource=admin', $options);
         if ($result->connect() === false) {
             throw new \RedisException(sprintf('Redis connect failed (host: %s, port: %s) %s', "空着", "空着", "空着"));
         }
