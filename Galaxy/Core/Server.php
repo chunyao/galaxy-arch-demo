@@ -82,6 +82,7 @@ class Server
 
         self::$appName = $this->config['app.name'];
         $vega = Vega::new(self::$appName);
+
         if (isset($bootConfig['server.port'])){
             $serverPort = $bootConfig['server.port'];
         }elseif(isset($this->config['server.port'])){
@@ -89,6 +90,7 @@ class Server
         }else{
             $serverPort = 8080;
         }
+
         if (isset($bootConfig['management.server.port'])){
             $managementServerPort = $bootConfig['management.server.port'];
         }elseif(isset($this->config['management.server.port'])){
@@ -113,8 +115,8 @@ EOL;
         printf("System    Name:       %s\n", strtolower(PHP_OS));
         printf("PHP       Version:    %s\n", PHP_VERSION);
         printf("Swoole    Version:    %s\n", swoole_version());
-        printf("Http   Listen    Addr:       http://%s:%d\n", "0.0.0.0", "8080");
-        printf("Health Listen    Addr:       http://%s:%d\n", "0.0.0.0", "8081");
+        printf("Http   Listen    Addr:       http://%s:%d\n", "0.0.0.0", $serverPort);
+        printf("Health Listen    Addr:       http://%s:%d\n", "0.0.0.0", $managementServerPort);
         Log::info('Start http server');
         $this->server->set(array(
             'reactor_num' => swoole_cpu_num(),
