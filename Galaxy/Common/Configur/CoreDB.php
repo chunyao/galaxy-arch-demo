@@ -4,7 +4,7 @@ namespace Galaxy\Common\Configur;
 
 use Galaxy\Common\Mysql\DBLogger;
 use Galaxy\Core\Once;
-use Mix\Database\Database;
+use Galaxy\Core\Database;
 
 class CoreDb
 {

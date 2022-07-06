@@ -5,6 +5,7 @@ namespace App\Http\Controller\Helloword;
 
 
 use App\Service\SayService;
+use App\Service\WishbrandService;
 use Galaxy\Core\BaseController;
 use Galaxy\Core\Log;
 use App\Service\MsgService;
@@ -14,16 +15,21 @@ class Helloword extends BaseController
 {
     private MsgService $msgSevice;
     private SayService $sayService;
-
+    private WishbrandService $wishbrandService;
     public function __construct()
     {
         $this->msgSevice = new MsgService();
-        $this->sayService = new SayService();
+        $this->wishbrandService = new WishbrandService();
     }
 
     public function helloword(Context $ctx)
     {
-
+        $data = $this->wishbrandService->findById(522);
+        $ctx->JSON(200, [
+            'code' => 10200,
+            'message' => 'success',
+            'data' => $data
+        ]);
         $id = rand(1, 239368);
         $data = $this->msgSevice->findById($id);
 
@@ -48,7 +54,7 @@ class Helloword extends BaseController
     public function __destruct()
     {
         unset($this->msgModel);
-        unset($this->sayService);
+
     }
 
 }
