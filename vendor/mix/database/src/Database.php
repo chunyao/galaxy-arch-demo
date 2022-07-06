@@ -267,6 +267,22 @@ class Database
     {
         return $this->borrow()->insert($table, $data, $insert);
     }
+    /**
+     * 分表
+     * User: wangpan
+     * Route:
+     * Api:
+     * @param $companyId
+     * @return string
+     */
+    public function setSuffix($companyId, $subTable = 100)
+    {
+        list($suffix, $alias) = $this->parseSuffix($companyId);
+
+        // 根据企业编号，对100取余分表
+        $suffix = is_numeric($suffix) ? (int)$suffix % $subTable : null;
+        return parent::setSuffix([$suffix, $alias]);
+    }
 
     /**
      * 批量插入
