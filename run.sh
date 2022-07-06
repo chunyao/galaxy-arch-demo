@@ -1,5 +1,5 @@
 #!/bin/bash
-cd service-main
-pwd
-cat Dockerfile
-./run.sh
+while(true)
+do
+echo  "1"
+done
