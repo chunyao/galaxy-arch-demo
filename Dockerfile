@@ -10,7 +10,7 @@ USER root
 COPY ./php.ini /usr/local/php/etc/
 RUN mkdir -p /data/web/website/$SERVICENAME
 ADD . /data/web/website/$SERVICENAME
-WORKDIR /data/web/website/$SERVICENAME/$APP_DIR
+WORKDIR /data/web/website/mabang-arch-demo/service-main
 EXPOSE 8080
 EXPOSE 8081
 CMD ./run.sh $APP_PROFILE
