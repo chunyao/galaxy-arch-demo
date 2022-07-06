@@ -14,4 +14,4 @@ ADD . /data/web/website/$SERVICENAME
 RUN cd /data/web/website/$SERVICENAME/$APPDIR
 EXPOSE 8080
 EXPOSE 8081
-CMD /data/web/website/$SERVICENAME/$APPDIR/run.sh $APP_PROFILE
+CMD ./run.sh $APP_PROFILE
