@@ -6,9 +6,9 @@ class Feign{
     public function fegin1(Context $ctx)
     {
         // Initialisation de pheign
-        $pheign = \pheign\builder\Pheign::builder()->target(\App\Service\SayFeignService::class, 'http://127.0.0.1:8080');
+        $pheign = \pheign\builder\Pheign::builder()->target(\App\Service\SayFeignService::class, 'https://api.mabangerp.com/');
 
-        $result = $pheign->repositories('airmanbzh');
+        $result = $pheign->gethello();
 
         $ctx->JSON(200, [
             'code' => 10200,

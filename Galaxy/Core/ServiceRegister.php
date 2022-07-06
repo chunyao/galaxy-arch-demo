@@ -2,8 +2,6 @@
 
 namespace Galaxy\Core;
 
-use alibaba\nacos\NacosConfig;
-use alibaba\nacos\Naming;
 
 
 class ServiceRegister

@@ -1,21 +1,21 @@
 <?php
 
 namespace App\Service;
-
+use pheign\annotation\method\GET;
+use pheign\annotation\Options;
+use pheign\annotation\Pheign;
+use pheign\annotation\Target;
 class SayFeignService
 {
     /**
      * @Pheign
      *
      * @GET
-     * @Target("/users/{owner}/repos")
+     * @Target("/mabang-arch-demo/helloword/helloword")
      *
      * @Options(CURLOPT_SSL_VERIFYHOST=0, CURLOPT_SSL_VERIFYPEER=0)
      */
-    public function repositories($owner){
-
-        var_dump($owner);
-    }
+    public function gethello(){}
 
     /**
      * @Pheign

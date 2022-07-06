@@ -83,11 +83,26 @@ class Server
         self::$appName = $this->config['app.name'];
         $vega = Vega::new(self::$appName);
 
+        if (isset($bootConfig['server.port'])){
+            $serverPort = $bootConfig['server.port'];
+        }elseif(isset($this->config['server.port'])){
+            $serverPort = $this->config['server.port'];
+        }else{
+            $serverPort = 8080;
+        }
+
+        if (isset($bootConfig['management.server.port'])){
+            $managementServerPort = $bootConfig['management.server.port'];
+        }elseif(isset($this->config['management.server.port'])){
+            $managementServerPort = $this->config['management.server.port'];
+        }else{
+            $managementServerPort = 8081;
+        }
 
         /* http server */
-        $this->server = new Swoole\Http\Server("0.0.0.0", 8080);
+        $this->server = new Swoole\Http\Server("0.0.0.0", $serverPort);
         /* http server 健康检测 */
-        $health = $this->server->addListener('0.0.0.0', 8081, SWOOLE_SOCK_TCP);
+        $health = $this->server->addListener('0.0.0.0', $managementServerPort, SWOOLE_SOCK_TCP);
 
         echo <<<EOL
   __  __      ___                        _         
@@ -100,8 +115,8 @@ EOL;
         printf("System    Name:       %s\n", strtolower(PHP_OS));
         printf("PHP       Version:    %s\n", PHP_VERSION);
         printf("Swoole    Version:    %s\n", swoole_version());
-        printf("Http   Listen    Addr:       http://%s:%d\n", "0.0.0.0", "8080");
-        printf("Health Listen    Addr:       http://%s:%d\n", "0.0.0.0", "8081");
+        printf("Http   Listen    Addr:       http://%s:%d\n", "0.0.0.0", $serverPort);
+        printf("Health Listen    Addr:       http://%s:%d\n", "0.0.0.0", $managementServerPort);
         Log::info('Start http server');
         $this->server->set(array(
             'reactor_num' => swoole_cpu_num(),
@@ -206,6 +221,7 @@ EOL;
         CoreRDS::init($this->coreConfig);
         CoreRDS::enableCoroutine();
         /*自动加载用户配置*/
+
 
         $configs = ConfigLoad::findFile($this->config["app.name"]);
         foreach ($configs as $key => $val) {
