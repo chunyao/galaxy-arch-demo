@@ -25,7 +25,7 @@ class RobbitMqListener
     {
 
         $dir = ROOT_PATH  .
-            DIRECTORY_SEPARATOR."src".DIRECTORY_SEPARATOR."App".
+            DIRECTORY_SEPARATOR."service-main".DIRECTORY_SEPARATOR."src".DIRECTORY_SEPARATOR."App".
             DIRECTORY_SEPARATOR."Listener".DIRECTORY_SEPARATOR;
 
         if (is_dir($dir)) {
