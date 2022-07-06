@@ -7,7 +7,7 @@ ini_set('date.timezone', 'Asia/Shanghai');
 define("ROOT_PATH", dirname(__FILE__));
 ini_set('display_errors', 'On');
 
-SeasLog::setBasePath("./data/logs");
+SeasLog::setBasePath("../data/logs");
 SeasLog::setLogger("/mabang-arch-service");
 
 use Galaxy\Core\Log;

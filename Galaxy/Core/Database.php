@@ -1,18 +1,18 @@
 <?php
 
-namespace Mix\Database;
+namespace Galaxy\Core;
 
+use Mix\Database\Connection;
+use Mix\Database\ConnectionInterface;
+use Mix\Database\Driver;
+use Mix\Database\LoggerInterface;
 use Mix\Database\Pool\ConnectionPool;
 use Mix\Database\Pool\Dialer;
+use Mix\Database\Transaction;
 use Mix\ObjectPool\Exception\WaitTimeoutException;
 
-/**
- * Class Database
- * @package Mix\Database
- */
 class Database
 {
-
     /**
      * 数据源格式
      * @var string
@@ -267,7 +267,7 @@ class Database
     {
         return $this->borrow()->insert($table, $data, $insert);
     }
-    
+
 
     /**
      * 批量插入
@@ -308,6 +308,11 @@ class Database
     public function table(string $table): ConnectionInterface
     {
         return $this->borrow()->table($table);
+    }
+
+    public function tableSuffix(string $table, int $companyId, $subTable = 100): ConnectionInterface
+    {
+        return $this->borrow()->tableSuffix($table,$companyId,$subTable);
     }
 
 }

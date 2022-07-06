@@ -1,41 +1,62 @@
 <?php
 
-namespace Mix\Database;
+namespace Galaxy\Common\MongoDB;
 
-use Mix\Database\Pool\ConnectionPool;
-use Mix\Database\Pool\Dialer;
 use Mix\ObjectPool\Exception\WaitTimeoutException;
+use Galaxy\Common\MongoDB\Pool\ConnectionPool;
+use Galaxy\Common\MongoDB\Pool\Dialer;
 
 /**
- * Class Database
- * @package Mix\Database
+ * Class Mongo
+ * @package Mix\Mongo
  */
-class Database
+class MongoDB implements ConnectionInterface
 {
 
-    /**
-     * 数据源格式
-     * @var string
-     */
-    protected $dsn = '';
+
 
     /**
-     * 数据库用户名
+     * 主机
      * @var string
      */
-    protected $username = 'root';
+    protected $host = '';
 
     /**
-     * 数据库密码
+     * 端口
+     * @var int
+     */
+    protected $port = 27017;
+
+    /**
+     * 密码
      * @var string
      */
     protected $password = '';
 
     /**
-     * 驱动连接选项
-     * @var array
+     * 数据库
+     * @var int
      */
-    protected $options = [];
+    protected $database = 0;
+
+    /**
+     * 全局超时
+     * @var float
+     */
+    protected $timeout = 5.0;
+
+    /**
+     * 重连间隔
+     * @var int
+     */
+    protected $retryInterval = 0;
+
+    /**
+     * 读取超时
+     * phpMongo >= 3.1.3
+     * @var float
+     */
+    protected $readTimeout = -1;
 
     /**
      * 最大活跃数
@@ -66,11 +87,6 @@ class Database
     protected $waitTimeout = 0.0;
 
     /**
-     * @var Driver
-     */
-    protected $dialer;
-
-    /**
      * 连接池
      * @var ConnectionPool
      */
@@ -87,24 +103,34 @@ class Database
     protected $logger;
 
     /**
-     * Database constructor.
-     * @param string $dsn
-     * @param string $username
+     * Mongo constructor.
+     * @param string $host
+     * @param int $port
      * @param string $password
-     * @param array $options
+     * @param int $database
+     * @param float $timeout
+     * @param int $retryInterval
+     * @param float|int $readTimeout
+     * @throws \MongoException
      */
-    public function __construct(string $dsn, string $username, string $password, array $options = [])
+    public function __construct(string $host, int $port = 6379, string $password = '', int $database = 0, float $timeout = 5.0, int $retryInterval = 0, float $readTimeout = -1)
     {
-        $this->dsn = $dsn;
-        $this->username = $username;
+        $this->host = $host;
+        $this->port = $port;
         $this->password = $password;
-        $this->options = $options;
+        $this->database = $database;
+        $this->timeout = $timeout;
+        $this->retryInterval = $retryInterval;
+        $this->readTimeout = $readTimeout;
 
         $this->driver = new Driver(
-            $this->dsn,
-            $this->username,
+            $this->host,
+            $this->port,
             $this->password,
-            $this->options
+            $this->database,
+            $this->timeout,
+            $this->retryInterval,
+            $this->readTimeout
         );
     }
 
@@ -117,10 +143,13 @@ class Database
 
         $this->pool = new ConnectionPool(
             new Dialer(
-                $this->dsn,
-                $this->username,
+                $this->host,
+                $this->port,
                 $this->password,
-                $this->options
+                $this->database,
+                $this->timeout,
+                $this->retryInterval,
+                $this->readTimeout
             ),
             $this->maxOpen,
             $this->maxIdle,
@@ -228,86 +257,15 @@ class Database
     }
 
     /**
-     * @param \Closure $func
-     * @return ConnectionInterface
+     * Call
+     * @param $command
+     * @param $arguments
+     * @return mixed
+     * @throws \MongoException
      */
-    public function debug(\Closure $func): ConnectionInterface
+    public function __call($command, $arguments)
     {
-        return $this->borrow()->debug($func);
-    }
-
-    /**
-     * @param string $sql
-     * @param ...$values
-     * @return ConnectionInterface
-     */
-    public function raw(string $sql, ...$values): ConnectionInterface
-    {
-        return $this->borrow()->raw($sql, ...$values);
-    }
-
-    /**
-     * @param string $sql
-     * @param ...$values
-     * @return ConnectionInterface
-     */
-    public function exec(string $sql, ...$values): ConnectionInterface
-    {
-        return $this->borrow()->exec($sql, ...$values);
-    }
-
-    /**
-     * 插入
-     * @param string $table
-     * @param array $data
-     * @param string $insert
-     * @return ConnectionInterface
-     */
-    public function insert(string $table, array $data, string $insert = 'INSERT INTO'): ConnectionInterface
-    {
-        return $this->borrow()->insert($table, $data, $insert);
-    }
-    
-
-    /**
-     * 批量插入
-     * @param string $table
-     * @param array $data
-     * @param string $insert
-     * @return ConnectionInterface
-     */
-    public function batchInsert(string $table, array $data, string $insert = 'INSERT INTO'): ConnectionInterface
-    {
-        return $this->borrow()->batchInsert($table, $data, $insert);
-    }
-
-    /**
-     * 自动事务
-     * @param \Closure $closure
-     * @throws \Throwable
-     */
-    public function transaction(\Closure $closure)
-    {
-        $this->borrow()->transaction($closure);
-    }
-
-    /**
-     * 开始事务
-     * @return Transaction
-     */
-    public function beginTransaction(): Transaction
-    {
-        return $this->borrow()->beginTransaction();
-    }
-
-    /**
-     * 启动查询生成器
-     * @param string $table
-     * @return ConnectionInterface
-     */
-    public function table(string $table): ConnectionInterface
-    {
-        return $this->borrow()->table($table);
+        return $this->borrow()->__call($command, $arguments);
     }
 
 }

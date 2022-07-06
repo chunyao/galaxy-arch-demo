@@ -49,7 +49,7 @@ class Vega
         }*/
 
         // routes
-        $routes = require __DIR__ . '/../../'.$appName.'/src/App/Routes/index.php';
+        $routes = require __DIR__ . '/../../service-main/src/App/Routes/index.php';
         $routes($vega,$appName);
 
         return $vega;

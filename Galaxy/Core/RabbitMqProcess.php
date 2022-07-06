@@ -42,7 +42,7 @@ class RabbitMqProcess
                 $this->config['rabbitmq.password'],
                 $this->config['rabbitmq.vhost'][$i],
                 false,
-                "PLAIN"
+                "AMQPLAIN"
             ];
 
 
@@ -152,8 +152,10 @@ class RabbitMqProcess
     {
         $channel_step = 0;
         for ($worker = 0; $worker < $this->workers; $worker++) {
+
             $i = 0;
             foreach ($this->config['rabbitmq.enable'] as $key => $val) {
+
                 if ($val) {
 
                     foreach (RobbitMqListener::rabbitQueueload($this->config['app.name']) as $key => $val) {
