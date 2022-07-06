@@ -1,6 +1,6 @@
 <?php
 
-namespace Mix\Redis\Pool;
+namespace Galaxy\Common\MongoDB\Pool;
 
 use Mix\Redis\Driver;
 use Mix\ObjectPool\AbstractObjectPool;

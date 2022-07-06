@@ -1,6 +1,6 @@
 <?php
 
-namespace Mix\Redis;
+namespace Galaxy\Common\MongoDB;
 
 /**
  * Class AbstractConnection

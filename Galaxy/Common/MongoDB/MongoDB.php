@@ -1,19 +1,19 @@
 <?php
 
-namespace Mix\Redis;
+namespace Galaxy\Common\MongoDB;
 
 use Mix\ObjectPool\Exception\WaitTimeoutException;
-use Mix\Redis\Pool\ConnectionPool;
-use Mix\Redis\Pool\Dialer;
+use Galaxy\Common\MongoDB\Pool\ConnectionPool;
+use Galaxy\Common\MongoDB\Pool\Dialer;
 
 /**
- * Class Redis
- * @package Mix\Redis
+ * Class Mongo
+ * @package Mix\Mongo
  */
-class Redis implements ConnectionInterface
+class MongoDB implements ConnectionInterface
 {
 
-    use ScanTrait;
+
 
     /**
      * 主机
@@ -25,7 +25,7 @@ class Redis implements ConnectionInterface
      * 端口
      * @var int
      */
-    protected $port = 6379;
+    protected $port = 27017;
 
     /**
      * 密码
@@ -53,7 +53,7 @@ class Redis implements ConnectionInterface
 
     /**
      * 读取超时
-     * phpredis >= 3.1.3
+     * phpMongo >= 3.1.3
      * @var float
      */
     protected $readTimeout = -1;
@@ -103,7 +103,7 @@ class Redis implements ConnectionInterface
     protected $logger;
 
     /**
-     * Redis constructor.
+     * Mongo constructor.
      * @param string $host
      * @param int $port
      * @param string $password
@@ -111,7 +111,7 @@ class Redis implements ConnectionInterface
      * @param float $timeout
      * @param int $retryInterval
      * @param float|int $readTimeout
-     * @throws \RedisException
+     * @throws \MongoException
      */
     public function __construct(string $host, int $port = 6379, string $password = '', int $database = 0, float $timeout = 5.0, int $retryInterval = 0, float $readTimeout = -1)
     {
@@ -257,36 +257,11 @@ class Redis implements ConnectionInterface
     }
 
     /**
-     * @param string ...$keys
-     * @return Multi
-     */
-    public function watch(string ...$keys): Multi
-    {
-        return $this->borrow()->watch(...$keys);
-    }
-
-    /**
-     * @return Multi
-     */
-    public function multi(): Multi
-    {
-        return $this->borrow()->multi();
-    }
-
-    /**
-     * @return Pipeline
-     */
-    public function pipeline(): Pipeline
-    {
-        return $this->borrow()->pipeline();
-    }
-
-    /**
      * Call
      * @param $command
      * @param $arguments
      * @return mixed
-     * @throws \RedisException
+     * @throws \MongoException
      */
     public function __call($command, $arguments)
     {

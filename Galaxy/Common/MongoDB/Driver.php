@@ -1,6 +1,6 @@
 <?php
 
-namespace Mix\Redis;
+namespace Galaxy\Common\MongoDB;
 
 use Mix\ObjectPool\ObjectTrait;
 
@@ -80,9 +80,9 @@ class Driver
 
     /**
      * Get instance
-     * @return \Redis
+     * @return \Mongo
      */
-    public function instance(): \Redis
+    public function instance(): \MongoDB
     {
         return $this->redis;
     }
@@ -93,18 +93,13 @@ class Driver
      */
     public function connect()
     {
-        $redis = new \Redis();
-        $result = $redis->connect($this->host, $this->port, $this->timeout, null, $this->retryInterval);
-        if ($result === false) {
-            throw new \RedisException(sprintf('Redis connect failed (host: %s, port: %s) %s', $this->host, $this->port, $redis->getLastError()));
+        $options = ["connect" => true];
+        $result = new \MongoDB\Client('mongodb://jiagou@192.168.2.20:27017,192.168.2.21:27017/?replicaSet=mongos&authSource=admin', $options);
+        if ($result->connect() === false) {
+            throw new \RedisException(sprintf('Redis connect failed (host: %s, port: %s) %s', "空着", "空着", "空着"));
         }
-        $redis->setOption(\Redis::OPT_READ_TIMEOUT, $this->readTimeout);
-        // 假设密码是字符串 0 也能通过这个校验
-        if ('' != (string)$this->password) {
-            $redis->auth($this->password);
-        }
-        $redis->select($this->database);
-        $this->redis = $redis;
+
+        $this->redis = $result;
     }
 
     /**

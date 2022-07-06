@@ -1,9 +1,9 @@
 <?php
 
-namespace Mix\Redis\Pool;
+namespace Galaxy\Common\MongoDB\Pool;
 
 use Mix\ObjectPool\DialerInterface;
-use Mix\Redis\Driver;
+use Galaxy\Common\MongoDB\Driver;
 
 /**
  * Class Dialer
