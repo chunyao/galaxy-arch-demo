@@ -54,7 +54,7 @@ class RobbitMqListener
 
         foreach (self::$mqClasses as $key => $val) {
 
-            if ($val::$queueName==$this->queue){
+            if ($val::getQueue()==$this->queue){
 
                 $consumer = new $val($this->msg);
 

@@ -13,11 +13,6 @@ use App;
 
 class TestListener
 {
-    /*变量名固定且必须*/
-    /* 公有曰 1 对应 aaaa
-    私有云 1 对应 qqqq
-     * */
-    public static $queueName;
 
     private QueueService $queueService;
 
@@ -27,6 +22,15 @@ class TestListener
 
     private MsgProxyService $msgProxy;
 
+    /*变量名固定且必须*/
+    /* 公有曰 1 对应 aaaa
+    私有云 1 对应 qqqq
+     * */
+    public static function getQueue()
+    {
+
+        return App::$innerConfig['rabbitmq.queue'][1];
+    }
 
     public function __construct($msg)
     {
