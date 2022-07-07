@@ -13,7 +13,7 @@ use App\Service\MsgService;
 class TestListener
 {
     /*变量名固定且必须*/
-    public static $queueName = "ARCH_TEST_QUEUE";
+    public static $queueName = "ARCH_TEST1_QUEUE";
 
     private QueueService $queueService;
 
