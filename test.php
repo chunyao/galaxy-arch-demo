@@ -11,5 +11,5 @@ $options = [
     'sort' => ['x' => -1],
 ];
 $query = new MongoDB\Driver\Query($filter);
-$cursor = $manager->executeQuery('mabang_wishpublish.tb_product', $query);
+$cursor = $manager->executeQuery('mdc_product_online.tb_product', $query);
 

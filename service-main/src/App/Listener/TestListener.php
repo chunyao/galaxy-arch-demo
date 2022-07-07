@@ -22,7 +22,7 @@ class TestListener
 
     private MsgProxyService $msgProxy;
 
-    /*变量名固定且必须*/
+    /*该函数固定且必须*/
     /* 公有曰 1 对应 aaaa
     私有云 1 对应 qqqq
      * */
@@ -34,12 +34,11 @@ class TestListener
 
     public function __construct($msg)
     {
-        /* 公有曰 1 对应 aaaa
+        /**
+        公有云 1 对应 aaaa
         私有云 1 对应 qqqq
         **/
         self::$queueName = APP::$innerConfig['rabbitmq.queue'][1];
-
-
         $this->queueService = new QueueService();
         $this->msgService = new MsgService();
         $this->msgProxy = new MsgProxyService();

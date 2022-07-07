@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Http\Controller\Helloword;
 
 
+use App\Repository\Model\Mongo\Product;
 use App\Service\SayService;
 use App\Service\WishbrandService;
 use Galaxy\Core\BaseController;
@@ -15,16 +16,19 @@ class Helloword extends BaseController
 {
     private MsgService $msgSevice;
     private SayService $sayService;
+    private Product $product;
     private WishbrandService $wishbrandService;
     public function __construct()
     {
+        $this->product = new Product();
         $this->msgSevice = new MsgService();
         $this->wishbrandService = new WishbrandService();
     }
 
     public function helloword(Context $ctx)
-    {
-        $data = $this->wishbrandService->findById(522);
+    {   /*mongo*/
+        $data = $this->product->selectDataById();
+       // $data = $this->wishbrandService->findById(522);
         $ctx->JSON(200, [
             'code' => 10200,
             'message' => 'success',

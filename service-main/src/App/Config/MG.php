@@ -2,10 +2,9 @@
 
 namespace App\Config;
 
-use Galaxy\Common\MongoDB\Mongodb;
-use Galaxy\Common\Mq\Rabbitmq;
+use Galaxy\Common\MongoDB\MongoDB;
 use Galaxy\Core\Once;
-use Mix\Database\Database;
+
 
 class MG
 {
@@ -37,7 +36,7 @@ class MG
     /**
      * @return MGDB
      */
-    public static function instance(): Rabbitmq
+    public static function instance(): MongoDB
     {
 
 
@@ -45,7 +44,7 @@ class MG
         if (self::$instance == null) {
             //如果没有,则创建当前类的实例
 
-            self::$instance = new Mongodb(self::$config);
+            self::$instance = new MongoDB(self::$config);
         }
         //如果已经有了当前类实例,就直接返回,不要重复创建类实例
 
