@@ -38,20 +38,22 @@ class Server
         self::$httpClient = new GuzzleHttp\Client();
         $this->url = 'http://127.0.0.1:8081/rabbitmq';
         $this->headers = ["Content-Type" => 'application/json'];
+        $application = new Application(new Config([
+            'base_uri' => $bootConfig['url'],
+            'guzzle_config' => [
+                'headers' => [
+                    'charset' => 'UTF-8',
+                ],
+            ],
+        ]));
+        /*      $application->auth->login($bootConfig['user'], $bootConfig['password']);;*/
+        $response = $application->config->get('mico_core_service', 'V2SYSTEM_GROUP');
+        $this->coreConfig = parse_ini_string((string)$response->getBody());
         if ($bootConfig['env'] == "local") {
             $this->config = parse_ini_file(ROOT_PATH . '/local.ini');
+            self::$innerConfig = $this->config;
         } else {
-            $application = new Application(new Config([
-                'base_uri' => $bootConfig['url'],
-                'guzzle_config' => [
-                    'headers' => [
-                        'charset' => 'UTF-8',
-                    ],
-                ],
-            ]));
-      /*      $application->auth->login($bootConfig['user'], $bootConfig['password']);;*/
-            $response = $application->config->get('mico_core_service', 'V2SYSTEM_GROUP');
-            $this->coreConfig = parse_ini_string((string)$response->getBody());
+
             $application = new Application(new Config([
                 'base_uri' => $bootConfig['url'],
                 'guzzle_config' => [

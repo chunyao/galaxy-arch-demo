@@ -138,6 +138,11 @@ class MongoDB{
         return $this;
     }
 
+    public function tableSuffix(string $table, int $companyId, $subTable = 100): ConnectionInterface
+    {
+        $suffix = is_numeric($companyId) ? (int)$companyId % 100 : null;
+        return $this->_table($table.$suffix);
+    }
     /**
      * 获取数据库和表组合的命名空间
      * @return string
