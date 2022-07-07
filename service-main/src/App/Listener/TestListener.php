@@ -37,6 +37,7 @@ class TestListener
     /* handler 为固定函数，return true or false，ack 强依赖 */
     public function handler()
     {
+        var_dump($this->msg);
         /* 整理 接受msseage 消息*/
 
         /* 方案一 自己处理消息*/

@@ -82,24 +82,27 @@ class Driver
      * Get instance
      * @return \Mongo
      */
-    public function instance(): \MongoDB
+    public function instance()
     {
-        return $this->redis;
+        //检测当前类属性$instance是否已经保存了当前类的实例
+        if (self::$instance == null) {
+            //如果没有,则创建当前类的实例
+            self::$instance = new self($config);
+        }
+        //如果已经有了当前类实例,就直接返回,不要重复创建类实例
+        return self::$instance;
     }
 
     /**
      * Connect
-     * @throws \RedisException
+     * @throws \MongoConnectionException
      */
     public function connect()
     {
         $options = ["connect" => true];
-        $result = new \MongoClient('mongodb://jiagou@192.168.2.20:27017,192.168.2.21:27017/?replicaSet=mongos&authSource=admin', $options);
-        if ($result->connect() === false) {
-            throw new \RedisException(sprintf('Redis connect failed (host: %s, port: %s) %s', "空着", "空着", "空着"));
-        }
+        $manager = new \MongoClient('mongodb://jiagou:mtViTGogNLH2iwg@192.168.2.20:27017,192.168.2.21:27017/?replicaSet=mongos&authSource=admin', $options);
 
-        $this->redis = $result;
+        $this->mongo = $manager;
     }
 
     /**
@@ -107,7 +110,7 @@ class Driver
      */
     public function close()
     {
-        $this->redis and $this->redis->close();
+        $this->mongo and $this->mongo->close();
     }
 
 }
