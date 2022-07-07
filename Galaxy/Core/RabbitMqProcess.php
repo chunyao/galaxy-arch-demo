@@ -159,7 +159,8 @@ class RabbitMqProcess
                 if ($val) {
 
                     foreach (RobbitMqListener::rabbitQueueload($this->config['app.name']) as $key => $val) {
-                        if ($val::$queueName == $this->config['rabbitmq.queue'][$i]) $this->createProcess($worker, $this->channel_start + $channel_step, $i);
+
+                        if ($val::getQueue() == $this->config['rabbitmq.queue'][$i]) $this->createProcess($worker, $this->channel_start + $channel_step, $i);
                     }
                 }
                 $i++;
