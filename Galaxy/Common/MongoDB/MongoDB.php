@@ -7,7 +7,7 @@ namespace Galaxy\Common\MongoDB;
  * Class Mongo
  * @package Mongo
  */
-class Mongodb{
+class MongoDB{
     private $manager;
     private static $instance = null;
     private $uri;
@@ -47,9 +47,11 @@ class Mongodb{
 
     public function __construct($config){
         $this->config = array_merge($this->config,$config);
-        if($this->config['username']){
-            if ($this->config['replicaset']){
+
+        if($this->config['mongo.user']){
+            if ($this->config['mongo.replicaset']){
                 $this->uri = sprintf("mongodb://%s:%s@%s/%s?replicaSet=%s&authSource=admin",$this->config['mongo.user'],$this->config['mongo.password'],$this->config['mongo.host'],$this->config['mongo.database'],$this->config['mongo.replicaset']);
+
             }else{
                 $this->uri = sprintf("mongodb://%s:%s@%s:%d",$this->config['mongo.user'],$this->config['mongo.password'],$this->config['mongo.host'],$this->config['mongo.port']);
             }
@@ -328,7 +330,6 @@ class Mongodb{
         // 查询数据
         $query = new \MongoDB\Driver\Query($where, $options);
         $cursor = $this->manager->executeQuery($this->getNameSpace(), $query);
-
         $this->reset();
         foreach ($cursor as $document) {
             return $this->object2array($document);
