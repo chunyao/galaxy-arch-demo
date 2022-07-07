@@ -267,6 +267,13 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
     );
 
     public static $prefixesPsr0 = array (
+        'E' => 
+        array (
+            'ElasticSearch' => 
+            array (
+                0 => __DIR__ . '/..' . '/nervetattoo/elasticsearch/src',
+            ),
+        ),
         'D' => 
         array (
             'Dissect' => 
