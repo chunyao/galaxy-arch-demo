@@ -9,11 +9,15 @@ use Galaxy\Core\Log;
 use Galaxy\Service\QueueService;
 use App\Service\MsgService;
 
+use App;
 
 class TestListener
 {
     /*变量名固定且必须*/
-    public static $queueName = "ARCH_TEST1_QUEUE";
+    /* 公有曰 1 对应 aaaa
+    私有云 1 对应 qqqq
+     * */
+    public static $queueName;
 
     private QueueService $queueService;
 
@@ -26,6 +30,11 @@ class TestListener
 
     public function __construct($msg)
     {
+        /* 公有曰 1 对应 aaaa
+        私有云 1 对应 qqqq
+        **/
+        self::$queueName = APP::$innerConfig['rabbitmq.queue'][1];
+
 
         $this->queueService = new QueueService();
         $this->msgService = new MsgService();
@@ -42,12 +51,12 @@ class TestListener
 
         /* 方案一 自己处理消息*/
 
-      //  return $this->msgService->saveMsg($this->msg);
+        //  return $this->msgService->saveMsg($this->msg);
 
 
         /* 方案二转发消息*/
-     //   return $this->msgProxy->sendMessage("http://192.168.2.21:11181/api/default/testSwooleRabbitMq", $this->msg);
-    return true;
+        //   return $this->msgProxy->sendMessage("http://192.168.2.21:11181/api/default/testSwooleRabbitMq", $this->msg);
+        return true;
     }
 
     public function __destruct()

@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'ElasticSearch' => array($vendorDir . '/nervetattoo/elasticsearch/src'),
     'Dissect' => array($vendorDir . '/jakubledl/dissect/src'),
     'Curl' => array($vendorDir . '/curl/curl/src'),
 );

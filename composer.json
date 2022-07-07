@@ -8,8 +8,10 @@
         "mix/validator": "^3.0",
         "mix/redis-subscriber": "^3.0",
         "mix/vega": "^3.0",
-        "airmanbzh/pheign": "^1.0"
+        "airmanbzh/pheign": "^1.0",
+        "nervetattoo/elasticsearch" : "^2.4"
     },
+
     "autoload-dev": {
         "psr-4": {
             "GPBMetadata\\": "archDemoSpi/GPBMetadata/",

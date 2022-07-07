@@ -15,6 +15,8 @@ class Server
 
     protected array $config;
 
+    public static array $innerConfig;
+
     protected array $coreConfig;
 
     public static InnerServer $innerServer;
@@ -61,7 +63,7 @@ class Server
   //          $application->auth->login($bootConfig['user'], $bootConfig['password']);
             $response = $application->config->get($bootConfig['dataId'], $bootConfig['group']);
             $this->config = parse_ini_string((string)$response->getBody());
-
+            self::$innerConfig = $this->config;
             $register = new ServiceRegister($bootConfig['url'], $this->config['app.name'],$this->config['namespace.id'] );
             $register->handle("register");
 

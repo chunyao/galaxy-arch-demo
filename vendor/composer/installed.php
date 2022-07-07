@@ -5,7 +5,7 @@
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => 'a7a0923b46ac73fa799f5e19a19ab4a2e9ed22b9',
+        'reference' => 'bcc43972af991dd6165f502af39a6976826c15a2',
         'name' => '__root__',
         'dev' => true,
     ),
@@ -16,7 +16,7 @@
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => 'a7a0923b46ac73fa799f5e19a19ab4a2e9ed22b9',
+            'reference' => 'bcc43972af991dd6165f502af39a6976826c15a2',
             'dev_requirement' => false,
         ),
         'airmanbzh/pheign' => array(
@@ -287,6 +287,15 @@
             'install_path' => __DIR__ . '/../mix/view',
             'aliases' => array(),
             'reference' => 'ad416556a3c440bdbc7bbe907efa84ed5d969fa1',
+            'dev_requirement' => false,
+        ),
+        'nervetattoo/elasticsearch' => array(
+            'pretty_version' => 'v2.4.1',
+            'version' => '2.4.1.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../nervetattoo/elasticsearch',
+            'aliases' => array(),
+            'reference' => '6215e036b2e7940514d211828b852ad4118bb329',
             'dev_requirement' => false,
         ),
         'nikic/fast-route' => array(
