@@ -14,7 +14,6 @@ class Product
     }
     public function selectDataById(){
        $data = MG::instance()->database("mdc_product_online")->table('tb_product')->find(['productId'=>"2814182186"]);
-       var_dump($data);
         return $data;
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Http\Controller\Helloword;
 
 
+use App\Config\ES;
 use App\Repository\Model\Mongo\Product;
 use App\Service\SayService;
 use App\Service\WishbrandService;
@@ -26,13 +27,19 @@ class Helloword extends BaseController
     }
 
     public function helloword(Context $ctx)
-    {   /*mongo*/
+    {
+        /*ES*/
+
+        /*mongo*/
         $data = $this->product->selectDataById();
+        unset($data['_id']);
+        $es=  $this->wishbrandService->insertEs($data);
        // $data = $this->wishbrandService->findById(522);
+        $indexData = ES::instance()->getIndexData();
         $ctx->JSON(200, [
             'code' => 10200,
             'message' => 'success',
-            'data' => $data
+            'data' => $es
         ]);
         $id = rand(1, 239368);
         $data = $this->msgSevice->findById($id);
