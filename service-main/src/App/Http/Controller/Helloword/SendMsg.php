@@ -3,11 +3,12 @@
 namespace App\Http\Controller\Helloword;
 
 use App\Config\MQ;
+use Galaxy\Common\Utils\SnowFlakeUtils;
 
 
 class SendMsg
 {
-    private $exchange = "ARCH_TEST_EXCHANEG";
+    private $exchange = "ARCH_TEST2_EXCHANEG";
     private $routekey = "Qwer1234";
 
     public function __construct()
@@ -19,9 +20,10 @@ class SendMsg
     {
 
         $id = rand(1, 239368);
-        $data['test'] = "testetst" . $id;
+        $centerId = rand(1,2);
         $data['id'] = $id;
-
+        $data['generateID']= SnowFlakeUtils::generateID($centerId,3);
+        $data['test'] = "testetst" . $id;
         MQ::instance()->publish(json_encode($data), $this->exchange,$this->routekey);
         return "200";
     }

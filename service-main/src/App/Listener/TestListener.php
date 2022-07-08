@@ -29,7 +29,7 @@ class TestListener
     public static function getQueue()
     {
 
-        return App::$innerConfig['rabbitmq.queue'][0];
+        return App::$innerConfig['rabbitmq.queue'][1];
     }
 
     public function __construct($msg)
