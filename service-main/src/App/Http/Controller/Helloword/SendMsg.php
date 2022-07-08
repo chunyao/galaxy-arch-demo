@@ -25,6 +25,8 @@ class SendMsg
         $data['generateID']= SnowFlakeUtils::generateID($centerId,3);
         $data['test'] = "testetst" . $id;
         MQ::instance()->publish(json_encode($data), $this->exchange,$this->routekey);
+
+
         return "200";
     }
 
