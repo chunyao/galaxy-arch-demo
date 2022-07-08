@@ -64,6 +64,13 @@ class RDS
         self::instance()->startPool($maxOpen, $maxIdle, $maxLifetime, $waitTimeout);
         \Swoole\Runtime::enableCoroutine(); // 必须放到最后，防止触发协程调度导致异常
     }
+    public static function health() :string
+    {
+        if(self::instance()->set("health",true,1)){
+            return "1";
+        }
+        return "0";
 
+    }
 }
 

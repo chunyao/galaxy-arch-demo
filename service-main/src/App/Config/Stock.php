@@ -65,5 +65,19 @@ class Stock
         self::instance()->startPool($maxOpen, $maxIdle, $maxLifetime, $waitTimeout);
         \Swoole\Runtime::enableCoroutine(); // 必须放到最后，防止触发协程调度导致异常
     }
+    /**
+     * health
+     * @return void
+     */
+    public static function health() :string
+    {
+        try{
+            return self::instance()->raw("SELECT 1")->first()[1];
+        }catch (\Throwable $ex){
+            return "0";
+        }
+
+
+    }
 
 }

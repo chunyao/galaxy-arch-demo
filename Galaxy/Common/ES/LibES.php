@@ -1,9 +1,8 @@
 <?php
 
-namespace Galaxy\Core;
+namespace Galaxy\Common\ES;
 
 use Elasticsearch\ClientBuilder;
-
 
 
 /**
@@ -70,6 +69,7 @@ class LibES
         $this->indexName = $config['es.index_name'];
         $this->typeName = $config['es.type_name'];
         //  $this->createIndex();
+
     }
 
     private function bulidClient($host, $user, $pass)

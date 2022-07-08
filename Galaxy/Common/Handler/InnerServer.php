@@ -37,7 +37,7 @@ class InnerServer
 
 
     public function handler()
-    {
+    {   $result = null;
         foreach ($this->route as $key => $val) {
 
             if ($val == $this->action) {

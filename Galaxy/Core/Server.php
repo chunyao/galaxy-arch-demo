@@ -1,6 +1,7 @@
 <?php
 
 namespace Galaxy\Core;
+
 use \Swoole;
 use \Hyperf\Nacos\Application;
 use \Hyperf\Nacos\Config;
@@ -62,24 +63,24 @@ class Server
                     ],
                 ],
             ]));
-  //          $application->auth->login($bootConfig['user'], $bootConfig['password']);
+            //          $application->auth->login($bootConfig['user'], $bootConfig['password']);
             $response = $application->config->get($bootConfig['dataId'], $bootConfig['group']);
             $this->config = parse_ini_string((string)$response->getBody());
             self::$innerConfig = $this->config;
 
-            $register = new ServiceRegister($bootConfig['url'], $this->config['app.name'],$this->config['namespace.id'] );
+            $register = new ServiceRegister($bootConfig['url'], $this->config['app.name'], $this->config['namespace.id']);
             $register->handle("register");
 
             $process = new Swoole\Process(function ($worker) use ($register) {
 
-                    swoole_timer_tick(5000,function() use ($register){
-                        try{
-                            $register->beat();
-                        }catch (\Throwable $e){
-                            //var_dump($e);
-                        }
+                swoole_timer_tick(5000, function () use ($register) {
+                    try {
+                        $register->beat();
+                    } catch (\Throwable $e) {
+                        //var_dump($e);
+                    }
 
-                    });
+                });
 
             }, false, 0, true);
             $process->start();
@@ -88,19 +89,19 @@ class Server
         self::$appName = $this->config['app.name'];
         $vega = Vega::new(self::$appName);
 
-        if (isset($bootConfig['server.port'])){
+        if (isset($bootConfig['server.port'])) {
             $serverPort = $bootConfig['server.port'];
-        }elseif(isset($this->config['server.port'])){
+        } elseif (isset($this->config['server.port'])) {
             $serverPort = $this->config['server.port'];
-        }else{
+        } else {
             $serverPort = 8080;
         }
 
-        if (isset($bootConfig['management.server.port'])){
+        if (isset($bootConfig['management.server.port'])) {
             $managementServerPort = $bootConfig['management.server.port'];
-        }elseif(isset($this->config['management.server.port'])){
+        } elseif (isset($this->config['management.server.port'])) {
             $managementServerPort = $this->config['management.server.port'];
-        }else{
+        } else {
             $managementServerPort = 8081;
         }
 
@@ -134,10 +135,9 @@ EOL;
 
         $rabbitMq = new RabbitMqProcess($this->config, 1, $this->url, $this->tcpClient);
         $rabbitMq->handler();
-
         $health->on('Request', function ($request, $response) {
 
-        $_SERVER = $request->server ?? array();
+            $_SERVER = $request->server ?? array();
             if ($_SERVER['request_uri'] != "") {
                 $action = $_SERVER['request_uri'];
             }
@@ -154,8 +154,25 @@ EOL;
                 $response->end(datajson("10200", $metrics, "success",));
                 return;
             }
+
             if ($action == "/health") {
                 try {
+                    $configs = ConfigLoad::findFile();
+                    foreach ($configs as $key => $val) {
+                       // $val::init($this->config);
+                        $ok = $val::health();
+                        log::info("检测 $val ".$val::health());
+                        if ($ok!="1"){
+                            $response->end("Down");
+                            echo "配置错误,启动失败";
+                            $this->server->shutdown();
+
+                            return;
+                        }
+
+                       // $val::enableCoroutine();
+                    }
+
                 } catch (Exception $e) {
                     $this->server->shutdown();
                 }
@@ -228,7 +245,7 @@ EOL;
         /*自动加载用户配置*/
 
 
-        $configs = ConfigLoad::findFile($this->config["app.name"]);
+        $configs = ConfigLoad::findFile();
         foreach ($configs as $key => $val) {
             $val::init($this->config);
             $val::enableCoroutine();

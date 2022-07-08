@@ -61,6 +61,13 @@ class MongoDB{
         }
         $this->manager = new \MongoDB\Driver\Manager($this->uri);
     }
+    public function status(){
+        $rp = new \MongoDB\Driver\ReadPreference('primary');
+        $this->manager->selectServer($rp);
+        $server = $this->manager->getServers();
+
+       return $server;
+    }
     private function __clone(){}
 
 
