@@ -9,7 +9,7 @@ class ConfigLoad
     /**
      * 解析文件路径
      */
-    public static function findFile($appName)
+    public static function findFile()
     {
 
 // 扫描$con目录下的所有文件

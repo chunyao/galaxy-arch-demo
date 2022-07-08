@@ -59,4 +59,13 @@ class MG
 
     }
 
+    public static function health(): string
+    {
+        $data = self::instance()->database("mdc_product_online")->table('tb_product')->find(['productId' => "2814182186"]);
+        if (is_array($data)) {
+            return "1";
+        }
+        return "0";
+
+    }
 }

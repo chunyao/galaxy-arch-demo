@@ -29,7 +29,7 @@ class TestListener
     public static function getQueue()
     {
 
-        return App::$innerConfig['rabbitmq.queue'][1];
+        return App::$innerConfig['rabbitmq.queue'][0];
     }
 
     public function __construct($msg)
@@ -38,7 +38,6 @@ class TestListener
         公有云 1 对应 aaaa
         私有云 1 对应 qqqq
         **/
-        self::$queueName = APP::$innerConfig['rabbitmq.queue'][1];
         $this->queueService = new QueueService();
         $this->msgService = new MsgService();
         $this->msgProxy = new MsgProxyService();
@@ -49,6 +48,7 @@ class TestListener
     /* handler 为固定函数，return true or false，ack 强依赖 */
     public function handler()
     {
+
         var_dump($this->msg);
         /* 整理 接受msseage 消息*/
 

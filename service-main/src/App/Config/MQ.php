@@ -57,5 +57,9 @@ class MQ
     {
 
     }
+    public static function health() :string
+    {
+        return "1";
 
+    }
 }
