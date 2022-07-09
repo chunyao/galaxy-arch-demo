@@ -22,6 +22,7 @@ class RabbitMqProcess
 
     public function __construct($config, $workers, $url, $tcpClient)
     {
+
         $this->config = $config;
         $this->workers = $workers;
         $this->url = $url;
@@ -125,7 +126,7 @@ class RabbitMqProcess
             while ($channel->is_consuming()) {
                 $channel->wait();
             }
-
+            $conn->close();
         } catch (\Throwable $e) {
             // Log::error($e->getMessage());
         }
@@ -137,6 +138,7 @@ class RabbitMqProcess
 
         $process = new Swoole\Process(function ($worker) use ($index, $ch, $queue) {
             while (1) {
+                log::info("消息进程ID:".posix_getpid()."\n");
                 $this->initQueues($ch, $queue);
             }
         }, false, 0, true);

@@ -35,7 +35,7 @@ class Server
     public function __construct($bootConfig)
     {
         Log::init();
-
+        echo "主进程ID:".posix_getpid()."\n";
         self::$httpClient = new GuzzleHttp\Client();
         $this->url = 'http://127.0.0.1:8081/rabbitmq';
         $this->headers = ["Content-Type" => 'application/json'];
@@ -130,6 +130,7 @@ EOL;
             'enable_coroutine' => true,
             'max_request' => 0,
             'reload_async' => true,
+            'daemonize' => true,
             'max_wait_time' => 6
         ));
 
@@ -237,7 +238,7 @@ EOL;
 
     public function onWorkerStart($server, $worker_id)
     {
-
+        echo "Worker 进程id:".posix_getpid();
         CoreDB::init($this->coreConfig);
         CoreDB::enableCoroutine();
         CoreRDS::init($this->coreConfig);
@@ -246,7 +247,9 @@ EOL;
 
 
         $configs = ConfigLoad::findFile();
+
         foreach ($configs as $key => $val) {
+            if ($val=="\\App\Config\\") continue;
             $val::init($this->config);
             $val::enableCoroutine();
 
