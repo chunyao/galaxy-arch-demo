@@ -129,6 +129,7 @@ class LibES
         if (!$this->existsIndex()) {
             return false;
         }
+
         if (!is_array($body) || empty($body)) {
             return false;
         }
@@ -140,6 +141,7 @@ class LibES
             'body' => $body
         ];
         $esID !== null && $params['id'] = $esID;
+
         return $this->esClient->create($params);
     }
 
@@ -559,5 +561,11 @@ class LibES
             $rows = $rs['aggregations'];
         }
         return ['total' => $total, 'items' => $rows];
+    }
+
+    //销毁
+    public function __destruct()
+    {
+        unset($this->esClient);
     }
 }

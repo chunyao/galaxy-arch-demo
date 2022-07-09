@@ -4,16 +4,18 @@ namespace Galaxy\Common\Mq;
 
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
+
 class Rabbitmq
 {
     protected $channel;
-
+    protected $con;
     protected $host;
     protected $port;
     protected $username;
     protected $password;
     protected $vhost;
-    public function __construct($host,$port,$username,$password,$vhost,$channel)
+
+    public function __construct($host, $port, $username, $password, $vhost, $channel)
     {
         $this->host = $host;
         $this->username = $username;
@@ -25,8 +27,9 @@ class Rabbitmq
 
     public function connect()
     {
-        $connection = new AMQPStreamConnection($this->host, $this->port, $this->username, $this->password, $this->vhost, false, 'AMQPLAIN', null, 'en_US', 3.0, 3.0, null, false, 0);
-        $this->channel = $connection->channel(12);
+        $this->con = new AMQPStreamConnection($this->host, $this->port, $this->username, $this->password, $this->vhost, false, 'AMQPLAIN', null, 'en_US', 3.0, 3.0, null, false, 0);
+        $this->channel = $this->con->channel(12);
+
         return true;
     }
 
@@ -46,7 +49,12 @@ class Rabbitmq
         $head = array_merge(array('content_type' => 'text/plain', 'delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT), $head);
         $message = new AMQPMessage($messageBody, $head);
         $res = $this->channel->basic_publish($message, $exchange, $routeKey);
+
         return $res;
     }
 
+    public function __destruct()
+    {
+        $this->con->close();
+    }
 }
