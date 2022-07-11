@@ -27,10 +27,12 @@ class MsgService
 
     public function saveMsg($msg)
     {
-        $convertMsg = $msg;
-        $convertMsg['msg_id'] = $msg['id'];
-        unset($convertMsg['id']);
-        $return = $this->msgModel->insertMsg($msg);
+
+        $body = array();
+
+        $body['msg_id']=$msg['id'];
+        $body['msgBody']=json_encode($msg);
+        $return = $this->msgModel->insertMsg($body);
 
         return $return;
     }

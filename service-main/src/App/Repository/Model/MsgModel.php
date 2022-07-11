@@ -2,6 +2,7 @@
 
 namespace App\Repository\Model;
 
+use App\Config\DB;
 use \App\Config\Stock;
 
 class MsgModel
@@ -23,9 +24,7 @@ class MsgModel
 
     public function insertMsg(array $msg):int
     {
-        $id = Stock::instance()->insert($this->table,$msg)->lastInsertId();
-
-
+        $id = DB::instance()->insert($this->table,$msg)->lastInsertId();
         return $id;
     }
 

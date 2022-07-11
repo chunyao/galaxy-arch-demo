@@ -29,7 +29,7 @@ class TestListener
     public static function getQueue()
     {
 
-        return App::$innerConfig['rabbitmq.queue'][1];
+        return App::$innerConfig['rabbitmq.queue'][0];
     }
 
     public function __construct($msg)
@@ -46,20 +46,23 @@ class TestListener
     }
 
     /* handler 为固定函数，return true or false，ack 强依赖 */
-    public function handler()
+    public function handler() :bool
     {
 
-        var_dump($this->msg);
+
         /* 整理 接受msseage 消息*/
 
         /* 方案一 自己处理消息*/
 
-        //  return $this->msgService->saveMsg($this->msg);
+
+        $result = $this->msgService->saveMsg($this->msg);
+
+        return $result;
 
 
         /* 方案二转发消息*/
         //   return $this->msgProxy->sendMessage("http://192.168.2.21:11181/api/default/testSwooleRabbitMq", $this->msg);
-        return true;
+     //   return true;
     }
 
     public function __destruct()
