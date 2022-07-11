@@ -40,6 +40,7 @@ class RobbitMqListener
                     $class = str_replace(".php", "", $file);
 
                     self::$mqClasses[$i] = 'App\Listener\\'.$class;
+                    $i++;
                 }
 
             }
