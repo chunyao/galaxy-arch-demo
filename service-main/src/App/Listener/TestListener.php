@@ -56,17 +56,15 @@ class TestListener
         /* 方案一 自己处理消息*/
 
 
-        if (RDS::instance()->get(App::$innerConfig['rabbitmq.queue'][1] . ":" . $this->msg['id'])) {
+        if (RDS::instance()->get(App::$innerConfig['rabbitmq.queue'][0] . ":" . $this->msg['id'])) {
             echo "消息重复消费 id:". $this->msg['id'];
             log::info("消息重复消费 id:". $this->msg['id']);
+            return true;
         }else{
             $result = $this->msgService->saveMsg($this->msg);
-            RDS::instance()->set(App::$innerConfig['rabbitmq.queue'][1] . ":" . $this->msg['id'], "1", 300);
+            RDS::instance()->set(App::$innerConfig['rabbitmq.queue'][0] . ":" . $this->msg['id'], "1", 300);
+            return $result;
         }
-
-
-        return $result;
-
 
         /* 方案二转发消息*/
         //   return $this->msgProxy->sendMessage("http://192.168.2.21:11181/api/default/testSwooleRabbitMq", $this->msg);
