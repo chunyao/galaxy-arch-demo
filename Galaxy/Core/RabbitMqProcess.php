@@ -111,17 +111,9 @@ class RabbitMqProcess
                 $msgBody['message'] = $tmp;
                 $msgBody['queue'] = $this->config['rabbitmq.queue'][$i];
                 $msgBody['type'] = "mq";
-
-                if (isset(App::$localcache[$this->config['app.name'].":rabbitmq_msgid:".$tmp['id']])) {
-                    echo "消息重复消费:".$tmp['id']."\n";
-                    log::info("消息重复消费");
-                } else {
-
-                    $resp = json_decode((string)self::$httpClient->request('POST', $this->url, ['json' => $msgBody])->getBody());
-                    App::$localcache[$this->config['app.name'].":rabbitmq_msgid:".$tmp['id']]="1";
-                    if ($resp->code == "10200") {
-                        $msg->delivery_info["channel"]->basic_ack($msg->delivery_info["delivery_tag"]);
-                    }
+                $resp = json_decode((string)self::$httpClient->request('POST', $this->url, ['json' => $msgBody])->getBody());
+                if ($resp->code == "10200") {
+                    $msg->delivery_info["channel"]->basic_ack($msg->delivery_info["delivery_tag"]);
                 }
                 // 响应ack
             };
