@@ -3,6 +3,7 @@
 namespace App\Listener;
 
 
+use App\Config\RDS;
 use App\Service\MsgProxyService;
 use Swoole;
 use Galaxy\Core\Log;
@@ -35,9 +36,9 @@ class TestListener
     public function __construct($msg)
     {
         /**
-        公有云 1 对应 aaaa
-        私有云 1 对应 qqqq
-        **/
+         * 公有云 1 对应 aaaa
+         * 私有云 1 对应 qqqq
+         **/
         $this->queueService = new QueueService();
         $this->msgService = new MsgService();
         $this->msgProxy = new MsgProxyService();
@@ -46,7 +47,7 @@ class TestListener
     }
 
     /* handler 为固定函数，return true or false，ack 强依赖 */
-    public function handler() :bool
+    public function handler(): bool
     {
 
 
@@ -55,17 +56,25 @@ class TestListener
         /* 方案一 自己处理消息*/
 
 
-        $result = $this->msgService->saveMsg($this->msg);
+        if (RDS::instance()->get(App::$innerConfig['rabbitmq.queue'][1] . ":" . $this->msg['id'])) {
+            echo "消息重复消费 id:". $this->msg['id'];
+            log::info("消息重复消费 id:". $this->msg['id']);
+        }else{
+            $result = $this->msgService->saveMsg($this->msg);
+            RDS::instance()->set(App::$innerConfig['rabbitmq.queue'][1] . ":" . $this->msg['id'], "1", 300);
+        }
+
 
         return $result;
 
 
         /* 方案二转发消息*/
         //   return $this->msgProxy->sendMessage("http://192.168.2.21:11181/api/default/testSwooleRabbitMq", $this->msg);
-     //   return true;
+        //   return true;
     }
 
-    public function __destruct()
+    public
+    function __destruct()
     {
         unset($this->msgService);
         unset($this->QueueService);
