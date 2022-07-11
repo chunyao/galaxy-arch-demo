@@ -21,8 +21,9 @@ class SendMsg
     {
 
         $id = rand(1, 239368);
-        $centerId = rand(1,2);
-        $data['id']= SnowFlakeUtils::generateID($centerId,3);
+        $centerId = rand(1,18);
+        $mId = rand(1,18);
+        $data['id']= SnowFlakeUtils::generateID($centerId,$mId);
         $data['body'] = "眼下，今年以来最大范围高温正在影响我国。7月6日以来，四川盆地多地出现高温天气，甚至打破全年最高气温纪录，同时，新疆、西北地区东部、西南地区东部、华北、黄淮、浙江等地出现了35℃以上的高温天气。
 
 气象专家表示，此次高温天气范围广、强度强、持续时间长，受副热带高压西伸北抬影响，未来高温天气影响范围进一步扩大，南方大部地区将出现持续性高温天气。
