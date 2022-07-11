@@ -4,7 +4,7 @@ namespace Galaxy\Common\Mq;
 
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
-
+use Swoole;
 class Rabbitmq
 {
     protected $channel;
@@ -48,9 +48,18 @@ class Rabbitmq
 
         $head = array_merge(array('content_type' => 'text/plain', 'delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT), $head);
         $message = new AMQPMessage($messageBody, $head);
-        $res = $this->channel->basic_publish($message, $exchange, $routeKey);
+        $chan = new Swoole\Coroutine\Channel(1);
 
-        return $res;
+        go(function () use ($chan,$message,$exchange,$routeKey) {
+            $res = $this->channel->basic_publish($message, $exchange, $routeKey);
+            $chan->push($res);
+        });
+
+        // 响应ack
+        $r = $chan->pop();
+
+
+        return  $r ;
     }
 
     public function __destruct()

@@ -24,7 +24,7 @@ class MsgModel
 
     public function insertMsg(array $msg):int
     {
-        $id = DB::instance()->insert($this->table,$msg)->lastInsertId();
+        $id = Stock::instance()->insert($this->table,$msg)->lastInsertId();
         return $id;
     }
 
