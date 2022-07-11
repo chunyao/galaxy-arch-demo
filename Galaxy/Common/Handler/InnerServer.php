@@ -18,8 +18,9 @@ class InnerServer
 
     public function __construct($action, $data, &$config)
     {
-        $this->action = str_replace("/", "", $action);
+        $this->action = str_replace("http://127.0.0.1:8081/", "", $action);
         $this->data = $data;
+
         $this->route = [
             "rabbitmq",
         ];
@@ -32,6 +33,7 @@ class InnerServer
         $mq = new RobbitMqListener($this->data['message'], $this->data['queue'], self::$config);
 
         $result = $mq->handler();
+        unset($mq);
         return $result;
     }
 
@@ -41,7 +43,7 @@ class InnerServer
         foreach ($this->route as $key => $val) {
 
             if ($val == $this->action) {
-                $result =   call_user_func(array($this, $val));
+                $result = call_user_func(array($this, $val));
 
             }
         }

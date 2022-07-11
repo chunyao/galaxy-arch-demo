@@ -39,9 +39,9 @@ class Stock
     {
         if (!isset(self::$instance)) {
             static::$once->do(function () {
-                $dsn = "mysql:host=" . self::$config['mysql.host'][0] . ":" . self::$config['mysql.port'][0]. ";dbname=" . self::$config['mysql.database'][0]; //'mysql:host=192.168.2.224:3306;dbname=swoole'
-                $username = self::$config['mysql.user'][0];
-                $password = self::$config['mysql.password'][0];
+                $dsn = "mysql:host=" . self::$config['mysql.host'][1] . ":" . self::$config['mysql.port'][1]. ";dbname=" . self::$config['mysql.database'][1];
+                $username = self::$config['mysql.user'][1];
+                $password = self::$config['mysql.password'][1];
                 $db = new Database($dsn, $username, $password, [
                     \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
                     // \PDO::ATTR_EMULATE_PREPARES => false
@@ -58,10 +58,10 @@ class Stock
      */
     public static function enableCoroutine(): void
     {
-        $maxOpen =(int) self::$config['mysql.maxOpen'][0];        // 最大开启连接数
-        $maxIdle =(int) self::$config['mysql.maxIdle'][0];        // 最大\闲置连接数
-        $maxLifetime =(int) self::$config['mysql.maxLifetime'][0];  // 连接的最长生命周期
-        $waitTimeout =(float) self::$config['mysql.waitTimeout'][0];  // 从池获取连接等待的时间, 0为一直等待
+        $maxOpen =(int) self::$config['mysql.maxOpen'][1];        // 最大开启连接数
+        $maxIdle =(int) self::$config['mysql.maxIdle'][1];        // 最大\闲置连接数
+        $maxLifetime =(int) self::$config['mysql.maxLifetime'][1];  // 连接的最长生命周期
+        $waitTimeout =(float) self::$config['mysql.waitTimeout'][1];  // 从池获取连接等待的时间, 0为一直等待
         self::instance()->startPool($maxOpen, $maxIdle, $maxLifetime, $waitTimeout);
         \Swoole\Runtime::enableCoroutine(); // 必须放到最后，防止触发协程调度导致异常
     }

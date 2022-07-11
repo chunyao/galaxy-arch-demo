@@ -60,7 +60,6 @@ class RobbitMqListener
 
                 $result = $consumer->handler();
 
-                unset($consumer);
                 return $result;
             };
         }

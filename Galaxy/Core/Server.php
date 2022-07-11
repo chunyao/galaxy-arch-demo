@@ -12,15 +12,14 @@ use \Galaxy\Common\Configur\CoreRDS;
 
 class Server
 {
-    protected Swoole\Http\Server $server;
-
+    protected  Swoole\Http\Server $server;
+    public static Swoole\Http\Server $serverinfo;
     protected array $config;
-
+    public static array $localcache;
     public static array $innerConfig;
 
     protected array $coreConfig;
 
-    public static InnerServer $innerServer;
 
     public static \GuzzleHttp\Client $httpClient;
 
@@ -35,7 +34,8 @@ class Server
     public function __construct($bootConfig)
     {
         Log::init();
-        echo "主进程ID:".posix_getpid()."\n";
+        echo "主进程ID:" . posix_getpid() . "\n";
+        log::info( "主进程ID:" . posix_getpid());
         self::$httpClient = new GuzzleHttp\Client();
         $this->url = 'http://127.0.0.1:8081/rabbitmq';
         $this->headers = ["Content-Type" => 'application/json'];
@@ -72,8 +72,10 @@ class Server
             $register->handle("register");
 
             $process = new Swoole\Process(function ($worker) use ($register) {
-
-                swoole_timer_tick(5000, function () use ($register) {
+                echo "注册中心进程ID:" . posix_getpid() . "\n";
+                log::info( "注册中心进程ID:" . posix_getpid());
+                swoole_timer_tick(10000, function () use ($register) {
+                    self::$localcache=array();
                     try {
                         $register->beat();
                     } catch (\Throwable $e) {
@@ -81,7 +83,6 @@ class Server
                     }
 
                 });
-
             }, false, 0, true);
             $process->start();
         }
@@ -109,7 +110,7 @@ class Server
         $this->server = new Swoole\Http\Server("0.0.0.0", $serverPort);
         /* http server 健康检测 */
         $health = $this->server->addListener('0.0.0.0', $managementServerPort, SWOOLE_SOCK_TCP);
-
+        $coreVega = CoreVega::new();
         echo <<<EOL
   __  __      ___                        _         
  |  \/  |__ _| _ ) __ _ _ _  __ _   _ __| |_  _ __ 
@@ -130,75 +131,21 @@ EOL;
             'enable_coroutine' => true,
             'max_request' => 0,
             'reload_async' => true,
-            'daemonize' => true,
             'max_wait_time' => 6
         ));
 
-        $rabbitMq = new RabbitMqProcess($this->config, 1, $this->url, $this->tcpClient);
-        $rabbitMq->handler();
-        $health->on('Request', function ($request, $response) {
 
-            $_SERVER = $request->server ?? array();
-            if ($_SERVER['request_uri'] != "") {
-                $action = $_SERVER['request_uri'];
-            }
-            /* 监听 */
-            self::$innerServer = new InnerServer($action, json_decode($request->rawContent(), 1), $this->config);
-            $data = self::$innerServer->handler();
 
-            if ($action == "/health/metrics") {
-                $metrics = $this->server->stats();
-                foreach ($metrics as $k => $v) {
-                    echo sprintf("%s %s", $k, $v) . "\n";
-                }
-                $response->header("Content-type", "application/json;charset=utf-8");
-                $response->end(datajson("10200", $metrics, "success",));
-                return;
-            }
+        $health->on('Request', $coreVega->handler());
 
-            if ($action == "/health") {
-                try {
-                    $configs = ConfigLoad::findFile();
-                    foreach ($configs as $key => $val) {
-                       // $val::init($this->config);
-                        $ok = $val::health();
-                        log::info("检测 $val ".$val::health());
-                        if ($ok!="1"){
-                            $response->end("Down");
-                            echo "配置错误,启动失败";
-                            $this->server->shutdown();
-
-                            return;
-                        }
-
-                       // $val::enableCoroutine();
-                    }
-
-                } catch (Exception $e) {
-                    $this->server->shutdown();
-                }
-                // if ($rs) {
-                $response->end("UP");
-                //    } else {
-                //        $this->server->shutdown();
-                //          $response->end("DOWN");
-                //       }
-                return;
-            }
-            if (isset($data) && $data) {
-                $response->end(datajson("10200", $data, "success",));
-            } else {
-                $response->end(datajson("10500", $data, "fail",));
-            }
-
-        });
         $this->server->on('open', function ($server, $request) {
         });
         $this->server->on('Start', function ($server) {
 
         });
         $this->server->on("ManagerStart", function ($server) {
-
+            $rabbitMq = new RabbitMqProcess($this->config, 1, $this->url, $this->tcpClient);
+            $rabbitMq->handler();
         });
         $this->server->on('WorkerStart', array($this, 'onWorkerStart'));
         $this->server->on('WorkerStop', function ($server, $worker_id) {
@@ -208,7 +155,7 @@ EOL;
         $this->server->on('WorkerError', array($this, 'onWorkerError'));
         $this->server->on('Request', $vega->handler());
         $this->server->on('Receive', array($this, 'onReceive'));
-
+        self::$serverinfo=$this->server;
     }
 
     public function httpStart()
@@ -238,7 +185,8 @@ EOL;
 
     public function onWorkerStart($server, $worker_id)
     {
-        echo "Worker 进程id:".posix_getpid();
+        echo "Worker 进程id:" . posix_getpid()."\n";
+        log::info( "Worker 进程ID:" . posix_getpid());
         CoreDB::init($this->coreConfig);
         CoreDB::enableCoroutine();
         CoreRDS::init($this->coreConfig);
@@ -249,7 +197,7 @@ EOL;
         $configs = ConfigLoad::findFile();
 
         foreach ($configs as $key => $val) {
-            if ($val=="\\App\Config\\") continue;
+            if ($val == "\\App\Config\\") continue;
             $val::init($this->config);
             $val::enableCoroutine();
 
