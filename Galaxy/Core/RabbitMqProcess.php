@@ -100,7 +100,7 @@ class RabbitMqProcess
             // 回调
             $msgBody = array();
 
-            $callback = function ($msg) use ($i, $msgBody, $step) {
+            $callback = function ($msg) use ($i, $msgBody) {
                 if (isset($this->config['rabbitmq.qps'][$i])) {
                     $sleep = round(1000000 / ((int)$this->config['rabbitmq.qps'][$i]));
                     usleep($sleep);
@@ -111,7 +111,7 @@ class RabbitMqProcess
                 $msgBody['message'] = $tmp;
                 $msgBody['queue'] = $this->config['rabbitmq.queue'][$i];
                 $msgBody['type'] = "mq";
-                $resp = json_decode((string)self::$httpClient->request('POST', $this->url, ['json' => $msgBody])->getBody());
+                $resp = json_decode((string)rest_post( $this->url,$msgBody,3));
                 if ($resp->code == "10200") {
                     $msg->delivery_info["channel"]->basic_ack($msg->delivery_info["delivery_tag"]);
                 }
@@ -119,9 +119,7 @@ class RabbitMqProcess
             };
             echo $this->config['rabbitmq.queue'][$i] . " 开始消费\n";
             Log::info($this->config['rabbitmq.queue'][$i] . " 开始消费");
-            $channel->basic_consume($queueName, "", false, false, false, false, $callback);
-
-
+            $return = $channel->basic_consume($queueName, "", false, false, false, false, $callback);
             // 监听
             while ($channel->is_consuming()) {
                 $channel->wait();
@@ -141,7 +139,7 @@ class RabbitMqProcess
                 log::info("消息进程ID:".posix_getpid()."\n");
                 $this->initQueues($ch, $queue);
             }
-        }, false, 0, true);
+        }, false, 0, false);
 
         $pid = $process->start();
         $this->works[$index] = $pid;

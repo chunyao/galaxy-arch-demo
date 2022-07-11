@@ -18,7 +18,7 @@ class RDSLogger implements \Mix\Redis\LoggerInterface
      */
     public function trace(float $time, string $cmd, array $args, ?\Throwable $exception): void
     {
-        Log::debug(sprintf('RDS: %sms %s %s', $time, $cmd, json_encode($args)));
+     //   Log::debug(sprintf('RDS: %sms %s %s', $time, $cmd, json_encode($args)));
     }
 
 }
