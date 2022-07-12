@@ -282,14 +282,6 @@ function JSON($array)
     return urldecode($json);
 }
 
-function GetUtilId($type = 'OtherId')
-{
-    $getDataCenterId = SnowFlakeUtils::getDataCenterId();
-    $getBizId = SnowFlakeUtils::getBizId($type);
-    $utilId = (new SnowFlakeUtils($getDataCenterId, $getBizId,))->nextId();
-    return $utilId;
-}
-
 function parseattach($message)
 {
     $patterns = "/\[attach\]\d+\[\/attach\]/i";
