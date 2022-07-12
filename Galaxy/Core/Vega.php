@@ -27,7 +27,6 @@ class Vega
                 if ($ex instanceof Abort || $ex instanceof NotFoundException) {
                     throw $ex;
                 }
-                //var_dump($ex->getTrace()[0]);
                 Log::error(sprintf('%s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));
                 $ctx->string(500, 'Galaxy Internal Server Error');
                 $ctx->abort();

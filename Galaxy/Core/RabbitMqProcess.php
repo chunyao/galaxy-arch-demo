@@ -124,7 +124,8 @@ class RabbitMqProcess
             while ($channel->is_consuming()) {
                 $channel->wait();
             }
-
+            $channel->close();
+            $conn->close();
         } catch (\Throwable $e) {
             // Log::error($e->getMessage());
         }
@@ -139,7 +140,7 @@ class RabbitMqProcess
                 log::info("消息进程ID:".posix_getpid()."\n");
                 $this->initQueues($ch, $queue);
             }
-        }, false, 0, false);
+        }, false, 0, true);
 
         $pid = $process->start();
         $this->works[$index] = $pid;
