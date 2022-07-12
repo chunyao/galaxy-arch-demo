@@ -7,6 +7,7 @@ ini_set('date.timezone', 'Asia/Shanghai');
 define("ROOT_PATH", dirname(__FILE__));
 ini_set('display_errors', 'On');
 gc_enable();
+
 use Galaxy\Core\Log;
 use Galaxy\Core\Server;
 use Galaxy\Core\PoolServer;
@@ -29,16 +30,13 @@ class App extends Server
     }
 }
 
-class Pool extends PoolServer
-{
-    public function __construct($bootConfig)
-    {
-        parent:: __construct($bootConfig);
-    }
+$temp = array();
+for ($i = 0; $i < 100000; $i++) {
+    $id = GetUtilId('OtherId');
+    $temp[$id] = "1";
 }
+echo "count: " . count($temp);
 
-//$server = new Pool($bootConfig);
-//$server->poolStart();
 try {
     $server = new App($bootConfig);
     $server->httpStart();

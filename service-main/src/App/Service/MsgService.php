@@ -29,7 +29,6 @@ class MsgService
     {
 
         $body = array();
-
         $body['msg_id']=$msg['id'];
         $body['msgBody']=JSON($msg);
         $return = $this->msgModel->insertMsg($body);
