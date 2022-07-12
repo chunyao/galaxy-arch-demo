@@ -64,6 +64,6 @@ class Rabbitmq
 
     public function __destruct()
     {
-        $this->con->close();
+     //   $this->con->close();
     }
 }
