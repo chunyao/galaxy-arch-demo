@@ -21,9 +21,9 @@ class Helloword extends BaseController
     private WishbrandService $wishbrandService;
     public function __construct()
     {
-        $this->product = new Product();
-        $this->msgSevice = new MsgService();
-        $this->wishbrandService = new WishbrandService();
+    //    $this->product = new Product();
+     //   $this->msgSevice = new MsgService();
+     //   $this->wishbrandService = new WishbrandService();
     }
 
     public function helloword(Context $ctx)
@@ -38,7 +38,7 @@ class Helloword extends BaseController
             'data' => $data
         ]);*/
        // unset($data['_id']);
-        $data['data']='作者：nesmto
+  /*      $data['data']='作者：nesmto
 链接：https://www.zhihu.com/question/542336391/answer/2565631310
 来源：知乎
 著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
@@ -55,14 +55,14 @@ class Helloword extends BaseController
         ]);/*
         $id = rand(1, 239368);
         $data = $this->msgSevice->findById($id);
-
+*/
         $ctx->JSON(200, [
             'code' => 10200,
             'message' => 'success',
-            'data' => $data
+            'data' => 1
         ]);
 
-        $echo_string = datajson(10200, $data, "success", $cache = false);*/
+
         /* 写法1*/
         //  $ctx->string(200, $echo_string);
         /* 写法2*/
