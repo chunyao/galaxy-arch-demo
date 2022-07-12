@@ -11,17 +11,30 @@ class SendMsg
 {
     private $exchange = "ARCH_TEST2_EXCHANEG";
     private $routekey = "Qwer1234";
-
+    private $snowFlak ;
     public function __construct()
     {
+        $getDataCenterId = SnowFlakeUtils::getDataCenterId();
+        $getBizId = SnowFlakeUtils::getBizId("OtherId");
+        $this->snowFlak = new SnowFlakeUtils($getDataCenterId, $getBizId,);
+    }
 
+    public function send(Context $ctx)
+    {
+        $body = $ctx->mustGetJSON();
+        MQ::instance()->publish(json_encode($body), $this->exchange, $this->routekey);
+
+        $ctx->JSON(200, [
+            'code' => 10200,
+            'message' => 'success',
+            'data' => $body
+        ]);
     }
 
     public function handler(Context $ctx)
     {
 
-        $id = rand(1, 1000000);
-        $data['id']= GetUtilId('OtherId');
+        $data['id'] =   $this->snowFlak->nextId();
         $data['body'] = "眼下，今年以来最大范围高温正在影响我国。7月6日以来，四川盆地多地出现高温天气，甚至打破全年最高气温纪录，同时，新疆、西北地区东部、西南地区东部、华北、黄淮、浙江等地出现了35℃以上的高温天气。
 
 气象专家表示，此次高温天气范围广、强度强、持续时间长，受副热带高压西伸北抬影响，未来高温天气影响范围进一步扩大，南方大部地区将出现持续性高温天气。
@@ -391,7 +404,7 @@ class SendMsg
 今年5月，英国伦敦帝国理工学院格兰瑟姆气候变化与环境研究所的科学家弗里德里克·奥托在一份报告中表示，在人为造成的气候变化开始之前，像今年南亚地区出现极端高温天气的概率大约为每3000年一次。
 
 奥托和世界气候归因组织的研究人员发现，迄今为止，全球变暖1.2℃的现实，已经将与南亚地区这样持续时间和强度相似的极端高温的所谓回归期缩短至百年一遇。但随着地球继续升温，这种致命热浪之间的发生间隔将进一步缩小。研究人员预计，如果地球的平均地表温度比工业化前水平再上升0.8℃，预计像这样的热浪每5年就会发生一次。" . $id;
-        MQ::instance()->publish(json_encode($data), $this->exchange,$this->routekey);
+        MQ::instance()->publish(json_encode($data), $this->exchange, $this->routekey);
 
         $ctx->JSON(200, [
             'code' => 10200,
