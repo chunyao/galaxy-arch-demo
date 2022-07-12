@@ -30,13 +30,6 @@ class App extends Server
     }
 }
 
-$temp = array();
-for ($i = 0; $i < 100000; $i++) {
-    $id = GetUtilId('OtherId');
-    $temp[$id] = "1";
-}
-echo "count: " . count($temp);
-
 try {
     $server = new App($bootConfig);
     $server->httpStart();

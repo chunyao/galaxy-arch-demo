@@ -396,7 +396,7 @@ class SendMsg
         $ctx->JSON(200, [
             'code' => 10200,
             'message' => 'success',
-            'data' => 1
+            'data' => $data
         ]);
 
         return "200";
