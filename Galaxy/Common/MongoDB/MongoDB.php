@@ -159,10 +159,11 @@ class MongoDB
         return $this;
     }
 
-    public function tableSuffix(string $table, int $companyId, $subTable = 100): ConnectionInterface
+    public function tableSuffix(string $table, int $companyId, $subTable = 100)
     {
         $suffix = is_numeric($companyId) ? (int)$companyId % 100 : null;
-        return $this->_table($table . $suffix);
+        $this->_table = $table . $suffix;
+        return $this;
     }
 
     /**
@@ -449,6 +450,6 @@ class MongoDB
     public function __destruct()
     {
         // TODO: Implement __destruct() method.
-        unset( $this->manager);
+        unset($this->manager);
     }
 }
