@@ -3,6 +3,7 @@
 namespace App\Http\Controller\Helloword;
 
 use App\Config\DB;
+use App\Config\MG;
 use App\Config\RDS;
 use Galaxy\Core\Log;
 use Mix\Vega\Context;
@@ -88,14 +89,17 @@ class Database
     }
 
     public function redistest(Context $ctx){
-        $tx =  RDS::instance()->multi();
+       $re= MG::instance()->database('mabang_email')
+           ->table('account_email')
+           ->select(['account'=>array('$in'=>['lihongjun@mabangerp.com','8391936@qq.com','1804280961@qq.com','info@simplechicdeals.com'])]);
+       /* $tx =  RDS::instance()->multi();
         $tx->set('foo', 'bar');
         $tx->set('foo1', 'bar1');
-        $ret = $tx->exec();
+        $ret = $tx->exec();*/
         $ctx->JSON(200, [
             'code' => 10200,
             'message' => 'success',
-            'data' => RDS::instance()->get("foo")
+            'data' => $re
         ]);
     }
 
