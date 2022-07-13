@@ -315,4 +315,11 @@ class Database
         return $this->borrow()->tableSuffix($table,$companyId,$subTable);
     }
 
+    public function getTableSuffix(string $table,int $companyId,$subTable): string
+    {
+        // 根据企业编号，对100取余分表
+        $suffix = is_numeric($companyId) ? (int)$companyId % 100 : null;
+        return $table.$suffix;
+    }
+
 }

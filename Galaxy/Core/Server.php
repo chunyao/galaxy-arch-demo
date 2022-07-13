@@ -2,6 +2,7 @@
 
 namespace Galaxy\Core;
 
+use Galaxy\Common\Utils\SnowFlakeUtils;
 use \Swoole;
 use \Hyperf\Nacos\Application;
 use \Hyperf\Nacos\Config;
@@ -17,7 +18,7 @@ class Server
     protected array $config;
     public static array $localcache;
     public static array $innerConfig;
-
+    public static $snowFlak;
     protected array $coreConfig;
 
 
@@ -34,6 +35,12 @@ class Server
     public function __construct($bootConfig)
     {
         Log::init();
+        $getDataCenterId = SnowFlakeUtils::getDataCenterId();
+        $getBizId = SnowFlakeUtils::getBizId("OtherId");
+        self::$snowFlak = new SnowFlakeUtils($getDataCenterId, $getBizId,);
+
+
+        echo count($f);
         echo "主进程ID:" . posix_getpid() . "\n";
         log::info( "主进程ID:" . posix_getpid());
         self::$httpClient = new GuzzleHttp\Client();
