@@ -35,12 +35,6 @@ class Server
     public function __construct($bootConfig)
     {
         Log::init();
-        $getDataCenterId = SnowFlakeUtils::getDataCenterId();
-        $getBizId = SnowFlakeUtils::getBizId("OtherId");
-        self::$snowFlak = new SnowFlakeUtils($getDataCenterId, $getBizId,);
-
-
-        echo count($f);
         echo "主进程ID:" . posix_getpid() . "\n";
         log::info( "主进程ID:" . posix_getpid());
         self::$httpClient = new GuzzleHttp\Client();
