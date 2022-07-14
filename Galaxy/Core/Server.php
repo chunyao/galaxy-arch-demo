@@ -35,6 +35,10 @@ class Server
     public function __construct($bootConfig)
     {
         Log::init();
+        $getDataCenterId = SnowFlakeUtils::getDataCenterId();
+        $getBizId = SnowFlakeUtils::getBizId("OtherId");
+        self::$snowFlak = new SnowFlakeUtils($getDataCenterId, $getBizId,);
+
         echo "主进程ID:" . posix_getpid() . "\n";
         log::info( "主进程ID:" . posix_getpid());
         self::$httpClient = new GuzzleHttp\Client();
@@ -145,7 +149,7 @@ EOL;
 
         });
         $this->server->on("ManagerStart", function ($server) {
-            $rabbitMq = new RabbitMqProcess($this->config, 4, $this->url, $this->tcpClient);
+            $rabbitMq = new RabbitMqProcess($this->config, 1, $this->url, $this->tcpClient);
             $rabbitMq->handler();
         });
         $this->server->on('WorkerStart', array($this, 'onWorkerStart'));

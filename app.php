@@ -8,10 +8,8 @@ define("ROOT_PATH", dirname(__FILE__));
 ini_set('display_errors', 'On');
 gc_enable();
 
-use Galaxy\Common\Utils\SnowFlakeUtils;
 use Galaxy\Core\Log;
 use Galaxy\Core\Server;
-use Galaxy\Core\PoolServer;
 
 $opts = array('env:', 'user:', 'password:', 'dataId:', 'group:', 'url:', 'server.port:', 'management.server.port:', 'log.path:');
 $bootConfig = getopt('', $opts);
