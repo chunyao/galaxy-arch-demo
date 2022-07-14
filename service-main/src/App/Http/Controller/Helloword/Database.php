@@ -70,7 +70,6 @@ class Database
             'ctime' => new \Mix\Database\Expr('CURRENT_TIMESTAMP()'),
         ];
         $return =  DB::instance()->insert('user', $data)->lastInsertId();
-        var_dump($return);
 
         DB::instance()->debug(function (\Mix\Database\ConnectionInterface $conn) {
             var_dump($conn->queryLog()); // array, fields: time, sql, bindings

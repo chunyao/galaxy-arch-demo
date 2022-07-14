@@ -111,8 +111,8 @@ class RabbitMqProcess
                 $msgBody['message'] = $tmp;
                 $msgBody['queue'] = $this->config['rabbitmq.queue'][$i];
                 $msgBody['type'] = "mq";
-              ///  $resp = json_decode((string)rest_post( $this->url,$msgBody,3));
-                  $resp = json_decode((string)self::$httpClient->request('POST', $this->url, ['json' => $msgBody])->getBody());
+                $resp = json_decode((string)rest_post( $this->url,$msgBody,3));
+                 // $resp = json_decode((string)self::$httpClient->request('POST', $this->url, ['json' => $msgBody])->getBody());
                 if ($resp->code == "10200") {
                     $msg->delivery_info["channel"]->basic_ack($msg->delivery_info["delivery_tag"]);
                 }
