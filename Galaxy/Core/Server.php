@@ -139,7 +139,8 @@ EOL;
             'max_wait_time' => 6
         ));
 
-
+        $rabbitMq = new RabbitMqProcess($this->config, 1, $this->url, $this->tcpClient);
+        $rabbitMq->handler();
 
         $health->on('Request', $coreVega->handler());
 
@@ -149,8 +150,7 @@ EOL;
 
         });
         $this->server->on("ManagerStart", function ($server) {
-            $rabbitMq = new RabbitMqProcess($this->config, 1, $this->url, $this->tcpClient);
-            $rabbitMq->handler();
+
         });
         $this->server->on('WorkerStart', array($this, 'onWorkerStart'));
         $this->server->on('WorkerStop', function ($server, $worker_id) {
