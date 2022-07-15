@@ -60,6 +60,7 @@ class TestListener
          //   log::info("消息重复消费 id:". $this->msg['id']);
             return true;
         }else{
+
             $result = $this->msgService->saveMsg($this->msg);
             RDS::instance()->set(App::$innerConfig['rabbitmq.queue'][0] . ":" . $this->msg['id'], "1", 300);
             return $result;
