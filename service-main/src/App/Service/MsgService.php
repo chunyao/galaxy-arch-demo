@@ -27,7 +27,6 @@ class MsgService
 
     public function saveMsg($msg)
     {
-        log::info($msg);
         $body = array();
         $body['msg_id']=$msg['id'];
         $body['msgBody']=JSON($msg);
