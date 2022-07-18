@@ -1,10 +1,9 @@
 <?php
-
-
 use App\Http\Controller\Helloword\Database;
 use App\Http\Controller\Helloword\Helloword;
 use App\Http\Controller\Helloword\SendMsg;
-
+use App\Http\Controller\Sql\SqlImprove;
+use App\Http\Controller\Es\Index;
 return function (Mix\Vega\Engine $vega,$appName) {
     $sub = $vega->pathPrefix("/".$appName);
 
@@ -14,6 +13,9 @@ return function (Mix\Vega\Engine $vega,$appName) {
     $sub->handle('/msg/send', [new SendMsg(), 'handler'])->methods('GET');
     $sub->handle('/msg/send2', [new SendMsg(), 'send'])->methods('POST');
     $sub->handle('/mg/in', [new Database(), 'redistest'])->methods('GET');
-
+    $sub->handle('/sql/1', [new SqlImprove(), 'sql1'])->methods('GET');
+    $sub->handle('/es/createIndex', [new Index(), 'createIndex'])->methods('GET');
+    $sub->handle('/es/getIndexData', [new Index(), 'getDataByIndex'])->methods('GET');
+    $sub->handle('/es/sync', [new Index(), 'sycncDataByIndex'])->methods('GET');
     // $vega->handle('/auth', [new Auth(), 'index'])->methods('GET');
 };

@@ -112,6 +112,16 @@ class LibES
         $params = ['index' => $this->indexName];
         return $this->esClient->indices()->delete($params);
     }
+    public function setIndex($index)
+    {
+       $this->indexName=$index;
+       return $this;
+    }
+    public function setType($type)
+    {
+        $this->typeName=$type;
+        return $this;
+    }
 
     public function getIndexData()
     {

@@ -310,9 +310,9 @@ class Database
         return $this->borrow()->table($table);
     }
 
-    public function tableSuffix(string $table, int $companyId, $subTable = 100): ConnectionInterface
+    public function tableSuffix(string $table, int $companyId, $subTable = 100,$split=""): ConnectionInterface
     {
-        return $this->borrow()->tableSuffix($table,$companyId,$subTable);
+        return $this->borrow()->tableSuffix($table.$split,$companyId,$subTable);
     }
 
     public function getTableSuffix(string $table,int $companyId,$subTable): string

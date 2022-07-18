@@ -30,7 +30,7 @@ class TestListener
     public static function getQueue()
     {
 
-        return App::$innerConfig['rabbitmq.queue'][0];
+        return App::$innerConfig['rabbitmq.queue'][1];
     }
 
     public function __construct($msg)
@@ -55,7 +55,7 @@ class TestListener
         /* 方案一 自己处理消息*/
 
         if (RDS::instance()->get(App::$innerConfig['rabbitmq.queue'][0] . ":" . $this->msg['id'])) {
-            echo "消息重复消费 id:". $this->msg['id']."\n";
+          //  echo "消息重复消费 id:". $this->msg['id']."\n";
          //   log::info("消息重复消费 id:". $this->msg['id']);
             return true;
         }else{

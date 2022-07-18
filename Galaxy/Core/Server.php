@@ -76,10 +76,11 @@ class Server
             $register = new ServiceRegister($bootConfig['url'], $this->config['app.name'], $this->config['namespace.id']);
             $register->handle("register");
 
-            $process = new Swoole\Process(function ($worker) use ($register) {
+            $process = new Swoole\Process(function ($worker) use ($register,$bootConfig) {
                 echo "注册中心进程ID:" . posix_getpid() . "\n";
                 log::info( "注册中心进程ID:" . posix_getpid());
-                swoole_timer_tick(10000, function () use ($register) {
+                swoole_timer_tick(10000, function () use ($register,$worker,$bootConfig) {
+                    $worker->exec('/bin/sh', array('-c', "rm -rf ".$bootConfig['log.path']."/".$this->config['app.name']."/".date("Ymd",strtotime("-1 day")).".log"));
                     self::$localcache=array();
                     try {
                         $register->beat();

@@ -55,7 +55,7 @@ class RabbitMqProcess
 
             // 创建通道
             $channel = $conn->channel($ch);
-            $channel->basic_qos(null, 20, null);
+            $channel->basic_qos(null, 1, null);
             // 创建交换机
 
             /**
@@ -106,14 +106,14 @@ class RabbitMqProcess
                     usleep($sleep);
                 }
                 /*冷启动*/
-                $tmp = json_decode($msg->body, 1);
+
                 $tmp['queue'] = $this->config['rabbitmq.queue'][$i];
                 $msgBody['message'] = $tmp;
                 $msgBody['queue'] = $this->config['rabbitmq.queue'][$i];
                 $msgBody['type'] = "mq";
              // $resp = json_decode((string)rest_post( $this->url,$msgBody,3));
                   $resp = json_decode((string)self::$httpClient->request('POST', $this->url, ['json' => $msgBody])->getBody());
-                if ($resp->code == "10200") {
+                if ($resp->code === "10200") {
                     $msg->delivery_info["channel"]->basic_ack($msg->delivery_info["delivery_tag"]);
                 }
                 // 响应ack
@@ -128,7 +128,7 @@ class RabbitMqProcess
             $channel->close();
             $conn->close();
         } catch (\Throwable $e) {
-            // Log::error($e->getMessage());
+             Log::error($e->getMessage());
         }
 
     }
