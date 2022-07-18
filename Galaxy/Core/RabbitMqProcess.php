@@ -114,6 +114,7 @@ class RabbitMqProcess
                 // $resp = json_decode((string)rest_post( $this->url,$msgBody,3));
                 try {
                     $data = (string)self::$httpClient->request('POST', $this->url, ['json' => $msgBody])->getBody();
+
                     $resp =json_decode($data);
                     if ($resp->code === 10200) {
                         $msg->delivery_info["channel"]->basic_ack($msg->delivery_info["delivery_tag"]);

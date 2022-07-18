@@ -27,7 +27,7 @@ class CoreVega
                 }
                 //var_dump($ex->getTrace()[0]);
                 Log::error(sprintf('%s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));
-                $ctx->string(500, 'Galaxy nternal Server Error');
+                $ctx->string(500, '{"code":10500}');
                 $ctx->abort();
             }
         });
