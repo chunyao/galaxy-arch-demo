@@ -106,11 +106,12 @@ class RabbitMqProcess
                        usleep($sleep);
                    }
                    /*冷启动*/
-
+                $tmp = json_decode($msg->body, true);
                 $tmp['queue'] = $this->config['rabbitmq.queue'][$i];
                 $msgBody['message'] = $tmp;
                 $msgBody['queue'] = $this->config['rabbitmq.queue'][$i];
                 $msgBody['type'] = "mq";
+
                 // $resp = json_decode((string)rest_post( $this->url,$msgBody,3));
                 try {
                     $data = (string)self::$httpClient->request('POST', $this->url, ['json' => $msgBody])->getBody();
