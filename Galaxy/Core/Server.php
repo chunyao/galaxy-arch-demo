@@ -140,7 +140,7 @@ EOL;
             'max_wait_time' => 6
         ));
 
-        $rabbitMq = new RabbitMqProcess($this->config, 1, $this->url, $this->tcpClient);
+        $rabbitMq = new RabbitMqProcess($this->config, 2, $this->url, $this->tcpClient);
         $rabbitMq->handler();
 
         $health->on('Request', $coreVega->handler());
