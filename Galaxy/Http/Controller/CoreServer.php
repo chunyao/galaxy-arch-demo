@@ -43,7 +43,7 @@ class CoreServer
             'code' => 10500,
             'message' => 'fail',
             'data' => false]);
-        //  unset($innerServer);
+          unset($innerServer);
     }
 
     public function health(Context $ctx)
