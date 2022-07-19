@@ -111,27 +111,29 @@ class RabbitMqProcess
                 $msgBody['message'] = $tmp;
                 $msgBody['queue'] = $this->config['rabbitmq.queue'][$i];
                 $msgBody['type'] = "mq";
-
                 // $resp = json_decode((string)rest_post( $this->url,$msgBody,3));
-                try {
-                    $data = (string)self::$httpClient->request('POST', $this->url, ['json' => $msgBody])->getBody();
 
+                try {
+
+               //     $resp =self::$httpClient->request('POST', $this->url, ['json' => $msgBody]);
+               //     $resp = json_decode((string)rest_post( $this->url,$msgBody,3));
+                    $data = (string)self::$httpClient->request('POST', $this->url, ['json' => $msgBody])->getBody();
                     $resp =json_decode($data);
                     if ($resp->code === 10200) {
                         $msg->delivery_info["channel"]->basic_ack($msg->delivery_info["delivery_tag"]);
                     }
                 }catch (\Throwable $ex){
-                    Log::error("noack ".$data);
+                //    $msg->delivery_info["channel"]->basic_nack($msg->delivery_info["delivery_tag"],false,true);
+
                     Log::error(sprintf('%s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));
-                    $msg->delivery_info["channel"]->basic_ack($msg->delivery_info["delivery_tag"]);
+                   // $msg->delivery_info["channel"]->basic_ack($msg->delivery_info["delivery_tag"]);
                 }
-
-
                 // 响应ack
             };
             echo $this->config['rabbitmq.queue'][$i] . " 开始消费\n";
             Log::info($this->config['rabbitmq.queue'][$i] . " 开始消费");
             $return = $channel->basic_consume($queueName, "", false, false, false, false, $callback);
+            Log::info($return);
             // 监听
             while ($channel->is_consuming()) {
                 $channel->wait();
@@ -139,7 +141,7 @@ class RabbitMqProcess
             $channel->close();
             $conn->close();
         } catch (\Throwable $ex) {
-
+            Log::error(sprintf('%s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));
         }
 
     }
@@ -150,6 +152,7 @@ class RabbitMqProcess
         $process = new Swoole\Process(function ($worker) use ($index, $ch, $queue) {
             while (1) {
                 log::info("消息进程ID:".posix_getpid()."\n");
+                sleep(5);
                 $this->initQueues($ch, $queue);
             }
         }, false, 0, true);
