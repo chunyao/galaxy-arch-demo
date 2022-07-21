@@ -19,7 +19,7 @@ class DBLogger implements \Mix\Database\LoggerInterface
      */
     public function trace(float $time, string $sql, array $bindings, int $rowCount, ?\Throwable $exception): void
     {
-      #  Log::debug(sprintf('SQL: %sms %s %s %d', $time, $sql, json_encode($bindings), $rowCount));
+      //  Log::debug(sprintf('SQL: %sms %s %s %d', $time, $sql, json_encode($bindings), $rowCount));
     }
 
 }

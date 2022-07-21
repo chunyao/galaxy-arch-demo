@@ -53,7 +53,7 @@ class CoreServer
             foreach ($configs as $key => $val) {
                 // $val::init($this->config);
                 $ok = $val::health();
-                log::info("检测 $val " . $val::health());
+          //      log::info("检测 $val " . $val::health());
                 if ($ok != "1") {
                     $ctx->JSON(200, [
                         'code' => 10200,

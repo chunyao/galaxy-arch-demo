@@ -1,7 +1,4 @@
 <?php
-
-use Galaxy\Common\Utils\SnowFlakeUtils;
-
 function libfile($path, $filename)
 {
     return ROOT_PATH . "/" . $path . $filename . ".php";
@@ -250,7 +247,6 @@ function rest_post($url, $data, $timeout = 10)
     //	print_r($data);
     return $data;
 }
-
 function arrayRecursive(&$array, $function, $apply_to_keys_also = false)
 {
     static $recursive_counter = 0;
@@ -274,37 +270,32 @@ function arrayRecursive(&$array, $function, $apply_to_keys_also = false)
     }
     $recursive_counter--;
 }
-
-function JSON($array)
-{
+function JSON($array) {
     arrayRecursive($array, 'urlencode', true);
     $json = json_encode($array);
     return urldecode($json);
 }
-
-function parseattach($message)
-{
+function parseattach($message) {
     $patterns = "/\[attach\]\d+\[\/attach\]/i";
     //$patterns = '/\[attach\]\d+/im';
-    preg_match_all($patterns, $message, $arr);
+    preg_match_all($patterns,$message,$arr);
 
     SeasLog::info(" attachment:" . json_encode($arr));
-    foreach ($arr[0] as $item) {
+    foreach ($arr[0] as $item){
         $patterns = '/\d+/';
 
-        preg_match($patterns, $item, $newitem);
+        preg_match($patterns,$item,$newitem);
 
-        $tableid = table_forum_attachment::fetch_tableid_all_by_aid($newitem[0]);
-        $attachment = table_forum_attachment_n::fetch($tableid[0]->tableid, $newitem[0], true);
+        $tableid=table_forum_attachment::fetch_tableid_all_by_aid($newitem[0]);
+        $attachment = table_forum_attachment_n::fetch($tableid[0]->tableid,$newitem[0],true);
         SeasLog::info(" attachment:" . json_encode($attachment));
-        $image = urlencode($attachment['attachment']);
+        $image=urlencode($attachment['attachment']);
 
-        $message = preg_replace("/\[attach\]" . $newitem[0] . "\[\/attach\]/i", "[img]" . Config::$data['imageserver'] . "v1/image/getimages?get=" . $image . "[/img]", $message);
+        $message = preg_replace("/\[attach\]".$newitem[0]."\[\/attach\]/i","[img]".Config::$data['imageserver']."v1/image/getimages?get=".$image."[/img]",$message);
         print_r($message);
     }
     return $message;
 }
-
 function rest_get($url)
 {
     $curl = curl_init();
@@ -338,25 +329,26 @@ function getavatarbak($uid, $size = 'middle', $token = "")
 function getavatar($uid, $size = 'middle', $token = "")
 {
     $defaultUrl = 'https://bkjk-public-dev-1256212241.image.myqcloud.com/gh-forum/lljr/709d1d31dc47636e4f5ccbfd07601c19-default-avator.png';
-    $return = "";
+    $return="";
     if ($return = getCache("avatar-aid-" . $uid) && $return != "") {
         SeasLog::info("avatar cache return :" . $return);
-        return Config::$data['oss'] . $return;
+        return Config::$data['oss'].$return;
     } else {
         $hash = table_ll_avatar::fetchbyuid($uid);
 
-        if (isset($hash['avatarhash'])) {
+        if (isset($hash['avatarhash'])){
             $return = $hash['avatarhash'];
-        } else {
-            $return = "";
+        }
+        else{
+            $return ="";
         }
 
         setCache("avatar-aid-" . $uid, $hash['avatarhash'], "3600");
     }
-    if ($return == "") {
+    if ($return==""){
         return $defaultUrl;
-    } else {
-        return Config::$data['oss'] . $hash['avatarhash'];
+    }else{
+        return Config::$data['oss'].$hash['avatarhash'];
     }
 }
 

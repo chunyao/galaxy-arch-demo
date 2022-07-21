@@ -53,12 +53,11 @@ class MongoDB
         $driverOptions = array();
         if ($this->config['mongo.user']) {
             if ($this->config['mongo.replicaset']) {
-                $this->uri = sprintf("mongodb://%s:%s@%s/%s?replicaSet=%s&authSource=admin", $this->config['mongo.user'], $this->config['mongo.password'], $this->config['mongo.host'], $this->config['mongo.database'], $this->config['mongo.replicaset']);
+                $this->uri = sprintf("mongodb://%s:%s@%s/?replicaSet=%s&authSource=%s", $this->config['mongo.user'], $this->config['mongo.password'], $this->config['mongo.host'], $this->config['mongo.replicaset'], $this->config['mongo.database']);
 
             } else {
-                $this->uri = sprintf("mongodb://%s:%s@%s:%d", $this->config['mongo.user'], $this->config['mongo.password'], $this->config['mongo.host'], $this->config['mongo.port']);
+                $this->uri = sprintf("mongodb://%s:%s@%s:%d/?authSource=%s", $this->config['mongo.user'], $this->config['mongo.password'], $this->config['mongo.host'], $this->config['mongo.port'],$this->config['mongo.database']);
             }
-
         } else {
             $this->uri = sprintf("mongodb://%s:%d", $this->config['mongo.host'], $this->config['mongo.port']);
         }
@@ -155,13 +154,15 @@ class MongoDB
      */
     public function table($table)
     {
+        $this->_database = $this->config['mongo.database'];
         $this->_table = $table;
         return $this;
     }
 
     public function tableSuffix(string $table, int $companyId, $subTable = 100)
     {
-        $suffix = is_numeric($companyId) ? (int)$companyId % 100 : null;
+        $this->_database = $this->config['mongo.database'];
+        $suffix = is_numeric($companyId) ? (int)$companyId % $subTable : null;
         $this->_table = $table . $suffix;
         return $this;
     }

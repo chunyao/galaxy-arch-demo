@@ -2,165 +2,108 @@
 
 namespace Galaxy\Common\Utils;
 
-use Galaxy\Core\Once;
-
 /**
  * 雪花算法类
  * @package Galaxy\Common\Utils
  */
 class SnowFlakeUtils
 {
-    const TWEPOCH = 1638288000000; // 时间起始标记点，作为基准，一般取系统的最近时间（一旦确定不能变动）
-    const WORKER_ID_BITS = 5; // 机器标识位数
-    const DATACENTER_ID_BITS = 5; // 数据中心标识位数
-    const SEQUENCE_BITS = 12; // 毫秒内自增位
-    // 工作机器ID
-    private $workerId;
-    /** 数据中心ID(0~31) */
-    private $datacenterId;
-    /** 毫秒内序列(0~4095) */
-    private $sequence;
-    // 机器ID最大值
-    private $maxWorkerId = -1 ^ (-1 << self::WORKER_ID_BITS);
-    // 数据中心ID最大值 最大31
-    private $maxDatacenterId = -1 ^ (-1 << self::DATACENTER_ID_BITS);
-    // 机器ID偏左移位数
-    private $workerIdShift = self::SEQUENCE_BITS;
-    // 数据中心ID左移位数 17 (12+5)
-    private $datacenterIdShift = self::SEQUENCE_BITS + self::WORKER_ID_BITS;
-    /** 时间截向左移22位(5+5+12) */
-    private $timestampLeftShift = self::SEQUENCE_BITS + self::WORKER_ID_BITS + self::DATACENTER_ID_BITS;
-    /** 生成序列的掩码，这里为4095 (0b111111111111=0xfff=4095) */
-    private $sequenceMask = -1 ^ (-1 << self::SEQUENCE_BITS);
-    // 上次生产id时间戳
-    private $lastTimestamp = -1;
+    const EPOCH_OFFSET = 0;  //偏移时间戳,该时间一定要小于第一个id生成的时间,且尽量大(影响算法的有效可用时间)
 
-    public function __construct($datacenterId, $workerId, $sequence = 0)
+    const SIGN_BITS = 1;        //最高位(符号位)位数，始终为0，不可用
+    const TIMESTAMP_BITS = 41;  //时间戳位数(算法默认41位,可以使用69年)
+    const DATA_CENTER_BITS = 5;  //IDC(数据中心)编号位数(算法默认5位,最多支持部署32个节点)
+    const MACHINE_ID_BITS = 5;  //机器编号位数(算法默认5位,最多支持部署32个节点)
+    const SEQUENCE_BITS = 12;   //计数序列号位数,即一系列的自增id，可以支持同一节点同一毫秒生成多个ID序号(算法默认12位,支持每个节点每毫秒产生4096个ID序号)。
+
+    /**
+     * @var integer 数据中心编号
+     */
+    protected static $data_center_id;
+
+    /**
+     * @var integer 机器编号
+     */
+    protected static $machine_id;
+
+    /**
+     * @var null|integer 上一次生成id使用的时间戳(毫秒级别)
+     */
+    protected static $lastTimestamp = null;
+
+    /**
+     * @var int
+     */
+    protected static $sequence = 1;    //序列号
+    protected static $signLeftShift = self::TIMESTAMP_BITS + self::DATA_CENTER_BITS + self::MACHINE_ID_BITS + self::SEQUENCE_BITS;  //符号位左位移位数
+    protected static $timestampLeftShift = self::DATA_CENTER_BITS + self::MACHINE_ID_BITS + self::SEQUENCE_BITS;    //时间戳左位移位数
+    protected static $dataCenterLeftShift = self::MACHINE_ID_BITS + self::SEQUENCE_BITS;   //IDC左位移位数
+    protected static $machineLeftShift = self::SEQUENCE_BITS;  //机器编号左位移位数
+    protected static $maxSequenceId = -1 ^ (-1 << self::SEQUENCE_BITS);    //最大序列号
+    protected static $maxMachineId = -1 ^ (-1 << self::MACHINE_ID_BITS);   //最大机器编号
+    protected static $maxDataCenterId = -1 ^ (-1 << self::DATA_CENTER_BITS);   //最大数据中心编号
+
+    /**
+     * @param integer $dataCenter_id 数据中心的唯一ID(如果使用多个数据中心,需要设置此ID用以区分)
+     * @param integer $machine_id 机器的唯一ID (如果使用多台机器,需要设置此ID用以区分)
+     * @throws \Exception
+     */
+    public static function init($dataCenter_id = 0, $machine_id = 0)
     {
-
-        if ($workerId > $this->maxWorkerId || $workerId < 0) {
-            throw new Exception("worker Id can't be greater than {$this->maxWorkerId} or less than 0");
+        if ($dataCenter_id > self::$maxDataCenterId) {
+            throw new \Exception('数据中心编号取值范围为:0-' . self::$maxDataCenterId);
         }
-        if (!$datacenterId) {
-            $datacenterId = $this->getDataCenterId();
+        if ($machine_id > self::$maxMachineId) {
+            throw new \Exception('机器编号编号取值范围为:0-' . self::$maxMachineId);
         }
-        if ($datacenterId > $this->maxDatacenterId || $datacenterId < 0) {
-            throw new Exception("datacenter Id can't be greater than {$this->maxDatacenterId} or less than 0");
-        }
-        $this->workerId = $workerId;
-        $this->datacenterId = $datacenterId;
-        $this->sequence = $sequence;
-    }
-
-    public function nextId()
-    {
-        $timestamp = $this->timeGen();
-
-        if ($timestamp < $this->lastTimestamp) {
-            $diffTimestamp = bcsub($this->lastTimestamp, $timestamp);
-            throw new Exception("Clock moved backwards.  Refusing to generate id for {$diffTimestamp} milliseconds");
-        }
-
-        if ($this->lastTimestamp == $timestamp) {
-            $this->sequence = ($this->sequence + 1) & $this->sequenceMask;
-
-            if (0 == $this->sequence) {
-                $timestamp = $this->tilNextMillis($this->lastTimestamp);
-            }
-        } else {
-            $this->sequence = 0;
-        }
-
-        $this->lastTimestamp = $timestamp;
-        /*$gmpTimestamp    = gmp_init($this->leftShift(bcsub($timestamp, self::TWEPOCH), $this->timestampLeftShift));
-        $gmpDatacenterId = gmp_init($this->leftShift($this->datacenterId, $this->datacenterIdShift));
-        $gmpWorkerId     = gmp_init($this->leftShift($this->workerId, $this->workerIdShift));
-        $gmpSequence     = gmp_init($this->sequence);
-        return gmp_strval(gmp_or(gmp_or(gmp_or($gmpTimestamp, $gmpDatacenterId), $gmpWorkerId), $gmpSequence));*/
-        //上次生成ID的时间截
-        /*  Log::debug('SnowFlake:all', [
-              $timestamp,
-              self::TWEPOCH,
-              $this->timestampLeftShift,
-              $this->datacenterId,
-              $this->datacenterIdShift,
-              $this->workerId,
-              $this->workerIdShift,
-              $this->sequence,
-          ]);*/
-        return (($timestamp - self::TWEPOCH) << $this->timestampLeftShift) |
-            ($this->datacenterId << $this->datacenterIdShift) |
-            ($this->workerId << $this->workerIdShift) |
-            $this->sequence;
-
-
-    }
-
-    protected function tilNextMillis($lastTimestamp)
-    {
-        $timestamp = $this->timeGen();
-        while ($timestamp <= $lastTimestamp) {
-            $timestamp = $this->timeGen();
-        }
-        return $timestamp;
-    }
-
-    protected function timeGen()
-    {
-        return floor(microtime(true) * 1000);
-    }
-
-    // 左移 <<
-    protected function leftShift($a, $b)
-    {
-        return bcmul($a, bcpow(2, $b));
-    }
-
-    /*
-     * Ip 取模
-     *
-     * */
-    public static function getDataCenterId()
-    {
-        if (isset($_SERVER['REMOTE_ADDR']) && $_SERVER['REMOTE_ADDR']) {
-            $cip = $_SERVER['REMOTE_ADDR'];
-        } elseif (getenv("REMOTE_ADDR")) {
-            $cip = getenv("REMOTE_ADDR");
-        } elseif (getenv("HTTP_CLIENT_IP")) {
-            $cip = getenv("HTTP_CLIENT_IP");
-        } else {
-            //获取不到ip 直接返回 随机取模数据 0-31 之间
-            return rand(0, 31);
-        }
-        return intval(array_sum(explode('.', $cip)) % 32);
+        self::$data_center_id = $dataCenter_id;
+        self::$machine_id = $machine_id;
     }
 
     /**
-     * 业务ID相关
-     * @param start
-     * @param end
-     * @return
+     * 使用雪花算法生成一个唯一ID
+     * @return string 生成的ID
+     * @throws \Exception
      */
-    public static function getBizId($type)
+    public static function generateID($dataCenter_id = 0, $machine_id = 0)
     {
-        $id = 0;
-        switch ($type) {
-            case 'companyId':
-                $id = rand(0, 1);
-                break;
-            case 'ShopId':
-                $id = rand(2, 5);
-                break;
-            case 'StockId':
-                $id = rand(6, 13);
-                break;
-            case 'OrderId':
-                $id = rand(14, 21);
-                break;
-            case 'OtherId':
-                $id = rand(22, 31);
-                break;
+        self::init($dataCenter_id, $machine_id);
+        $sign = 0; //符号位,值始终为0
+        $timestamp = self::getUnixTimestamp();
+        if ($timestamp < self::$lastTimestamp) {
+            throw new \Exception('时间倒退了!');
         }
-        return $id;
+
+        //与上次时间戳相等,需要生成序列号.不相等则重置序列号
+        if ($timestamp == self::$lastTimestamp) {
+            $sequence = ++self::$sequence;
+            if ($sequence == self::$maxSequenceId) { //如果序列号超限，则需要重新获取时间
+                $timestamp = self::getUnixTimestamp();
+                while ($timestamp <= self::$lastTimestamp) {    //时间相同则阻塞
+                    $timestamp = self::getUnixTimestamp();
+                }
+                self::$sequence = 0;
+                $sequence = ++self::$sequence;
+            }
+        } else {
+            self::$sequence = 0;
+            $sequence = ++self::$sequence;
+        }
+
+        self::$lastTimestamp = $timestamp;
+        $time = (int)($timestamp - self::EPOCH_OFFSET);
+        $id = ($sign << self::$signLeftShift) | ($time << self::$timestampLeftShift) | (self::$data_center_id << self::$dataCenterLeftShift) | (self::$machine_id << self::$machineLeftShift) | $sequence;
+
+        return (string)$id;
+    }
+
+    /**
+     * 获取去当前时间戳
+     *
+     * @return integer 毫秒级别的时间戳
+     */
+    private static function getUnixTimestamp()
+    {
+        return floor(microtime(true) * 1000);
     }
 }

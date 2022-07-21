@@ -38,6 +38,22 @@ class RabbitMqProcess
         $step = 60;
 
         try {
+     /*       $host,
+        $port,
+        $user,
+        $password,
+        $vhost = '/',
+        $insist = false,
+        $login_method = 'AMQPLAIN',
+        $login_response = null,
+        $locale = 'en_US',
+        $connection_timeout = 3.0,
+        $read_write_timeout = 3.0,
+        $context = null,
+        $keepalive = false,
+        $heartbeat = 0,
+        $channel_rpc_timeout = 0.0,
+        $ssl_protocol = null,*/
             //
             $params = [
                 $this->config['rabbitmq.host'],
@@ -46,7 +62,7 @@ class RabbitMqProcess
                 $this->config['rabbitmq.password'],
                 $this->config['rabbitmq.vhost'][$i],
                 false,
-                "AMQPLAIN"
+                "AMQPLAIN",null,'en_US',5,31,null,true,15
             ];
 
 
@@ -106,34 +122,33 @@ class RabbitMqProcess
                        usleep($sleep);
                    }
                    /*冷启动*/
+
                 $tmp = json_decode($msg->body, true);
                 $tmp['queue'] = $this->config['rabbitmq.queue'][$i];
                 $msgBody['message'] = $tmp;
+                Log::info(sprintf('messageId: %s', $tmp['messageId']));
                 $msgBody['queue'] = $this->config['rabbitmq.queue'][$i];
                 $msgBody['type'] = "mq";
                 // $resp = json_decode((string)rest_post( $this->url,$msgBody,3));
-
                 try {
-
-               //     $resp =self::$httpClient->request('POST', $this->url, ['json' => $msgBody]);
-               //     $resp = json_decode((string)rest_post( $this->url,$msgBody,3));
                     $data = (string)self::$httpClient->request('POST', $this->url, ['json' => $msgBody])->getBody();
-                    $resp =json_decode($data);
+                    $resp = json_decode($data);
                     if ($resp->code === 10200) {
                         $msg->delivery_info["channel"]->basic_ack($msg->delivery_info["delivery_tag"]);
+                        Log::info(sprintf('messageId ack : %s', $tmp['messageId']));
                     }
-                }catch (\Throwable $ex){
-                //    $msg->delivery_info["channel"]->basic_nack($msg->delivery_info["delivery_tag"],false,true);
+                } catch (\Throwable $ex) {
 
                     Log::error(sprintf('%s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));
-                   // $msg->delivery_info["channel"]->basic_ack($msg->delivery_info["delivery_tag"]);
+
                 }
+
+
                 // 响应ack
             };
             echo $this->config['rabbitmq.queue'][$i] . " 开始消费\n";
             Log::info($this->config['rabbitmq.queue'][$i] . " 开始消费");
             $return = $channel->basic_consume($queueName, "", false, false, false, false, $callback);
-            Log::info($return);
             // 监听
             while ($channel->is_consuming()) {
                 $channel->wait();
@@ -141,6 +156,7 @@ class RabbitMqProcess
             $channel->close();
             $conn->close();
         } catch (\Throwable $ex) {
+            Log::error(sprintf('%s error',   $this->config['rabbitmq.queue'][$i]));
             Log::error(sprintf('%s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));
         }
 
@@ -151,8 +167,8 @@ class RabbitMqProcess
 
         $process = new Swoole\Process(function ($worker) use ($index, $ch, $queue) {
             while (1) {
-                log::info("消息进程ID:".posix_getpid()."\n");
                 sleep(5);
+                log::info("消息进程ID:" . posix_getpid() . "\n");
                 $this->initQueues($ch, $queue);
             }
         }, false, 0, true);

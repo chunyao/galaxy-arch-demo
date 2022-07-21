@@ -1,9 +1,11 @@
 <?php
 declare(strict_types=1);//开启严格模式
 
-namespace Galaxy\Service;
+namespace App\Service;
 
-
+use App\Config\RDS;
+use App\Repository\Model\BaseModel;
+use App\Repository\Model\MdcassociateshopModel;
 /**
  * Created by 刘永胜
  * date: 2022/7/7

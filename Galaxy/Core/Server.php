@@ -2,7 +2,6 @@
 
 namespace Galaxy\Core;
 
-use Galaxy\Common\Utils\SnowFlakeUtils;
 use \Swoole;
 use \Hyperf\Nacos\Application;
 use \Hyperf\Nacos\Config;
@@ -18,7 +17,7 @@ class Server
     protected array $config;
     public static array $localcache;
     public static array $innerConfig;
-    public static $snowFlak;
+
     protected array $coreConfig;
 
 
@@ -35,10 +34,6 @@ class Server
     public function __construct($bootConfig)
     {
         Log::init();
-        $getDataCenterId = SnowFlakeUtils::getDataCenterId();
-        $getBizId = SnowFlakeUtils::getBizId("OtherId");
-        self::$snowFlak = new SnowFlakeUtils($getDataCenterId, $getBizId,);
-
         echo "主进程ID:" . posix_getpid() . "\n";
         log::info( "主进程ID:" . posix_getpid());
         self::$httpClient = new GuzzleHttp\Client();
@@ -53,8 +48,9 @@ class Server
             ],
         ]));
         /*      $application->auth->login($bootConfig['user'], $bootConfig['password']);;*/
-        $response = $application->config->get('mico_core_service', 'V2SYSTEM_GROUP');
-        $this->coreConfig = parse_ini_string((string)$response->getBody());
+       // $response = $application->config->get('mico_core_service', 'V2SYSTEM_GROUP');
+
+    //    $this->coreConfig = parse_ini_string((string)$response->getBody());
         if ($bootConfig['env'] == "local") {
             $this->config = parse_ini_file(ROOT_PATH . '/local.ini');
             self::$innerConfig = $this->config;
@@ -69,21 +65,22 @@ class Server
                 ],
             ]));
             //          $application->auth->login($bootConfig['user'], $bootConfig['password']);
-            $response = $application->config->get($bootConfig['dataId'], $bootConfig['group']);
+
+            $response = $application->config->get($bootConfig['dataId'], $bootConfig['group'],$bootConfig['tenant']);
             $this->config = parse_ini_string((string)$response->getBody());
             self::$innerConfig = $this->config;
 
             $register = new ServiceRegister($bootConfig['url'], $this->config['app.name'], $this->config['namespace.id']);
             $register->handle("register");
 
-            $process = new Swoole\Process(function ($worker) use ($register,$bootConfig) {
+            $process = new Swoole\Process(function ($worker) use ($bootConfig) {
                 echo "注册中心进程ID:" . posix_getpid() . "\n";
                 log::info( "注册中心进程ID:" . posix_getpid());
-                swoole_timer_tick(10000, function () use ($register,$worker,$bootConfig) {
+                swoole_timer_tick(10000, function () use ($worker,$bootConfig) {
                     $worker->exec('/bin/sh', array('-c', "rm -rf ".$bootConfig['log.path']."/".$this->config['app.name']."/".date("Ymd",strtotime("-1 day")).".log"));
                     self::$localcache=array();
                     try {
-                        $register->beat();
+                   //     $register->beat();
                     } catch (\Throwable $e) {
                         //var_dump($e);
                     }
@@ -140,8 +137,7 @@ EOL;
             'max_wait_time' => 6
         ));
 
-        $rabbitMq = new RabbitMqProcess($this->config, 4, $this->url, $this->tcpClient);
-        $rabbitMq->handler();
+
 
         $health->on('Request', $coreVega->handler());
 
@@ -151,7 +147,8 @@ EOL;
 
         });
         $this->server->on("ManagerStart", function ($server) {
-
+            $rabbitMq = new RabbitMqProcess($this->config, 1, $this->url, $this->tcpClient);
+            $rabbitMq->handler();
         });
         $this->server->on('WorkerStart', array($this, 'onWorkerStart'));
         $this->server->on('WorkerStop', function ($server, $worker_id) {
@@ -193,10 +190,10 @@ EOL;
     {
         echo "Worker 进程id:" . posix_getpid()."\n";
         log::info( "Worker 进程ID:" . posix_getpid());
-        CoreDB::init($this->coreConfig);
-        CoreDB::enableCoroutine();
-        CoreRDS::init($this->coreConfig);
-        CoreRDS::enableCoroutine();
+    //    CoreDB::init($this->coreConfig);
+  //      CoreDB::enableCoroutine();
+   //     CoreRDS::init($this->coreConfig);
+   //     CoreRDS::enableCoroutine();
         /*自动加载用户配置*/
 
 
