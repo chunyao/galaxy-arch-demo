@@ -131,7 +131,7 @@ class RabbitMqProcess
                 $tmp['queue'] = $this->config['rabbitmq.queue'][$i];
                 $msgBody['message'] = $tmp;
                 if (isset($tmp['messageId'])) {
-                    Log::info(sprintf('messageId: %s', $tmp['messageId']));
+                //    Log::info(sprintf('messageId: %s', $tmp['messageId']));
                 }
 
                 $msgBody['queue'] = $this->config['rabbitmq.queue'][$i];
@@ -143,7 +143,7 @@ class RabbitMqProcess
                     if ($resp->code === 10200) {
                         $msg->delivery_info["channel"]->basic_ack($msg->delivery_info["delivery_tag"]);
                         if (isset($tmp['messageId'])) {
-                            Log::info(sprintf('messageId ack : %s', $tmp['messageId']));
+                    //        Log::info(sprintf('messageId ack : %s', $tmp['messageId']));
                         }
                     } else {
                         if (isset(APP::$localcache[$tmp['messageId']])) {
