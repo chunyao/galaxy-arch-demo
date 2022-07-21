@@ -61,7 +61,7 @@ class TestListener
 
             $result = $this->msgService->saveMsg($this->msg);
             RDS::instance()->set(App::$innerConfig['rabbitmq.queue'][0] . ":" . $this->msg['id'], "1", 30000);
-            return false;
+            return true;
         }
 
         /* 方案二转发消息*/
