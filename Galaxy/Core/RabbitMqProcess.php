@@ -38,22 +38,22 @@ class RabbitMqProcess
         $step = 60;
 
         try {
-     /*       $host,
-        $port,
-        $user,
-        $password,
-        $vhost = '/',
-        $insist = false,
-        $login_method = 'AMQPLAIN',
-        $login_response = null,
-        $locale = 'en_US',
-        $connection_timeout = 3.0,
-        $read_write_timeout = 3.0,
-        $context = null,
-        $keepalive = false,
-        $heartbeat = 0,
-        $channel_rpc_timeout = 0.0,
-        $ssl_protocol = null,*/
+            /*       $host,
+               $port,
+               $user,
+               $password,
+               $vhost = '/',
+               $insist = false,
+               $login_method = 'AMQPLAIN',
+               $login_response = null,
+               $locale = 'en_US',
+               $connection_timeout = 3.0,
+               $read_write_timeout = 3.0,
+               $context = null,
+               $keepalive = false,
+               $heartbeat = 0,
+               $channel_rpc_timeout = 0.0,
+               $ssl_protocol = null,*/
             //
             $params = [
                 $this->config['rabbitmq.host'],
@@ -136,10 +136,24 @@ class RabbitMqProcess
                     if ($resp->code === 10200) {
                         $msg->delivery_info["channel"]->basic_ack($msg->delivery_info["delivery_tag"]);
                         Log::info(sprintf('messageId ack : %s', $tmp['messageId']));
+                    }else{
+                        if (isset(APP::$localcache[$tmp['messageId']])){
+                            if (APP::$localcache[$tmp['messageId']]>3){
+                                Log::error(sprintf('重试: '.APP::$localcache[$tmp['messageId']].' messageId ack : %s', $tmp['messageId']));
+                                $msg->delivery_info["channel"]->basicReject($msg->delivery_info["delivery_tag"], false);
+                                unset(APP::$localcache[$tmp['messageId']]);
+                            }
+                            APP::$localcache[$tmp['messageId']]++;
+
+                        }else{
+                            APP::$localcache[$tmp['messageId']]=0;
+                            $msg->delivery_info["channel"]->basic_recover(true);
+                            Log::error(sprintf('重试: '.APP::$localcache[$tmp['messageId']].' messageId unack : %s', $tmp['messageId']));
+                        }
                     }
                 } catch (\Throwable $ex) {
 
-                    Log::error(sprintf('%s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));
+                    Log::error(sprintf('ack: %s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));
 
                 }
 
@@ -158,6 +172,7 @@ class RabbitMqProcess
         } catch (\Throwable $ex) {
             Log::error(sprintf('%s error',   $this->config['rabbitmq.queue'][$i]));
             Log::error(sprintf('%s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));
+
         }
 
     }
