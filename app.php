@@ -29,7 +29,7 @@ if (isset($ip['eth0'])) {
 $newip = str_replace(".","_",$ip);
 
 SeasLog::setLogger("/mabang-arch-demo");
-SeasLog::setFilePrefix($newip."-");
+//SeasLog::setFilePrefix($newip."-");
 class App extends Server
 {
     public function __construct($bootConfig)
