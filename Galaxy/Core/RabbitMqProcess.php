@@ -62,7 +62,7 @@ class RabbitMqProcess
                 $this->config['rabbitmq.password'],
                 $this->config['rabbitmq.vhost'][$i],
                 false,
-                "AMQPLAIN",null,'en_US',5,31,null,true,15
+                "AMQPLAIN", null, 'en_US', 5, 31, null, true, 15
             ];
 
 
@@ -124,9 +124,16 @@ class RabbitMqProcess
                    /*冷启动*/
 
                 $tmp = json_decode($msg->body, true);
+                if (isset($tmp['id']) && empty($tmp['messageId'])){
+                    $tmp['messageId'] = $tmp['id'];
+                }
+
                 $tmp['queue'] = $this->config['rabbitmq.queue'][$i];
                 $msgBody['message'] = $tmp;
-                Log::info(sprintf('messageId: %s', $tmp['messageId']));
+                if (isset($tmp['messageId'])) {
+                    Log::info(sprintf('messageId: %s', $tmp['messageId']));
+                }
+
                 $msgBody['queue'] = $this->config['rabbitmq.queue'][$i];
                 $msgBody['type'] = "mq";
                 // $resp = json_decode((string)rest_post( $this->url,$msgBody,3));
@@ -135,20 +142,22 @@ class RabbitMqProcess
                     $resp = json_decode($data);
                     if ($resp->code === 10200) {
                         $msg->delivery_info["channel"]->basic_ack($msg->delivery_info["delivery_tag"]);
-                        Log::info(sprintf('messageId ack : %s', $tmp['messageId']));
-                    }else{
-                        if (isset(APP::$localcache[$tmp['messageId']])){
-                            if (APP::$localcache[$tmp['messageId']]>3){
-                                Log::error(sprintf('重试: '.APP::$localcache[$tmp['messageId']].' messageId ack : %s', $tmp['messageId']));
+                        if (isset($tmp['messageId'])) {
+                            Log::info(sprintf('messageId ack : %s', $tmp['messageId']));
+                        }
+                    } else {
+                        if (isset(APP::$localcache[$tmp['messageId']])) {
+                            if (APP::$localcache[$tmp['messageId']] > 3) {
+                                Log::error(sprintf('重试: ' . APP::$localcache[$tmp['messageId']] . ' messageId ack : %s', $tmp['messageId']));
                                 $msg->delivery_info["channel"]->basicReject($msg->delivery_info["delivery_tag"], false);
                                 unset(APP::$localcache[$tmp['messageId']]);
                             }
                             APP::$localcache[$tmp['messageId']]++;
 
-                        }else{
-                            APP::$localcache[$tmp['messageId']]=0;
-                            $msg->delivery_info["channel"]->basic_recover(true);
-                            Log::error(sprintf('重试: '.APP::$localcache[$tmp['messageId']].' messageId unack : %s', $tmp['messageId']));
+                        } else {
+                            APP::$localcache[$tmp['messageId']] = 0;
+                                $msg->delivery_info["channel"]->basic_recover(true);
+                            Log::error(sprintf('重试: ' . APP::$localcache[$tmp['messageId']] . ' messageId unack : %s', $tmp['messageId']));
                         }
                     }
                 } catch (\Throwable $ex) {
@@ -156,7 +165,6 @@ class RabbitMqProcess
                     Log::error(sprintf('ack: %s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));
 
                 }
-
 
                 // 响应ack
             };
@@ -170,7 +178,7 @@ class RabbitMqProcess
             $channel->close();
             $conn->close();
         } catch (\Throwable $ex) {
-            Log::error(sprintf('%s error',   $this->config['rabbitmq.queue'][$i]));
+            Log::error(sprintf('%s error', $this->config['rabbitmq.queue'][$i]));
             Log::error(sprintf('%s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));
 
         }

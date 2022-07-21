@@ -147,7 +147,7 @@ EOL;
 
         });
         $this->server->on("ManagerStart", function ($server) {
-            $rabbitMq = new RabbitMqProcess($this->config, 5, $this->url, $this->tcpClient);
+            $rabbitMq = new RabbitMqProcess($this->config, 4, $this->url, $this->tcpClient);
             $rabbitMq->handler();
         });
         $this->server->on('WorkerStart', array($this, 'onWorkerStart'));
