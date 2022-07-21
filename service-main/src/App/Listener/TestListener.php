@@ -60,9 +60,9 @@ class TestListener
             return true;
         }else{
 
-            $result = $this->msgService->saveMsg($this->msg);
-            RDS::instance()->set(App::$innerConfig['rabbitmq.queue'][0] . ":" . $this->msg['id'], "1", 3000000);
-            return $result;
+       //     $result = $this->msgService->saveMsg($this->msg);
+         //   RDS::instance()->set(App::$innerConfig['rabbitmq.queue'][0] . ":" . $this->msg['id'], "1", 3000000);
+            return true;
         }
 
         /* 方案二转发消息*/

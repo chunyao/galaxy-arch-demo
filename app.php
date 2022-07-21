@@ -19,8 +19,17 @@ if ($bootConfig['env'] == "local") {
 if (isset($bootConfig['log.path'])) {
     SeasLog::setBasePath($bootConfig['log.path']);
 }
-SeasLog::setLogger("/mabang-arch-demo");
+$ip = swoole_get_local_ip();
+if (isset($ip['en0'])) {
+    $ip = $ip['en0'];
+}
+if (isset($ip['eth0'])) {
+    $ip = $ip['eth0'];
+}
+$newip = str_replace(".","_",$ip);
 
+SeasLog::setLogger("/mabang-arch-demo");
+//SeasLog::setFilePrefix($newip."-");
 class App extends Server
 {
     public function __construct($bootConfig)
