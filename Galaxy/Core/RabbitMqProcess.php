@@ -126,10 +126,15 @@ class RabbitMqProcess
 
                 $tmp = json_decode($msg->body, true);
                 $tmp['queue'] = $this->config['rabbitmq.queue'][$i];
+                if (isset($tmp['id'])) {
+                    $tmp['messageId'] =  $tmp['id'];
+                }
                 $msgBody['message'] = $tmp;
-                Log::info(sprintf('messageId: %s', $tmp['messageId']));
+
+               // Log::info(sprintf('messageId: %s', $tmp['messageId']));
                 $msgBody['queue'] = $this->config['rabbitmq.queue'][$i];
                 $msgBody['type'] = "mq";
+
                 // $resp = json_decode((string)rest_post( $this->url,$msgBody,3));
                 if (isset(APP::$localcache[$tmp['messageId']])){
                     if (APP::$localcache[$tmp['messageId']]>3){
