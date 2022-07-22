@@ -62,7 +62,7 @@ class RabbitMqProcess
                 $this->config['rabbitmq.password'],
                 $this->config['rabbitmq.vhost'][$i],
                 false,
-                "AMQPLAIN", null, 'en_US', 5, 31, null, true, 15
+                "AMQPLAIN",null,'en_US',5,31,null,true,15
             ];
 
 
@@ -70,7 +70,8 @@ class RabbitMqProcess
             $conn = new \PhpAmqpLib\Connection\AMQPStreamConnection(...$params);
 
             // 创建通道
-            $channel = $conn->channel($ch);
+            $c=rand(0,100);
+            $channel = $conn->channel($c);
             $channel->basic_qos(null, 20, null);
             // 创建交换机
 
@@ -124,48 +125,55 @@ class RabbitMqProcess
                    /*冷启动*/
 
                 $tmp = json_decode($msg->body, true);
-                if (isset($tmp['id']) && empty($tmp['messageId'])){
-                    $tmp['messageId'] = $tmp['id'];
-                }
-
                 $tmp['queue'] = $this->config['rabbitmq.queue'][$i];
                 $msgBody['message'] = $tmp;
-                if (isset($tmp['messageId'])) {
-                //    Log::info(sprintf('messageId: %s', $tmp['messageId']));
-                }
-
+                Log::info(sprintf('messageId: %s', $tmp['messageId']));
                 $msgBody['queue'] = $this->config['rabbitmq.queue'][$i];
                 $msgBody['type'] = "mq";
                 // $resp = json_decode((string)rest_post( $this->url,$msgBody,3));
-                try {
-                    $data = (string)self::$httpClient->request('POST', $this->url, ['json' => $msgBody])->getBody();
-                    $resp = json_decode($data);
-                    if ($resp->code === 10200) {
-                        $msg->delivery_info["channel"]->basic_ack($msg->delivery_info["delivery_tag"]);
-                        if (isset($tmp['messageId'])) {
-                    //        Log::info(sprintf('messageId ack : %s', $tmp['messageId']));
-                        }
-                    } else {
-                        if (isset(APP::$localcache[$tmp['messageId']])) {
-                            if (APP::$localcache[$tmp['messageId']] > 3) {
-                                Log::error(sprintf('重试: ' . APP::$localcache[$tmp['messageId']] . ' messageId ack : %s', $tmp['messageId']));
-                                $msg->delivery_info["channel"]->basicReject($msg->delivery_info["delivery_tag"], false);
-                                unset(APP::$localcache[$tmp['messageId']]);
-                            }
-                            APP::$localcache[$tmp['messageId']]++;
-
-                        } else {
-                            APP::$localcache[$tmp['messageId']] = 0;
-                                $msg->delivery_info["channel"]->basic_recover(true);
-                            Log::error(sprintf('重试: ' . APP::$localcache[$tmp['messageId']] . ' messageId unack : %s', $tmp['messageId']));
-                        }
+                if (isset(APP::$localcache[$tmp['messageId']])){
+                    if (APP::$localcache[$tmp['messageId']]>3){
+                        Log::error(sprintf('重试: '.APP::$localcache[$tmp['messageId']].' messageId ack : %s', $tmp['messageId']));
+                        $msg->delivery_info["channel"]->basic_reject($msg->delivery_info["delivery_tag"], false);
+                        unset(APP::$localcache[$tmp['messageId']]);
+                        return ;
                     }
-                } catch (\Throwable $ex) {
+                    try {
+                        $data = (string)self::$httpClient->request('POST', $this->url, ['json' => $msgBody])->getBody();
+                        $resp = json_decode($data);
+                        if ($resp->code === 10200) {
+                            $msg->delivery_info["channel"]->basic_ack($msg->delivery_info["delivery_tag"]);
+                            Log::info(sprintf('messageId ack : %s', $tmp['messageId']));
+                            unset(APP::$localcache[$tmp['messageId']]);
+                            return ;
+                        }
+                    } catch (\Throwable $ex) {
 
-                    Log::error(sprintf('ack: %s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));
+                        Log::error(sprintf('ack: %s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));
 
+                    }
+                    APP::$localcache[$tmp['messageId']]++;
+                    $msg->delivery_info["channel"]->basic_recover(true);
+                    Log::error(sprintf('重试: '.APP::$localcache[$tmp['messageId']].' messageId ack : %s', $tmp['messageId']));
+                }else{
+                    try {
+                        $data = (string)self::$httpClient->request('POST', $this->url, ['json' => $msgBody])->getBody();
+                        $resp = json_decode($data);
+                        if ($resp->code === 10200) {
+                            $msg->delivery_info["channel"]->basic_ack($msg->delivery_info["delivery_tag"]);
+                            Log::info(sprintf('messageId ack : %s', $tmp['messageId']));
+                            unset(APP::$localcache[$tmp['messageId']]);
+                            return ;
+                        }
+                    } catch (\Throwable $ex) {
+
+                        Log::error(sprintf('ack: %s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));
+
+                    }
+                    APP::$localcache[$tmp['messageId']]=1;
+                    $msg->delivery_info["channel"]->basic_recover(true);
+                    Log::error(sprintf('重试: '.APP::$localcache[$tmp['messageId']].' messageId unack : %s', $tmp['messageId']));
                 }
-
                 // 响应ack
             };
             echo $this->config['rabbitmq.queue'][$i] . " 开始消费\n";
@@ -178,7 +186,9 @@ class RabbitMqProcess
             $channel->close();
             $conn->close();
         } catch (\Throwable $ex) {
-            Log::error(sprintf('%s error', $this->config['rabbitmq.queue'][$i]));
+            $channel->close();
+            $conn->close();
+            Log::error(sprintf('%s error',   $this->config['rabbitmq.queue'][$i]));
             Log::error(sprintf('%s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));
 
         }
