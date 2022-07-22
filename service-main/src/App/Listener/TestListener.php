@@ -39,9 +39,9 @@ class TestListener
          * 公有云 1 对应 aaaa
          * 私有云 1 对应 qqqq
          **/
-        $this->queueService = new QueueService();
+    //    $this->queueService = new QueueService();
         $this->msgService = new MsgService();
-        $this->msgProxy = new MsgProxyService();
+ //       $this->msgProxy = new MsgProxyService();
         $this->msg = $msg;
 
     }
@@ -58,9 +58,11 @@ class TestListener
          //   log::info("消息重复消费 id:". $this->msg['id']);
             return true;
         }else{
-
-            $result = $this->msgService->saveMsg($this->msg);
+       //     echo "start:" . self::getMillisecond()."\n";
+         //   $result = $this->msgService->saveMsg($this->msg);
+     //       echo "end:" . self::getMillisecond()."\n";
             RDS::instance()->set(App::$innerConfig['rabbitmq.queue'][0] . ":" . $this->msg['id'], "1", 30000);
+
             return true;
         }
 
@@ -73,8 +75,14 @@ class TestListener
     function __destruct()
     {
         unset($this->msgService);
-        unset($this->QueueService);
-        unset($this->msgProxy);
+      //  unset($this->QueueService);
+      //  unset($this->msgProxy);
 
+    }
+    /** * 时间戳 - 精确到毫秒 * @return float */
+    public static function getMillisecond()
+    {
+        list($t1, $t2) = explode(' ', microtime());
+        return (float)sprintf('%.0f', (floatval($t1) + floatval($t2)) * 1000);
     }
 }
