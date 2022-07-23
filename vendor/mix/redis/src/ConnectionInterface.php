@@ -20,7 +20,7 @@ namespace Mix\Redis;
  * @method int getOption($name)
  * @method string ping()
  * @method string|bool get($key)
- * @method bool set($key, $value, $timeout = 0)
+ * @method bool set($key, $value, $timeout = 0, array $array=[])
  * @method bool setex($key, $ttl, $value)
  * @method bool setnx($key, $value)
  * @method int del($key1, $key2 = null, $key3 = null)
