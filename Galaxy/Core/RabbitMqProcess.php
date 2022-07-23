@@ -72,7 +72,7 @@ class RabbitMqProcess
             // 创建通道
             $c=rand(0,100);
             $channel = $conn->channel($c);
-            $channel->basic_qos(null, 20, null);
+        //    $channel->basic_qos(null, 20, null);
             // 创建交换机
 
             /**
@@ -148,7 +148,7 @@ class RabbitMqProcess
                         $resp = json_decode($data);
                         if ($resp->code === 10200) {
                             $msg->delivery_info["channel"]->basic_ack($msg->delivery_info["delivery_tag"]);
-                            Log::info(sprintf('messageId ack : %s', $tmp['messageId']));
+                       //     Log::info(sprintf('messageId ack : %s', $tmp['messageId']));
                             unset(APP::$localcache[$tmp['messageId']]);
                             return ;
                         }
@@ -166,7 +166,7 @@ class RabbitMqProcess
                         $resp = json_decode($data);
                         if ($resp->code === 10200) {
                             $msg->delivery_info["channel"]->basic_ack($msg->delivery_info["delivery_tag"]);
-                            Log::info(sprintf('messageId ack : %s', $tmp['messageId']));
+                         //   Log::info(sprintf('messageId ack : %s', $tmp['messageId']));
                             unset(APP::$localcache[$tmp['messageId']]);
                             return ;
                         }
@@ -191,8 +191,6 @@ class RabbitMqProcess
             $channel->close();
             $conn->close();
         } catch (\Throwable $ex) {
-            $channel->close();
-            $conn->close();
             Log::error(sprintf('%s error',   $this->config['rabbitmq.queue'][$i]));
             Log::error(sprintf('%s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));
 
