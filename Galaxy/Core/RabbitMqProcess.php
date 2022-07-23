@@ -72,7 +72,7 @@ class RabbitMqProcess
             // 创建通道
             $c=rand(0,100);
             $channel = $conn->channel($c);
-          //  $channel->basic_qos(null, 400, null);
+            $channel->basic_qos(null, 800, null);
             // 创建交换机
 
             /**
