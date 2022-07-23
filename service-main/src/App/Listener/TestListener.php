@@ -30,7 +30,7 @@ class TestListener
     public static function getQueue()
     {
 
-        return App::$innerConfig['rabbitmq.queue'][0];
+        return App::$innerConfig['rabbitmq.queue'][1];
     }
 
     public function __construct($msg)
@@ -53,7 +53,7 @@ class TestListener
         /* 整理 接受msseage 消息*/
         /* 方案一 自己处理消息*/
 
-        if (RDS::instance()->get(App::$innerConfig['rabbitmq.queue'][0] . ":" . $this->msg['id'])) {
+        if (!RDS::instance()->setnx(App::$innerConfig['rabbitmq.queue'][1] . ":" . $this->msg['id'],1)) {
             echo "消息重复消费 id:". $this->msg['id']."\n";
          //   log::info("消息重复消费 id:". $this->msg['id']);
             return true;
@@ -61,7 +61,7 @@ class TestListener
        //     echo "start:" . self::getMillisecond()."\n";
          //   $result = $this->msgService->saveMsg($this->msg);
      //       echo "end:" . self::getMillisecond()."\n";
-            RDS::instance()->set(App::$innerConfig['rabbitmq.queue'][0] . ":" . $this->msg['id'], "1", 30000);
+
 
             return true;
         }
