@@ -72,7 +72,7 @@ trait QueryBuilder
     public function tableSuffix(string $table,int $companyId,$subTable): ConnectionInterface
     {
         // 根据企业编号，对100取余分表
-        $suffix = is_numeric($companyId) ? (int)$companyId % 100 : null;
+        $suffix = is_numeric($companyId) ? (int)$companyId % $subTable : null;
         $this->table = $table.$suffix;
         return $this;
     }
