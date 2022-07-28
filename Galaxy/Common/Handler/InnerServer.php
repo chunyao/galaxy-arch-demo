@@ -2,6 +2,7 @@
 
 namespace Galaxy\Common\Handler;
 
+use App;
 use Galaxy\Core\RobbitMqListener;
 use App\Listener;
 
@@ -18,7 +19,7 @@ class InnerServer
 
     public function __construct($action, $data, &$config)
     {
-        $this->action = str_replace("http://127.0.0.1:8081/", "", $action);
+        $this->action = str_replace("http://127.0.0.1:".App::$bootConfig['management.server.port']."/", "", $action);
         $this->data = $data;
 
         $this->route = [

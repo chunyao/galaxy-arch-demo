@@ -13,10 +13,16 @@ use \Galaxy\Common\Configur\CoreRDS;
 class Server
 {
     protected  Swoole\Http\Server $server;
+
     public static Swoole\Http\Server $serverinfo;
+
     protected array $config;
+
     public static array $localcache;
+
     public static array $innerConfig;
+
+    public static array $bootConfig;
 
     protected array $coreConfig;
 
@@ -32,7 +38,7 @@ class Server
     protected $tcpClient;
 
     public function __construct($bootConfig)
-    {
+    {   self::$bootConfig=$bootConfig;
         Log::init();
         echo "主进程ID:" . posix_getpid() . "\n";
         log::info( "主进程ID:" . posix_getpid());

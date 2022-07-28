@@ -310,16 +310,16 @@ class Database
         return $this->borrow()->table($table);
     }
 
-    public function tableSuffix(string $table, int $companyId, $subTable = 100,$split=""): ConnectionInterface
+    public function tableSuffix(string $table, int $companyId, $subTable = 100, $split = ""): ConnectionInterface
     {
-        return $this->borrow()->tableSuffix($table.$split,$companyId,$subTable);
+        return $this->borrow()->tableSuffix($table . $split, $companyId, $subTable);
     }
 
-    public function getTableSuffix(string $table,int $companyId,$subTable): string
+    public function getTableSuffix(string $table, int $companyId, $subTable = 100): string
     {
         // 根据企业编号，对100取余分表
-        $suffix = is_numeric($companyId) ? (int)$companyId % 100 : null;
-        return $table.$suffix;
+        $suffix = is_numeric($companyId) ? (int)$companyId % $subTable : null;
+        return $table . $suffix;
     }
 
 }
