@@ -1,4 +1,12 @@
 <?php
+
+function getTableSuffix(string $table, int $companyId, $subTable = 100): string
+{
+    // 根据企业编号，对100取余分表
+    $suffix = is_numeric($companyId) ? (int)$companyId % $subTable : null;
+    return $table . $suffix;
+}
+
 function libfile($path, $filename)
 {
     return ROOT_PATH . "/" . $path . $filename . ".php";

@@ -46,7 +46,7 @@ class Rabbitmq
             return false;
         }
 
-        $head = array_merge(array('content_type' => 'text/plain', 'delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT), $head);
+        $head = array_merge(array('content_type' => 'text/plain', 'content_encoding'=>'gzip','delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT), $head);
         $message = new AMQPMessage($messageBody, $head);
         $chan = new Swoole\Coroutine\Channel(1);
 
