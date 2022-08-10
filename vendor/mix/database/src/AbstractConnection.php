@@ -1,7 +1,7 @@
 <?php
 
 namespace Mix\Database;
-
+use Galaxy\Core\Log;
 /**
  * Class AbstractConnection
  * @package Mix\Database
@@ -195,6 +195,7 @@ abstract class AbstractConnection implements ConnectionInterface
             if (!$success) {
                 list($flag, $code, $message) = $this->statement->errorInfo();
                 throw new \PDOException(sprintf('%s %d %s', $flag, $code, $message), $code);
+                Log::error(sprintf('SQL %s %d %s', $flag, $code, $message));
             }
         } catch (\Throwable $ex) {
             throw $ex;
