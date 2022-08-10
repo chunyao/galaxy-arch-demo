@@ -131,16 +131,17 @@ class RabbitMqProcess
                 }
                 $msgBody['message'] = $tmp;
 
-               // Log::info(sprintf('messageId: %s', $tmp['messageId']));
+               // Log::info(sprintf('messageId: %s',  $msgBody['message']['messageId']));
                 $msgBody['queue'] = $this->config['rabbitmq.queue'][$i];
                 $msgBody['type'] = "mq";
-
+                unset($tmp);
                 // $resp = json_decode((string)rest_post( $this->url,$msgBody,3));
-                if (isset(APP::$localcache[$tmp['messageId']])){
-                    if (APP::$localcache[$tmp['messageId']]>3){
-                        Log::error(sprintf('重试: '.APP::$localcache[$tmp['messageId']].' messageId ack : %s', $tmp['messageId']));
+                if (isset(APP::$localcache[$msgBody['message']['messageId']])){
+                    if (APP::$localcache[ $msgBody['message']['messageId']]>3){
+                        Log::error(sprintf('重试: '.APP::$localcache[ $msgBody['message']['messageId']].' messageId ack : %s',  $msgBody['message']['messageId']));
                         $msg->delivery_info["channel"]->basic_reject($msg->delivery_info["delivery_tag"], false);
-                        unset(APP::$localcache[$tmp['messageId']]);
+                        unset(APP::$localcache[ $msgBody['message']['messageId']]);
+                        unset($msgBody);
                         return ;
                     }
                     try {
@@ -148,8 +149,9 @@ class RabbitMqProcess
                         $resp = json_decode($data);
                         if ($resp->code === 10200) {
                             $msg->delivery_info["channel"]->basic_ack($msg->delivery_info["delivery_tag"]);
-                       //     Log::info(sprintf('messageId ack : %s', $tmp['messageId']));
-                            unset(APP::$localcache[$tmp['messageId']]);
+                       //     Log::info(sprintf('messageId ack : %s',  $msgBody['message']['messageId']));
+                            unset(APP::$localcache[ $msgBody['message']['messageId']]);
+                            unset($msgBody);
                             return ;
                         }
                     } catch (\Throwable $ex) {
@@ -157,17 +159,18 @@ class RabbitMqProcess
                         Log::error(sprintf('ack: %s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));
 
                     }
-                    APP::$localcache[$tmp['messageId']]++;
+                    APP::$localcache[ $msgBody['message']['messageId']]++;
                     $msg->delivery_info["channel"]->basic_recover(true);
-                    Log::error(sprintf('重试: '.APP::$localcache[$tmp['messageId']].' messageId ack : %s', $tmp['messageId']));
+                    Log::error(sprintf('重试: '.APP::$localcache[ $msgBody['message']['messageId']].' messageId ack : %s',  $msgBody['message']['messageId']));
                 }else{
                     try {
                         $data = (string)self::$httpClient->request('POST', $this->url, ['json' => $msgBody])->getBody();
                         $resp = json_decode($data);
                         if ($resp->code === 10200) {
                             $msg->delivery_info["channel"]->basic_ack($msg->delivery_info["delivery_tag"]);
-                         //   Log::info(sprintf('messageId ack : %s', $tmp['messageId']));
-                            unset(APP::$localcache[$tmp['messageId']]);
+                         //   Log::info(sprintf('messageId ack : %s',  $msgBody['message']['messageId']));
+                            unset(APP::$localcache[ $msgBody['message']['messageId']]);
+                            unset($msgBody);
                             return ;
                         }
                     } catch (\Throwable $ex) {
@@ -175,9 +178,9 @@ class RabbitMqProcess
                         Log::error(sprintf('ack: %s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));
 
                     }
-                    APP::$localcache[$tmp['messageId']]=1;
+                    APP::$localcache[ $msgBody['message']['messageId']]=1;
                     $msg->delivery_info["channel"]->basic_recover(true);
-                    Log::error(sprintf('重试: '.APP::$localcache[$tmp['messageId']].' messageId unack : %s', $tmp['messageId']));
+                    Log::error(sprintf('重试: '.APP::$localcache[$msgBody['message']['messageId']].' messageId unack : %s',  $msgBody['message']['messageId']));
                 }
                 // 响应ack
             };
