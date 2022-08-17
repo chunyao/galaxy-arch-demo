@@ -4,7 +4,9 @@ declare(strict_types=1);
 namespace App\Http\Controller\Helloword;
 
 
+use App;
 use App\Config\ES;
+use App\Config\RDS;
 use App\Repository\Model\Mongo\Product;
 use App\Service\SayService;
 use App\Service\WishbrandService;
@@ -12,7 +14,8 @@ use Galaxy\Core\BaseController;
 use Galaxy\Core\Log;
 use App\Service\MsgService;
 use Mix\Vega\Context;
-
+use Swoole\Coroutine as co;
+use Swoole;
 class Helloword extends BaseController
 {
     private MsgService $msgSevice;
@@ -48,12 +51,30 @@ class Helloword extends BaseController
        //$es=  $this->wishbrandService->insertEs($data);
         //$data = $this->wishbrandService->findById(522);
 
-        $indexData = ES::instance()->getDocumentById("57ce61f064e915204367f296");
-        $ctx->JSON(200, [
-            'code' => 10200,
-            'message' => 'success',
-            'data' => $indexData
-        ]);/*
+
+      //  $indexData = ES::instance()->getDocumentById("57ce61f064e915204367f296");
+
+
+        if (!RDS::instance()->set(App::$innerConfig['rabbitmq.queue'][0] . ":" . $this->msg['messageId'],1, array('nx', 'ex' => 30000))) {
+
+            $ctx->JSON(200, [
+                'code' => 10200,
+                'message' => 'success',
+                'data' =>  RDS::instance()->set("qweqwe",1, array('nx', 'ex' => 30000))
+            ]);
+
+            echo "消息重复消费 id:". $this->msg['id']."\n";
+            //   log::info("消息重复消费 id:". $this->msg['id']);
+            return true;
+        }else{
+            $ctx->JSON(200, [
+                'code' => 10200,
+                'message' => 'success',
+                'data' =>  RDS::instance()->set("qweqwe",1, array('nx', 'ex' => 30000))
+            ]);
+        }
+
+      /*
         $id = rand(1, 239368);
         $data = $this->msgSevice->findById($id);
 */
@@ -74,6 +95,41 @@ class Helloword extends BaseController
             'data' => $data
         ]);*/
 
+    }
+    public function upload(Context $ctx){
+        $chan = new Swoole\Coroutine\Channel(1);
+        $chan2 = new Swoole\Coroutine\Channel(1);
+        co::create(function () use ($chan) {
+            for($i = 0; $i < 100000; $i++) {
+                co::sleep(1.0);
+
+                /* url 文件存本地 */
+                $chan->push(['rand' => rand(1000, 9999), 'index' => $i]);
+                echo "$i\n";
+            }
+        });
+
+        $n=0;
+        co::create(function () use ($chan,$chan2,$n) {
+            while(1) {
+                $data = $chan->pop();
+                $chan2->push(['rand2' => rand(1000, 9999), 'index' => $n]);
+                $n++;
+               // var_dump($data);
+            }
+        });
+       while(1){
+           $data2 = $chan2->pop();
+           var_dump($data2);
+       }
+
+
+
+        $ctx->JSON(200, [
+            'code' => 10200,
+            'message' => 'success',
+            'data' => 1
+        ]);
     }
 
     public function __destruct()
