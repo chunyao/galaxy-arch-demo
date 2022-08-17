@@ -290,6 +290,7 @@ abstract class AbstractConnection implements ConnectionInterface
             $statement = $this->driver->instance()->prepare($this->sql);
             if (!$statement) {
                 throw new \PDOException('PDO prepare failed');
+                Log::error(sprintf('SQL PDO prepare failed'));
             }
             $this->statement = $statement;
             $this->sqlData = [$this->sql, $this->params, [], 0,]; // 必须在 bindParam 前，才能避免类型被转换
@@ -302,18 +303,21 @@ abstract class AbstractConnection implements ConnectionInterface
             $statement = $this->driver->instance()->prepare($this->sql);
             if (!$statement) {
                 throw new \PDOException('PDO prepare failed');
+                Log::error(sprintf('PDO prepare failed'));
             }
             $this->statement = $statement;
             $this->sqlData = [$this->sql, [], $this->values, 0];
             foreach ($this->values as $key => $value) {
                 if (!$this->statement->bindValue($key + 1, $value, static::bindType($value))) {
                     throw new \PDOException('PDOStatement bindValue failed');
+                    Log::error(sprintf('PDOStatement bindValue failed'));
                 }
             }
         } else { // 无参数
             $statement = $this->driver->instance()->prepare($this->sql);
             if (!$statement) {
                 throw new \PDOException('PDO prepare failed');
+                Log::error(sprintf('PDO prepare failed'));
             }
             $this->statement = $statement;
             $this->sqlData = [$this->sql, [], [], 0];
@@ -394,10 +398,12 @@ abstract class AbstractConnection implements ConnectionInterface
         $result = $this->queryOne();
         if (empty($result)) {
             throw new \PDOException(sprintf('Field %s not found', $field));
+            Log::error(sprintf('Field %s not found', $field));
         }
         $isArray = is_array($result);
         if (($isArray && !isset($result[$field])) || (!$isArray && !isset($result->$field))) {
             throw new \PDOException(sprintf('Field %s not found', $field));
+            Log::error(sprintf('Field %s not found', $field));
         }
         return $isArray ? $result[$field] : $result->$field;
     }
@@ -444,6 +450,7 @@ abstract class AbstractConnection implements ConnectionInterface
         // check debug
         if (!$this->debug) {
             throw new \RuntimeException('Can only be used in debug closure');
+            Log::error(sprintf('Can only be used in debug closure'));
         }
 
         return $this->statement;
