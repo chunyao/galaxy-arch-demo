@@ -33,7 +33,7 @@ class SendMsg
     public function handler(Context $ctx)
     {   $id = mt_rand(0,1000000000);
         $data['id'] =  $id;
-        $data['body'] = "With thick pages cut into the s." ;
+        $data['body'] = "With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s." ;
 
         MQ::instance()->publish(json_encode($data), $this->exchange, $this->routekey);
 
