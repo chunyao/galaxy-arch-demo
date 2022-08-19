@@ -36,7 +36,7 @@ class RabbitMqProcess
 
     public function initQueues($ch, $i)
     {
-        $up = 20;
+        $up = 50;
 
         try {
             /*       $host,
