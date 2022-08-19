@@ -9,6 +9,7 @@ use Swoole;
 class Rabbitmq
 {
     protected $channel;
+    protected $ch;
     protected $con;
     protected $host;
     protected $port;
@@ -23,7 +24,7 @@ class Rabbitmq
         $this->password = $password;
         $this->port = $port;
         $this->vhost = $vhost;
-        $this->channel = $channel;
+        $this->ch = $channel;
     }
 
     public function connect()
