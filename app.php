@@ -11,7 +11,7 @@ gc_enable();
 use Galaxy\Core\Log;
 use Galaxy\Core\Server;
 
-$opts = array('env:', 'user:', 'password:', 'dataId:', 'group:', 'url:', 'server.port:', 'management.server.port:', 'log.path:');
+$opts = array('env:', 'user:', 'password:', 'dataId:', 'group:', 'url:', 'server.port:', 'management.server.port:', 'log.path:', 'tenant:');
 $bootConfig = getopt('', $opts);
 if ($bootConfig['env'] == "local") {
     SeasLog::setBasePath("./data/logs");
