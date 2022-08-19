@@ -18,5 +18,7 @@ return function (Mix\Vega\Engine $vega,$appName) {
     $sub->handle('/es/createIndex', [new Index(), 'createIndex'])->methods('GET');
     $sub->handle('/es/getIndexData', [new Index(), 'getDataByIndex'])->methods('GET');
     $sub->handle('/msg/handler', [new Msg(), 'handler'])->methods('GET');
+    $sub->handle('/file/handler', [new Helloword(), 'upload'])->methods('GET');
+
     // $vega->handle('/auth', [new Auth(), 'index'])->methods('GET');
 };

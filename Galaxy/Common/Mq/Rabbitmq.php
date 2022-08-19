@@ -48,18 +48,9 @@ class Rabbitmq
 
         $head = array_merge(array('content_type' => 'text/plain', 'content_encoding'=>'gzip','delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT), $head);
         $message = new AMQPMessage($messageBody, $head);
-        $chan = new Swoole\Coroutine\Channel(1);
-
-        go(function () use ($chan,$message,$exchange,$routeKey) {
-            $res = $this->channel->basic_publish($message, $exchange, $routeKey);
-            $chan->push($res);
-        });
-
+        $res = $this->channel->basic_publish($message, $exchange, $routeKey);
         // 响应ack
-        $r = $chan->pop();
-
-
-        return  $r ;
+        return  $res ;
     }
 
     public function __destruct()
