@@ -6,6 +6,7 @@ use App;
 use App\Config\RDS;
 use Galaxy\Common\Configur\CoreRDS;
 use Galaxy\Core\RobbitMqListener;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
 use function Swoole\Coroutine\run;
 use GuzzleHttp;
 use Swoole;
@@ -35,7 +36,7 @@ class RabbitMqProcess
 
     public function initQueues($ch, $i)
     {
-        $step = 60;
+        $up = 1;
 
         try {
             /*       $host,
@@ -62,17 +63,21 @@ class RabbitMqProcess
                 $this->config['rabbitmq.password'],
                 $this->config['rabbitmq.vhost'][$i],
                 false,
-                "AMQPLAIN",null,'en_US',5,31,null,true,15
+                "AMQPLAIN", null, 'en_US', 5, 901, null, true, 450
             ];
 
 
             // 建立连接
-            $conn = new \PhpAmqpLib\Connection\AMQPStreamConnection(...$params);
+            $conn = new AMQPStreamConnection(...$params);
 
             // 创建通道
-            $c=rand(0,100);
-            $channel = $conn->channel($c);
-            $channel->basic_qos(null, 200, null);
+
+            for ($chl = 0; $chl < $up; $chl++) {
+                $c = rand(0, 2000);
+                $channel[$chl] = $conn->channel($c);
+                $channel[$chl]->basic_qos(null, 20, null);
+            }
+
             // 创建交换机
 
             /**
@@ -83,7 +88,10 @@ class RabbitMqProcess
              * auto_delete:false    自动删除，最后一个
              */
             $exName = $this->config['rabbitmq.exchange'][$i];
-            $channel->exchange_declare($exName, 'direct', false, true, false);
+            for ($chl = 0; $chl < $up; $chl++) {
+                $channel[$chl]->exchange_declare($exName, 'direct', false, true, false);
+            }
+
             // 创建队列
             /**
              * name:xxx             队列名称
@@ -93,8 +101,9 @@ class RabbitMqProcess
              * auto_delete:false    自动删除，最后一个
              */
             $queueName = $this->config['rabbitmq.queue'][$i];
-            $channel->queue_declare($queueName, false, true, false, false);
-
+            for ($chl = 0; $chl < $up; $chl++) {
+                $channel[$chl]->queue_declare($queueName, false, true, false, false);
+            }
             // 绑定
             /**
              * $queue           队列名称
@@ -102,8 +111,9 @@ class RabbitMqProcess
              * $routing_key     路由名称
              */
             $routeKey = $this->config['rabbitmq.routekey'][$i];
-            $channel->queue_bind($queueName, $exName, $routeKey);
-
+            for ($chl = 0; $chl < $up; $chl++) {
+                $channel[$chl]->queue_bind($queueName, $exName, $routeKey);
+            }
             // 消费
             /**
              * $queue = '',         被消费队列名称
@@ -118,83 +128,84 @@ class RabbitMqProcess
             $msgBody = array();
 
             $callback = function ($msg) use ($i, $msgBody) {
-                /*   if (isset($this->config['rabbitmq.qps'][$i])) {
-                       $sleep = round(1000000 / ((int)$this->config['rabbitmq.qps'][$i]));
-                       usleep($sleep);
-                   }
-                   /*冷启动*/
+                if (isset($this->config['rabbitmq.qps'][$i])) {
+                    $sleep = round(1000000 / ((int)$this->config['rabbitmq.qps'][$i]));
+                    usleep($sleep);
+                }
+                //  sleep(30);
+                /*冷启动*/
 
                 $tmp = json_decode($msg->body, true);
                 $tmp['queue'] = $this->config['rabbitmq.queue'][$i];
                 if (isset($tmp['id'])) {
-                    $tmp['messageId'] =  $tmp['id'];
+                    $tmp['messageId'] = $tmp['id'];
                 }
                 $msgBody['message'] = $tmp;
 
-               // Log::info(sprintf('messageId: %s',  $msgBody['message']['messageId']));
+                Log::info(sprintf('messageId: %s queue: %s', $tmp['messageId'], $tmp['queue']));
                 $msgBody['queue'] = $this->config['rabbitmq.queue'][$i];
                 $msgBody['type'] = "mq";
-                unset($tmp);
+
                 // $resp = json_decode((string)rest_post( $this->url,$msgBody,3));
-                if (isset(APP::$localcache[$msgBody['message']['messageId']])){
-                    if (APP::$localcache[ $msgBody['message']['messageId']]>3){
-                        Log::error(sprintf('重试: '.APP::$localcache[ $msgBody['message']['messageId']].' messageId ack : %s',  $msgBody['message']['messageId']));
+                if (isset(APP::$localcache[$tmp['messageId']])) {
+                    if (APP::$localcache[$tmp['messageId']] > 3) {
+                        Log::error(sprintf('重试: ' . APP::$localcache[$tmp['messageId']] . ' messageId ack : %s 进程Id %s', $tmp['messageId'], posix_getpid()));
                         $msg->delivery_info["channel"]->basic_reject($msg->delivery_info["delivery_tag"], false);
-                        unset(APP::$localcache[ $msgBody['message']['messageId']]);
-                        unset($msgBody);
-                        return ;
+                        unset(APP::$localcache[$tmp['messageId']]);
+                        return;
                     }
                     try {
                         $data = (string)self::$httpClient->request('POST', $this->url, ['json' => $msgBody])->getBody();
                         $resp = json_decode($data);
                         if ($resp->code === 10200) {
                             $msg->delivery_info["channel"]->basic_ack($msg->delivery_info["delivery_tag"]);
-                       //     Log::info(sprintf('messageId ack : %s',  $msgBody['message']['messageId']));
-                            unset(APP::$localcache[ $msgBody['message']['messageId']]);
-                            unset($msgBody);
-                            return ;
+                            //     Log::info(sprintf('messageId ack : %s', $tmp['messageId']));
+                            unset(APP::$localcache[$tmp['messageId']]);
+                            return;
                         }
                     } catch (\Throwable $ex) {
 
                         Log::error(sprintf('ack: %s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));
 
                     }
-                    APP::$localcache[ $msgBody['message']['messageId']]++;
+                    APP::$localcache[$tmp['messageId']]++;
                     $msg->delivery_info["channel"]->basic_recover(true);
-                    Log::error(sprintf('重试: '.APP::$localcache[ $msgBody['message']['messageId']].' messageId ack : %s',  $msgBody['message']['messageId']));
-                }else{
+                    Log::error(sprintf('重试: ' . APP::$localcache[$tmp['messageId']] . ' messageId ack : %s 进程 %s', $tmp['messageId'], posix_getpid()));
+                } else {
                     try {
                         $data = (string)self::$httpClient->request('POST', $this->url, ['json' => $msgBody])->getBody();
                         $resp = json_decode($data);
                         if ($resp->code === 10200) {
                             $msg->delivery_info["channel"]->basic_ack($msg->delivery_info["delivery_tag"]);
-                         //   Log::info(sprintf('messageId ack : %s',  $msgBody['message']['messageId']));
-                            unset(APP::$localcache[ $msgBody['message']['messageId']]);
-                            unset($msgBody);
-                            return ;
+                            //   Log::info(sprintf('messageId ack : %s', $tmp['messageId']));
+                            unset(APP::$localcache[$tmp['messageId']]);
+                            return;
                         }
                     } catch (\Throwable $ex) {
 
                         Log::error(sprintf('ack: %s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));
 
                     }
-                    APP::$localcache[ $msgBody['message']['messageId']]=1;
+                    APP::$localcache[$tmp['messageId']] = 1;
                     $msg->delivery_info["channel"]->basic_recover(true);
-                    Log::error(sprintf('重试: '.APP::$localcache[$msgBody['message']['messageId']].' messageId unack : %s',  $msgBody['message']['messageId']));
+                    Log::error(sprintf('重试: ' . APP::$localcache[$tmp['messageId']] . ' messageId unack : %s queue: %s', $tmp['messageId'], $msgBody['queue']));
                 }
                 // 响应ack
             };
-            echo $this->config['rabbitmq.queue'][$i] . " 开始消费\n";
-            Log::info($this->config['rabbitmq.queue'][$i] . " 开始消费");
-            $return = $channel->basic_consume($queueName, "", false, false, false, false, $callback);
-            // 监听
-            while ($channel->is_consuming()) {
-                $channel->wait();
+            echo $this->config['rabbitmq.queue'][$i] . " 开始消费" . "Worker 进程ID:" . posix_getpid() . PHP_EOL;
+            Log::info($this->config['rabbitmq.queue'][$i] . " 开始消费" . "Worker 进程ID:" . posix_getpid());
+
+            for ($chl = 0; $chl < $up; $chl++) {
+                $channel[$chl]->basic_consume($queueName, "", false, false, false, false, $callback);
             }
-            $channel->close();
-            $conn->close();
+            // 监听
+            while (true) {
+                for ($chl = 0; $chl < $up; $chl++) {
+                    $channel[$chl]->wait();
+                }
+            }
         } catch (\Throwable $ex) {
-            Log::error(sprintf('%s error',   $this->config['rabbitmq.queue'][$i]));
+            Log::error(sprintf('%s error', $this->config['rabbitmq.queue'][$i]));
             Log::error(sprintf('%s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));
 
         }
