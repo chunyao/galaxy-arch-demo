@@ -140,7 +140,7 @@ class RabbitMqProcess
 
                 for ($chl = 0; $chl < $up; $chl++) {
                     $channel[$chl]->is_consuming();
-                        $channel[$chl]->wait();
+                    $channel[$chl]->wait();
 
                 }
             }
