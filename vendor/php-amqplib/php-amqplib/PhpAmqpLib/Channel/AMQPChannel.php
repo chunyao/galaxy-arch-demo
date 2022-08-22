@@ -143,6 +143,7 @@ class AMQPChannel extends AbstractChannel
      */
     protected function do_close()
     {
+
         if ($this->channel_id !== null) {
             unset($this->connection->channels[$this->channel_id]);
         }

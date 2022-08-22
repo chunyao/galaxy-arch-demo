@@ -105,7 +105,7 @@ class Helloword extends BaseController
 
                 /* url 文件存本地 */
                 $chan->push(['rand' => rand(1000, 9999), 'index' => $i]);
-                echo "$i\n";
+                echo "a $i\n";
             }
         });
 
@@ -115,7 +115,7 @@ class Helloword extends BaseController
                 $data = $chan->pop();
                 $chan2->push(['rand2' => rand(1000, 9999), 'index' => $n]);
                 $n++;
-               // var_dump($data);
+                var_dump($data);
             }
         });
        while(1){

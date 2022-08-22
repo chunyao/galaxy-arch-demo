@@ -18,6 +18,7 @@ class RabbitMqProcess
     private $workers = 1;
     private $processes = [];
     private $new_index = 1;
+    private $con;
     private $config;
     protected static $httpClient;
     protected $url;
@@ -36,7 +37,7 @@ class RabbitMqProcess
 
     public function initQueues($ch, $i)
     {
-        $up = 20;
+        $up = 5;
 
         try {
             /*       $host,
@@ -68,87 +69,84 @@ class RabbitMqProcess
 
 
             // 建立连接
-            $conn = new AMQPStreamConnection(...$params);
-
-            // 创建通道
+            $this->con = new AMQPStreamConnection(...$params);
 
             for ($chl = 0; $chl < $up; $chl++) {
-                $c = rand(0, 2000);
-                $channel[$chl] = $conn->channel($c);
-                $channel[$chl]->basic_qos(null, 20, null);
+                $obj[$chl] = $this->consumeMessage($chl, $i);
             }
 
-            // 创建交换机
-
-            /**
-             * name:xxx             交换机名称
-             * type:direct          类型 fanut,direct,topic,headers
-             * passive:false        不存在自动创建，如果设置true的话，返回OK，否则失败
-             * durable:false        是否持久化
-             * auto_delete:false    自动删除，最后一个
-             */
-            $exName = $this->config['rabbitmq.exchange'][$i];
-            for ($chl = 0; $chl < $up; $chl++) {
-                $channel[$chl]->exchange_declare($exName, 'direct', false, true, false);
-            }
-
-            // 创建队列
-            /**
-             * name:xxx             队列名称
-             * passive:false        不存在自动创建，如果设置true的话，返回OK，否则失败
-             * durable:false        是否持久化
-             * exclusive:false      是否排他，如果为true的话，只对当前连接有效，连接断开后自动删除
-             * auto_delete:false    自动删除，最后一个
-             */
-            $queueName = $this->config['rabbitmq.queue'][$i];
-            for ($chl = 0; $chl < $up; $chl++) {
-                $channel[$chl]->queue_declare($queueName, false, true, false, false);
-            }
-            // 绑定
-            /**
-             * $queue           队列名称
-             * $exchange        交换机名称
-             * $routing_key     路由名称
-             */
-            $routeKey = $this->config['rabbitmq.routekey'][$i];
-            for ($chl = 0; $chl < $up; $chl++) {
-                $channel[$chl]->queue_bind($queueName, $exName, $routeKey);
-            }
-            // 消费
-            /**
-             * $queue = '',         被消费队列名称
-             * $consumer_tag = '',  消费者客户端标识，用于区分客户端
-             * $no_local = false,   这个功能属于amqp的标准，但是rabbitmq未实现
-             * $no_ack = false,     收到消息后，是否要ack应答才算被消费
-             * $exclusive = false,  是否排他，即为这个队列只能由一个消费者消费，适用于任务不允许并发处理
-             * $nowait = false,     不返回直接结果，但是如果排他开启的话，则必须需要等待结果的，如果二个都开启会报错
-             * $callback = null,    回调函数处理逻辑
-             */
-            // 回调
-            $msgBody = array();
-            for ($chl = 0; $chl < $up; $chl++) {
-                $callback[$chl] = require __DIR__ . '/RabbitMqMsg.php';
-            }
-            echo $this->config['rabbitmq.queue'][$i] . " 开始消费" . "Worker 进程ID:" . posix_getpid() . PHP_EOL;
-            Log::info($this->config['rabbitmq.queue'][$i] . " 开始消费" . "Worker 进程ID:" . posix_getpid());
-
-            for ($chl = 0; $chl < $up; $chl++) {
-                $channel[$chl]->basic_consume($queueName, "", false, false, false, false, $callback[$chl]);
-            }
-            // 监听
-            while (true) {
-
+            while (1) {
                 for ($chl = 0; $chl < $up; $chl++) {
-                    $channel[$chl]->is_consuming();
-                        $channel[$chl]->wait();
-
+                    if ($obj[$chl]->is_consuming()){
+                        $obj[$chl]->wait();
+                    }
+                    else{
+                        $obj[$chl] = $this->consumeMessage($chl, $i);
+                    }
                 }
             }
+
         } catch (\Throwable $ex) {
             Log::error(sprintf('%s error', $this->config['rabbitmq.queue'][$i]));
             Log::error(sprintf('%s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));
 
         }
+
+    }
+
+    private function consumeMessage(int $num, int $i)
+    {
+        $c = rand(0, 2000);
+        // 创建通道
+        $channel[$num] = $this->con->channel($c);
+        $channel[$num]->basic_qos(null, 20, null);
+        /**
+         * name:xxx             交换机名称
+         * type:direct          类型 fanut,direct,topic,headers
+         * passive:false        不存在自动创建，如果设置true的话，返回OK，否则失败
+         * durable:false        是否持久化
+         * auto_delete:false    自动删除，最后一个
+         */
+        $exName = $this->config['rabbitmq.exchange'][$i];
+        $channel[$num]->exchange_declare($exName, 'direct', false, true, false);
+        // 创建队列
+        /**
+         * name:xxx             队列名称
+         * passive:false        不存在自动创建，如果设置true的话，返回OK，否则失败
+         * durable:false        是否持久化
+         * exclusive:false      是否排他，如果为true的话，只对当前连接有效，连接断开后自动删除
+         * auto_delete:false    自动删除，最后一个
+         */
+        $queueName = $this->config['rabbitmq.queue'][$i];
+        $channel[$num]->queue_declare($queueName, false, true, false, false);
+
+        // 绑定
+        /**
+         * $queue           队列名称
+         * $exchange        交换机名称
+         * $routing_key     路由名称
+         */
+        $routeKey = $this->config['rabbitmq.routekey'][$i];
+        $channel[$num]->queue_bind($queueName, $exName, $routeKey);
+
+        // 消费
+        /**
+         * $queue = '',         被消费队列名称
+         * $consumer_tag = '',  消费者客户端标识，用于区分客户端
+         * $no_local = false,   这个功能属于amqp的标准，但是rabbitmq未实现
+         * $no_ack = false,     收到消息后，是否要ack应答才算被消费
+         * $exclusive = false,  是否排他，即为这个队列只能由一个消费者消费，适用于任务不允许并发处理
+         * $nowait = false,     不返回直接结果，但是如果排他开启的话，则必须需要等待结果的，如果二个都开启会报错
+         * $callback = null,    回调函数处理逻辑
+         */
+        // 回调
+        $msgBody = array();
+        $callback[$num] = require __DIR__ . '/RabbitMqMsg.php';
+        echo $this->config['rabbitmq.queue'][$i] . " 开始消费" . "Worker 进程ID:" . posix_getpid() . PHP_EOL;
+        Log::info($this->config['rabbitmq.queue'][$i] . " 开始消费" . "Worker 进程ID:" . posix_getpid());
+        $channel[$num]->basic_consume($queueName, "", false, false, false, false, $callback[$num]);
+        //消费
+        return $channel[$num];
 
     }
 
@@ -170,7 +168,8 @@ class RabbitMqProcess
         return $pid;
     }
 
-    public function handler()
+    public
+    function handler()
     {
         $channel_step = 0;
         for ($worker = 0; $worker < $this->workers; $worker++) {
