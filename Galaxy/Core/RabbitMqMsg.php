@@ -16,26 +16,31 @@ return function ($msg) use ($i, $msgBody) {
         $tmp['messageId'] = $tmp['id'];
     }
     $msgBody['message'] = $tmp;
+    $msgBody['messageId']=$tmp['messageId'];
 
-    Log::info(sprintf('messageId: %s queue: %s', $tmp['messageId'], $tmp['queue']));
     $msgBody['queue'] = $this->config['rabbitmq.queue'][$i];
     $msgBody['type'] = "mq";
-
+    unset($tmp);
+    Log::info(sprintf('messageId: %s queue: %s', $msgBody['messageId'], $msgBody['queue']));
     // $resp = json_decode((string)rest_post( $this->url,$msgBody,3));
-    if (isset(APP::$localcache[$tmp['messageId']])) {
-        if (APP::$localcache[$tmp['messageId']] > 3) {
-            Log::error(sprintf('重试: ' . APP::$localcache[$tmp['messageId']] . ' messageId ack : %s 进程Id %s', $tmp['messageId'], posix_getpid()));
+    if (isset(APP::$localcache[$msgBody['messageId']])) {
+        if (APP::$localcache[$msgBody['messageId']] > 3) {
+            Log::error(sprintf('重试: ' . APP::$localcache[$msgBody['messageId']] . ' messageId ack : %s 进程Id %s', $msgBody['messageId'], posix_getpid()));
             $msg->delivery_info["channel"]->basic_reject($msg->delivery_info["delivery_tag"], false);
-            unset(APP::$localcache[$tmp['messageId']]);
+            unset(APP::$localcache[$msgBody['messageId']]);
             return;
         }
         try {
-            $data = (string)self::$httpClient->request('POST', $this->url, ['json' => $msgBody])->getBody();
+
+            $data = (string)self::$httpClient->request('POST', $this->url, ['json' => $msgBody, 'curl' => [
+                CURLOPT_UNIX_SOCKET_PATH => ROOT_PATH.'/myserv.sock'
+            ]])->getBody();
+            var_dump($data);
             $resp = json_decode($data);
             if ($resp->code === 10200) {
                 $msg->delivery_info["channel"]->basic_ack($msg->delivery_info["delivery_tag"]);
-                //     Log::info(sprintf('messageId ack : %s', $tmp['messageId']));
-                unset(APP::$localcache[$tmp['messageId']]);
+                //     Log::info(sprintf('messageId ack : %s', $msgBody['messageId']));
+                unset(APP::$localcache[$msgBody['messageId']]);
                 return;
             }
         } catch (\Throwable $ex) {
@@ -43,9 +48,9 @@ return function ($msg) use ($i, $msgBody) {
             Log::error(sprintf('ack: %s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));
 
         }
-        APP::$localcache[$tmp['messageId']]++;
+        APP::$localcache[$msgBody['messageId']]++;
         $msg->delivery_info["channel"]->basic_recover(true);
-        Log::error(sprintf('重试: ' . APP::$localcache[$tmp['messageId']] . ' messageId ack : %s 进程 %s', $tmp['messageId'], posix_getpid()));
+        Log::error(sprintf('重试: ' . APP::$localcache[$msgBody['messageId']] . ' messageId ack : %s 进程 %s', $msgBody['messageId'], posix_getpid()));
     } else {
         try {
             $data = (string)self::$httpClient->request('POST', $this->url, ['json' => $msgBody])->getBody();
@@ -53,7 +58,7 @@ return function ($msg) use ($i, $msgBody) {
             if ($resp->code === 10200) {
                 $msg->delivery_info["channel"]->basic_ack($msg->delivery_info["delivery_tag"]);
                 //   Log::info(sprintf('messageId ack : %s', $tmp['messageId']));
-                unset(APP::$localcache[$tmp['messageId']]);
+                unset(APP::$localcache[$msgBody['messageId']]);
                 return;
             }
         } catch (\Throwable $ex) {
@@ -61,9 +66,9 @@ return function ($msg) use ($i, $msgBody) {
             Log::error(sprintf('ack: %s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));
 
         }
-        APP::$localcache[$tmp['messageId']] = 1;
+        APP::$localcache[$msgBody['messageId']] = 1;
         $msg->delivery_info["channel"]->basic_recover(true);
-        Log::error(sprintf('重试: ' . APP::$localcache[$tmp['messageId']] . ' messageId unack : %s queue: %s', $tmp['messageId'], $msgBody['queue']));
+        Log::error(sprintf('重试: ' . APP::$localcache[$msgBody['messageId']] . ' messageId unack : %s queue: %s', $msgBody['messageId'], $msgBody['queue']));
     }
     // 响应ack
 };

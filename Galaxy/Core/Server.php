@@ -121,6 +121,8 @@ class Server
         $this->server = new Swoole\Http\Server("0.0.0.0", $serverPort);
         /* http server 健康检测 */
         $health = $this->server->addListener('0.0.0.0', $managementServerPort, SWOOLE_SOCK_TCP);
+        $socket= $this->server->addlistener(ROOT_PATH."/myserv.sock", 0, SWOOLE_UNIX_STREAM);
+
         $coreVega = CoreVega::new();
         echo <<<EOL
   __  __      ___                        _         
@@ -146,7 +148,7 @@ EOL;
         ));
 
 
-
+        $socket->on('Request', $coreVega->handler());
         $health->on('Request', $coreVega->handler());
 
         $this->server->on('open', function ($server, $request) {
