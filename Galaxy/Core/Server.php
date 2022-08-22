@@ -2,6 +2,7 @@
 
 namespace Galaxy\Core;
 
+use Galaxy\Common\Utils\SnowFlakeUtils;
 use \Swoole;
 use \Hyperf\Nacos\Application;
 use \Hyperf\Nacos\Config;
@@ -22,10 +23,11 @@ class Server
 
     public static array $innerConfig;
 
+    public static string  $trackId;
+
     public static array $bootConfig;
 
     protected array $coreConfig;
-
 
     public static \GuzzleHttp\Client $httpClient;
 
@@ -196,6 +198,7 @@ EOL;
     {
         echo "Worker 进程id:" . posix_getpid()."\n";
         log::info( "Worker 进程ID:" . posix_getpid());
+        SnowFlakeUtils::init(rand(0,1),rand(0,31));
     //    CoreDB::init($this->coreConfig);
   //      CoreDB::enableCoroutine();
    //     CoreRDS::init($this->coreConfig);

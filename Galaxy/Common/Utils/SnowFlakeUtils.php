@@ -13,7 +13,7 @@ class SnowFlakeUtils
     const SIGN_BITS = 1;        //最高位(符号位)位数，始终为0，不可用
     const TIMESTAMP_BITS = 41;  //时间戳位数(算法默认41位,可以使用69年)
     const DATA_CENTER_BITS = 5;  //IDC(数据中心)编号位数(算法默认5位,最多支持部署32个节点)
-    const MACHINE_ID_BITS = 5;  //机器编号位数(算法默认5位,最多支持部署32个节点)
+    const MACHINE_ID_BITS = 31;  //机器编号位数(算法默认5位,最多支持部署32个节点)
     const SEQUENCE_BITS = 12;   //计数序列号位数,即一系列的自增id，可以支持同一节点同一毫秒生成多个ID序号(算法默认12位,支持每个节点每毫秒产生4096个ID序号)。
 
     /**
@@ -65,9 +65,9 @@ class SnowFlakeUtils
      * @return string 生成的ID
      * @throws \Exception
      */
-    public static function generateID($dataCenter_id = 0, $machine_id = 0)
+    public static function generateID():string
     {
-        self::init($dataCenter_id, $machine_id);
+        //self::init($dataCenter_id, $machine_id);
         $sign = 0; //符号位,值始终为0
         $timestamp = self::getUnixTimestamp();
         if ($timestamp < self::$lastTimestamp) {
@@ -94,7 +94,7 @@ class SnowFlakeUtils
         $time = (int)($timestamp - self::EPOCH_OFFSET);
         $id = ($sign << self::$signLeftShift) | ($time << self::$timestampLeftShift) | (self::$data_center_id << self::$dataCenterLeftShift) | (self::$machine_id << self::$machineLeftShift) | $sequence;
 
-        return (string)$id;
+        return (string)(abs($id+rand(rand(0,10000),1000000)));
     }
 
     /**
