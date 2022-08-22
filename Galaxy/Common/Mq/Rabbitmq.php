@@ -2,6 +2,7 @@
 
 namespace Galaxy\Common\Mq;
 
+use Galaxy\Core\Log;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 use Swoole;
@@ -29,8 +30,8 @@ class Rabbitmq
 
     public function connect()
     {
-        $this->con = new AMQPStreamConnection($this->host, $this->port, $this->username, $this->password, $this->vhost, false, 'AMQPLAIN', null, 'en_US', 3.0, 3.0, null, false, 10);
-        $this->channel = $this->con->channel(12);
+        $this->con = new AMQPStreamConnection($this->host, $this->port, $this->username, $this->password, $this->vhost, false, 'AMQPLAIN', null, 'en_US', 3, 21, null, false, 10);
+        $this->channel = $this->con->channel(1);
 
         return true;
     }
@@ -57,7 +58,12 @@ class Rabbitmq
 
     public function __destruct()
     {
-        $this->channel->close();
-        $this->con->close();
+        try {
+            $this->channel->close();
+            $this->con->close();
+        }catch (\Throwable $ex){
+            Log::error(sprintf('%s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));
+        }
+
     }
 }
