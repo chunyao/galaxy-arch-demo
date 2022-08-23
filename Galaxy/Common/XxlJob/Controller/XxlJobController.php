@@ -57,7 +57,7 @@ class XxlJobController
             $param=(array)$ctx->getJSON();
             $tasks = TaskLoad::findFile();
             foreach ($tasks as $key => $val) {
-                if ($val == "\\App\Config\\") continue;
+                if ($val == "\\App\XxlJob\\") continue;
                 if ($key==$param['executorHandler'])
                 {
                     co::create(function () use ($val,$param) {
