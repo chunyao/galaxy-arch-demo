@@ -72,8 +72,6 @@ class XxlJobController
             ]);
 
 
-
-
         }else{
             $ctx->JSON(200, [
                 'code' => 500,
