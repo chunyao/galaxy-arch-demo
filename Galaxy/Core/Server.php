@@ -4,6 +4,7 @@ namespace Galaxy\Core;
 
 use Galaxy\Common\Utils\SnowFlakeUtils;
 use Galaxy\Common\XxlJob\XxlJobApi;
+use Galaxy\Common\XxlJob\XxlJobVega;
 use \Swoole;
 use \Hyperf\Nacos\Application;
 use \Hyperf\Nacos\Config;
@@ -57,15 +58,14 @@ class Server
                 ],
             ],
         ]));
-        /*      $application->auth->login($bootConfig['user'], $bootConfig['password']);;*/
-        // $response = $application->config->get('mico_core_service', 'V2SYSTEM_GROUP');
 
-        //    $this->coreConfig = parse_ini_string((string)$response->getBody());
         if ($bootConfig['env'] == "local") {
             $this->config = parse_ini_file(ROOT_PATH . '/local.ini');
             self::$innerConfig = $this->config;
-        } else {
 
+
+
+        } else {
             $application = new Application(new Config([
                 'base_uri' => $bootConfig['url'],
                 'guzzle_config' => [
@@ -83,21 +83,17 @@ class Server
             $register = new ServiceRegister($bootConfig['url'], $this->config['app.name'], $this->config['namespace.id']);
             $register->handle("register");
 
-            $xxlJobRegister = new XxlJobApi();
-            $xxlJobRegister->XxlJobRegistry();
-            $process = new Swoole\Process(function ($worker) use ($bootConfig, $register, $xxlJobRegister) {
+            $process = new Swoole\Process(function ($worker) use ($bootConfig, $register) {
                 echo "注册中心进程ID:" . posix_getpid() . "\n";
                 log::info("注册中心进程ID:" . posix_getpid());
-                swoole_timer_tick(10000, function () use ($worker, $bootConfig, $register, $xxlJobRegister) {
-                    $worker->exec('/bin/sh', array('-c', "rm -rf " . $bootConfig['log.path'] . "/" . $this->config['app.name'] . "/" . date("Ymd", strtotime("-1 day")) . ".log"));
+                swoole_timer_tick(10000, function () use ($worker, $bootConfig, $register) {
+                    $worker->exec('/bin/sh', array('-c', "rm -rf " . $bootConfig['log.path'] . "/" . $this->config['app.name'] . "/*" . date("Ymd", strtotime("-1 day")) . ".log"));
                     self::$localcache = array();
                     try {
-                        $xxlJobRegister->beat();
                         $register->beat();
                     } catch (\Throwable $e) {
                         //var_dump($e);
                     }
-
                 });
             }, false, 0, true);
             $process->start();
@@ -128,7 +124,6 @@ class Server
         $health = $this->server->addListener('0.0.0.0', $managementServerPort, SWOOLE_SOCK_TCP);
         $socket = $this->server->addlistener(ROOT_PATH . "/myserv.sock", 0, SWOOLE_UNIX_STREAM);
 
-        $coreVega = CoreVega::new();
         echo <<<EOL
   __  __      ___                        _         
  |  \/  |__ _| _ ) __ _ _ _  __ _   _ __| |_  _ __ 
@@ -151,8 +146,16 @@ EOL;
             'reload_async' => true,
             'max_wait_time' => 6
         ));
+        //集成 xxl job
+        if (isset( $this->config['xxl.job.enable'])&&$this->config['xxl.job.enable']){
+            $xxlJobRegister = new XxlJobApi();
+            $xxlJobRegister->XxlJobRegistry();
+            $xxljob = $this->server->addListener('0.0.0.0', $this->config['xxl.job.executor.port'], SWOOLE_SOCK_TCP);
+            $xxljobVega = XxlJobVega::new();
+            $xxljob->on('Request', $xxljobVega->handler());
+        }
 
-
+        $coreVega = CoreVega::new();
         $socket->on('Request', $coreVega->handler());
         $health->on('Request', $coreVega->handler());
 

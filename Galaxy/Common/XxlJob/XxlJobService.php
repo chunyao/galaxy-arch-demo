@@ -30,21 +30,22 @@ class XxlJobService
         $data = [
             "registryGroup" => 'EXECUTOR',                     // 固定值
             "registryKey"   => App::$innerConfig['app.name'],       // 执行器AppName
-            "registryValue" => $ip,        // 执行器地址，内置服务跟地址
+            "registryValue" => "http://$ip:".APP::$bootConfig['management.server.port'],        // 执行器地址，内置服务跟地址
         ];
-        self::sendXxlJobRegistry($data, App::$innerConfig['xxl.job.admin.addresses'].'/api/registry', App::$innerConfig['xxl.job.accessToken']);
+
+        self::sendXxlJobRegistry($data, App::$innerConfig['xxl.job.admin.addresses'].'api/registry', App::$innerConfig['xxl.job.accessToken']);
         return true;
     }
 
 
     public static function XxlJobBeat()
     {
-        $url  = App::$innerConfig['xxl.job.admin.addresses'].'/api/beat';
+        $url  = App::$innerConfig['xxl.job.admin.addresses'].'api/beat';
         $ip   = GetLocalIp::getIp();
         $data = [
             "registryGroup" => 'EXECUTOR',                     // 固定值
             "registryKey"   => App::$innerConfig['app.name'],       // 执行器AppName
-            "registryValue" => $ip,        // 执行器地址，内置服务跟地址
+            "registryValue" => "http://$ip:".APP::$bootConfig['management.server.port'],   // 执行器地址，内置服务跟地址
         ];
         return self::sendXxlJobRegistry($data, $url,  App::$innerConfig['xxl.job.accessToken']);
     }
@@ -52,7 +53,7 @@ class XxlJobService
 
     public static function XxlJobIdleBeat(array $params)
     {
-        $url = App::$innerConfig['xxl.job.admin.addresses'].'/api/idleBeat';
+        $url = App::$innerConfig['xxl.job.admin.addresses'].'api/idleBeat';
         $ip = GetLocalIp::getIp();
         $data = [
             "registryGroup" => 'EXECUTOR',                     // 固定值
@@ -72,9 +73,8 @@ class XxlJobService
         if (!$url || !$token) {
             return false;
         }
-        Log::debug('sendXxlJobRegistry:'.json_encode($params, $url, $token));
-        $params = json_encode($params);
 
+        $params = json_encode($params);
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
