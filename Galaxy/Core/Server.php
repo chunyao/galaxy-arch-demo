@@ -3,6 +3,7 @@
 namespace Galaxy\Core;
 
 use Galaxy\Common\Utils\SnowFlakeUtils;
+use Galaxy\Common\XxlJob\XxlJobApi;
 use \Swoole;
 use \Hyperf\Nacos\Application;
 use \Hyperf\Nacos\Config;
@@ -13,7 +14,7 @@ use \Galaxy\Common\Configur\CoreRDS;
 
 class Server
 {
-    protected  Swoole\Http\Server $server;
+    protected Swoole\Http\Server $server;
 
     public static Swoole\Http\Server $serverinfo;
 
@@ -23,7 +24,7 @@ class Server
 
     public static array $innerConfig;
 
-    public static string  $trackId;
+    public static string $trackId;
 
     public static array $bootConfig;
 
@@ -40,12 +41,13 @@ class Server
     protected $tcpClient;
 
     public function __construct($bootConfig)
-    {   self::$bootConfig=$bootConfig;
+    {
+        self::$bootConfig = $bootConfig;
         Log::init();
         echo "主进程ID:" . posix_getpid() . "\n";
-        log::info( "主进程ID:" . posix_getpid());
+        log::info("主进程ID:" . posix_getpid());
         self::$httpClient = new GuzzleHttp\Client();
-        $this->url = 'http://127.0.0.1:'.$bootConfig['management.server.port'].'/rabbitmq';
+        $this->url = 'http://127.0.0.1:' . $bootConfig['management.server.port'] . '/rabbitmq';
         $this->headers = ["Content-Type" => 'application/json'];
         $application = new Application(new Config([
             'base_uri' => $bootConfig['url'],
@@ -56,9 +58,9 @@ class Server
             ],
         ]));
         /*      $application->auth->login($bootConfig['user'], $bootConfig['password']);;*/
-       // $response = $application->config->get('mico_core_service', 'V2SYSTEM_GROUP');
+        // $response = $application->config->get('mico_core_service', 'V2SYSTEM_GROUP');
 
-    //    $this->coreConfig = parse_ini_string((string)$response->getBody());
+        //    $this->coreConfig = parse_ini_string((string)$response->getBody());
         if ($bootConfig['env'] == "local") {
             $this->config = parse_ini_file(ROOT_PATH . '/local.ini');
             self::$innerConfig = $this->config;
@@ -74,21 +76,24 @@ class Server
             ]));
             //          $application->auth->login($bootConfig['user'], $bootConfig['password']);
 
-            $response = $application->config->get($bootConfig['dataId'], $bootConfig['group'],$bootConfig['tenant']);
+            $response = $application->config->get($bootConfig['dataId'], $bootConfig['group'], $bootConfig['tenant']);
             $this->config = parse_ini_string((string)$response->getBody());
             self::$innerConfig = $this->config;
 
             $register = new ServiceRegister($bootConfig['url'], $this->config['app.name'], $this->config['namespace.id']);
             $register->handle("register");
 
-            $process = new Swoole\Process(function ($worker) use ($bootConfig) {
+            $xxlJobRegister = new XxlJobApi();
+            $xxlJobRegister->XxlJobRegistry();
+            $process = new Swoole\Process(function ($worker) use ($bootConfig, $register, $xxlJobRegister) {
                 echo "注册中心进程ID:" . posix_getpid() . "\n";
-                log::info( "注册中心进程ID:" . posix_getpid());
-                swoole_timer_tick(10000, function () use ($worker,$bootConfig) {
-                    $worker->exec('/bin/sh', array('-c', "rm -rf ".$bootConfig['log.path']."/".$this->config['app.name']."/".date("Ymd",strtotime("-1 day")).".log"));
-                    self::$localcache=array();
+                log::info("注册中心进程ID:" . posix_getpid());
+                swoole_timer_tick(10000, function () use ($worker, $bootConfig, $register, $xxlJobRegister) {
+                    $worker->exec('/bin/sh', array('-c', "rm -rf " . $bootConfig['log.path'] . "/" . $this->config['app.name'] . "/" . date("Ymd", strtotime("-1 day")) . ".log"));
+                    self::$localcache = array();
                     try {
-                   //     $register->beat();
+                        $xxlJobRegister->beat();
+                        $register->beat();
                     } catch (\Throwable $e) {
                         //var_dump($e);
                     }
@@ -121,7 +126,7 @@ class Server
         $this->server = new Swoole\Http\Server("0.0.0.0", $serverPort);
         /* http server 健康检测 */
         $health = $this->server->addListener('0.0.0.0', $managementServerPort, SWOOLE_SOCK_TCP);
-        $socket= $this->server->addlistener(ROOT_PATH."/myserv.sock", 0, SWOOLE_UNIX_STREAM);
+        $socket = $this->server->addlistener(ROOT_PATH . "/myserv.sock", 0, SWOOLE_UNIX_STREAM);
 
         $coreVega = CoreVega::new();
         echo <<<EOL
@@ -168,7 +173,7 @@ EOL;
         $this->server->on('WorkerError', array($this, 'onWorkerError'));
         $this->server->on('Request', $vega->handler());
         $this->server->on('Receive', array($this, 'onReceive'));
-        self::$serverinfo=$this->server;
+        self::$serverinfo = $this->server;
     }
 
     public function httpStart()
@@ -198,13 +203,13 @@ EOL;
 
     public function onWorkerStart($server, $worker_id)
     {
-        echo "Worker 进程id:" . posix_getpid()."\n";
-        log::info( "Worker 进程ID:" . posix_getpid());
-        SnowFlakeUtils::init(rand(0,1),rand(0,31));
-    //    CoreDB::init($this->coreConfig);
-  //      CoreDB::enableCoroutine();
-   //     CoreRDS::init($this->coreConfig);
-   //     CoreRDS::enableCoroutine();
+        echo "Worker 进程id:" . posix_getpid() . "\n";
+        log::info("Worker 进程ID:" . posix_getpid());
+        SnowFlakeUtils::init(rand(0, 1), rand(0, 31));
+        //    CoreDB::init($this->coreConfig);
+        //      CoreDB::enableCoroutine();
+        //     CoreRDS::init($this->coreConfig);
+        //     CoreRDS::enableCoroutine();
         /*自动加载用户配置*/
 
 

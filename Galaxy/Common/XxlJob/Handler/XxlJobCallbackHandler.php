@@ -8,11 +8,7 @@
 
 namespace MabangSdk\XxlJob\Support\XxlJob\Job;
 
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Support\Facades\Log;
-use MabangSdk\XxlJob\Facades\XxlJob;
-
-class XxlJobCallbackHandler implements ShouldQueue
+class XxlJobCallbackHandler
 {
     public function run($params)
     {

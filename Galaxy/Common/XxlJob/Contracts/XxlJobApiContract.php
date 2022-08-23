@@ -6,7 +6,7 @@
  * Time: 20:28
  */
 
-namespace MabangSdk\XxlJob\Support\XxlJob\Contracts;
+namespace  Galaxy\Common\XxlJob\Contracts;
 
 interface XxlJobApiContract
 {
@@ -17,7 +17,7 @@ interface XxlJobApiContract
      * @return boolean
      *
      */
-    public function beat($params): bool;
+    public function beat(): bool;
     /**
      *  心跳保活
      *

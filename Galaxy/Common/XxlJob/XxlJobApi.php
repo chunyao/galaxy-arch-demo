@@ -5,23 +5,23 @@
  * Date: 2022-03-02
  * Time: 20:28
  */
-namespace MabangSdk\XxlJob\Support\XxlJob;
 
-use Illuminate\Support\Arr;
-use MabangSdk\XxlJob\Support\XxlJob\Contracts\XxlJobApiContract;
-use Illuminate\Support\Facades\Redis;
+namespace Galaxy\Common\XxlJob;
+
+use  Galaxy\Common\XxlJob\Contracts\XxlJobApiContract;
 
 class XxlJobApi implements XxlJobApiContract
 {
-    public function beat($params): bool
+    public function beat(): bool
     {
-       return XxlJobService::XxlJobBeat($params);
+        return XxlJobService::XxlJobBeat();
     }
 
-    public  function XxlJobRegistry(): bool
+    public function XxlJobRegistry(): bool
     {
         return XxlJobService::XxlJobRegistry();
     }
+
     public function XxlJobIdleBeat($params): bool
     {
         return XxlJobService::XxlJobIdleBeat($params);
@@ -37,6 +37,7 @@ class XxlJobApi implements XxlJobApiContract
     {
         return XxlJobService::XxlJobCallback($params);
     }
+
     /**
      *  配置刷入缓存
      *
