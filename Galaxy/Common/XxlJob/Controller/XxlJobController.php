@@ -2,6 +2,7 @@
 namespace Galaxy\Common\XxlJob\Controller;
 use App;
 use App\Config\RDS;
+use Galaxy\Common\XxlJob\Handler\XxlJobHandler;
 use Galaxy\Common\XxlJob\TaskLoad;
 use Mix\Vega\Context;
 use Swoole\Coroutine as co;
@@ -52,33 +53,23 @@ class XxlJobController
         return;
     }
 
-    public function run(Context $ctx){
-
-        if ($this->checkToken($ctx)){
-            $param=(array)$ctx->getJSON();
-            $tasks = TaskLoad::findFile();
-            foreach ($tasks as $key => $val) {
-                if ($val == "\\App\XxlJob\\") continue;
-                if ($key==$param['executorHandler'])
-                {
-                    co::create(function () use ($val,$param) {
-                        $val::instance()->handler($param);
-                    });
-
-                }
-            }
+    public function run(Context $ctx)
+    {
+        if ($this->checkToken($ctx))
+        {
+            $param = (array)$ctx->getJSON();
+            co::create(function () use ($param) {
+                 XxlJobHandler::handlerCurrent($param);
+            });
             $ctx->JSON(200, [
                 'code' => 200,
                 'msg' => null
             ]);
-
-
         }else{
             $ctx->JSON(200, [
                 'code' => 500,
                 'msg' => 'fail'
             ]);
         }
-        return;
     }
 }
