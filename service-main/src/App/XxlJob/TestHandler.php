@@ -6,8 +6,9 @@ use Galaxy\Common\XxlJob\Handler\BaseHandler;
 
 class TestHandler extends BaseHandler
 {
-    public function handler(): bool
+    public function handler(array $params): bool
     {
+        var_dump($params);
         echo "XxlJob hello world";
         return true;
     }
