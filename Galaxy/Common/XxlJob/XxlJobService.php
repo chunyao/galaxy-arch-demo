@@ -28,102 +28,39 @@ class XxlJobService
     {
         $ip = GetLocalIp::getIp();
         $data = [
-            "registryGroup" => env('XXL_JOB_REGISTRY_GROUP', 'EXECUTOR'),                     // 固定值
-            "registryKey" => env('XXL_JOB_REGISTRY_KEY', App::$innerConfig['app.name']),       // 执行器AppName
-            "registryValue" => env('XXL_JOB_REGISTRY_VALUE', 'http://' . $ip . ':' . App::$bootConfig['management.server.port'] . '/'),        // 执行器地址，内置服务跟地址
+            "registryGroup" => 'EXECUTOR',                     // 固定值
+            "registryKey"   => App::$innerConfig['app.name'],       // 执行器AppName
+            "registryValue" => $ip,        // 执行器地址，内置服务跟地址
         ];
-        self::sendXxlJobRegistry($data, App::$innerConfig['xxl.job.admin.addresses'], App::$innerConfig['xxl.job.accessToken']);
+        self::sendXxlJobRegistry($data, App::$innerConfig['xxl.job.admin.addresses'].'/api/registry', App::$innerConfig['xxl.job.accessToken']);
         return true;
     }
 
 
     public static function XxlJobBeat()
     {
-        $url = '/beat';
-        $ip = GetLocalIp::getIp();
+        $url  = App::$innerConfig['xxl.job.admin.addresses'].'/api/beat';
+        $ip   = GetLocalIp::getIp();
         $data = [
-            "registryGroup" => env('XXL_JOB_REGISTRY_GROUP', 'EXECUTOR'),                     // 固定值
-            "registryKey" => env('XXL_JOB_REGISTRY_KEY', App::$innerConfig['app.name']),       // 执行器AppName
-            "registryValue" => env('XXL_JOB_REGISTRY_VALUE', $ip),        // 执行器地址，内置服务跟地址
+            "registryGroup" => 'EXECUTOR',                     // 固定值
+            "registryKey"   => App::$innerConfig['app.name'],       // 执行器AppName
+            "registryValue" => $ip,        // 执行器地址，内置服务跟地址
         ];
-        return self::sendXxlJob($data, $url);
+        return self::sendXxlJobRegistry($data, $url,  App::$innerConfig['xxl.job.accessToken']);
     }
 
 
     public static function XxlJobIdleBeat(array $params)
     {
-        $url = '/idleBeat';
+        $url = App::$innerConfig['xxl.job.admin.addresses'].'/api/idleBeat';
         $ip = GetLocalIp::getIp();
         $data = [
-            "registryGroup" => env('XXL_JOB_REGISTRY_GROUP', 'EXECUTOR'),                     // 固定值
-            "registryKey" => env('XXL_JOB_REGISTRY_KEY', App::$innerConfig['app.name']),       // 执行器AppName
-            "registryValue" => env('XXL_JOB_REGISTRY_VALUE', $ip),        // 执行器地址，内置服务跟地址
+            "registryGroup" => 'EXECUTOR',                     // 固定值
+            "registryKey"   => App::$innerConfig['app.name'],       // 执行器AppName
+            "registryValue" => $ip,        // 执行器地址，内置服务跟地址
         ];
-        return self::sendXxlJob($data, $url);
+        return self::sendXxlJobRegistry($data, $url,  App::$innerConfig['xxl.job.accessToken']);
     }
-
-    /* public static  function XxlJobCallback(array $params)
-     {
-         $logId =  Arr::get($params, 'logId');
-         $taskXxlJobLogModel = TaskXxljobLogModel::getOne($logId);
-         if (!$taskXxlJobLogModel)
-         {
-             return false;
-         }
-         $taskStatus  = Arr::get($params, 'taskStatus');
-         $taskXxlJobLogModel->task_status = $taskStatus;
-         $handleMsg    = Arr::get($params, 'handleMsg');
-         $handleCode   = Arr::get($params, 'handleCode');
-         //若当前code 为空，则为异步，可直接返回，
-         if (!$handleCode)
-         {
-             return true;
-         }
-         // todo 考虑优化成队列方式处理，此处生产队列，
-         // MQ::publish('SYSTEM_XXL_JOB_REGISTRY_CODE', ['title'=>'延迟20秒追加再次消费', 'xxljob_config'=>$XxlJobConfig ],1000);
-         $url = '/callback';
-         $callbackParams = [[
-             'logId'          => Arr::get($params, 'logId'),
-             "logDateTim"     => Arr::get($params, 'logDateTime'),
-             "handleCode"     => $handleCode,
-             "handleMsg"      =>  $handleMsg,
-             "executeResult" => [
-                 'code' => $handleCode,
-                 'msg'  =>  $handleMsg,
-             ],
-         ]];
-         Log::debug('sendXxlJob:', [$params, $url]);
-         return self::sendXxlJob([$params], $url);
-     }
-
-     public static function sendXxlJob($params, $url)
-     {
-         Log::debug('sendXxlJob:', [$params, $url]);
-         $url    = App::$innerConfig['xxl.job.admin.addresses'].'/api/'. $url;
-         $params = json_encode($params);
-         $token  = env('XXL_JOB_ACCESS_TOKEN', App::$innerConfig['xxl.job.accessToken']);
-
-         Log::debug('sendXxlJob:TOKEN:', [$token, $url]);
-
-         $ch = curl_init();
-         curl_setopt($ch, CURLOPT_URL, $url);
-         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-             'XXL-JOB-ACCESS-TOKEN:'.$token,
-             'Content-Type: application/json',
-             'Content-Length: ' . strlen($params)
-         ));
-         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-         curl_setopt($ch, CURLOPT_BINARYTRANSFER, true);
-         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-         curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
-
-         $res = curl_exec($ch);
-         curl_close($ch);
-
-         Log::debug('sendXxlJob:curl_res:', [$res]);
-
-         return $res;
-     }
 
 
      /*
@@ -135,9 +72,9 @@ class XxlJobService
         if (!$url || !$token) {
             return false;
         }
-        Log::debug('sendXxlJobRegistry:', [$params, $url, $token]);
+        Log::debug('sendXxlJobRegistry:'.json_encode($params, $url, $token));
         $params = json_encode($params);
-        $url = $url . '/api/registry';
+
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
@@ -152,76 +89,12 @@ class XxlJobService
 
         $res = curl_exec($ch);
         curl_close($ch);
-        Log::debug('sendXxlJob:curl_res:', [$res]);
+        Log::debug('sendXxlJob:curl_res:'. json_encode($res));
 
         return $res;
     }
 
 
-    /* public  function XxlRun($params):bool
-     {
-         //ps: $params [{"jobId":9,"executorHandler":null,"executorParams":null,"executorBlockStrategy":"SERIAL_EXECUTION","executorTimeout":0,"logId":1562,"logDateTime":1648891069975,"glueType":"GLUE_SHELL","glueSource":"#!/bin/bash\necho \"xxl-job: hello shell\"\n\necho \"脚本位置：$0\"\necho \"任务参数：$1\"\necho \"分片序号 = $2\"\necho \"分片总数 = $3\"\n\necho \"Good bye!\"\nexit 0","glueUpdatetime":1648870329000,"broadcastIndex":0,"broadcastTotal":1}]
-         //获取任务信息，匹配分发 todo 任务处理逻辑
-         //step 1 . 获取任务id
-         $taskId  =  Arr::get($params, 'jobId');
-         if (!$taskId)
-         {
-             return false;
-         }
-         ## step 2 . 根据任务ID 分配执行方式
-         $taskScene          = self::getSceneInfoByTaskId($taskId);
-         ## step 3 . 增加日志
-         $logId = Arr::get($params, 'logId');
-         Log::debug('task scene:', [$taskScene, $taskId, $logId]);
-         $taskXxlJobLogModel = TaskXxljobLogModel::getOne($logId);
-         if (!$taskXxlJobLogModel)
-         {
-             $taskXxlJobLogModel = new TaskXxljobLogModel();
-             $taskXxlJobLogModel->task_id    = $taskId;
-             $taskXxlJobLogModel->log_id      = $logId;
-             $taskXxlJobLogModel->glue_type  = Arr::get($params, 'glueType');
-             $taskXxlJobLogModel->executor_params_all = json_encode($params, true);
-             //$taskXxlJobLogModel->task_status  =
-             $taskXxlJobLogModel->save();
-         }
-         $taskHandler = Arr::get($taskScene, 'task_handler');
-         $taskType = Arr::get($taskScene, 'task_type');
-         $mqCode = Arr::get($taskScene, 'mq_code');
-         if ($taskScene && $taskHandler  && $taskType == TaskXxljobLogModel::TASK_TYPE_SYNC)
-         {
-             $taskStatus  = TaskXxljobLogModel::TASK_STATUS_ACKED;
-             $result  =  $this->handlerCurrent($taskHandler, $taskId, $params);
-             $taskStatus  = $result ? TaskXxljobLogModel::TASK_STATUS_ACKED : TaskXxljobLogModel::TASK_STATUS_FAIL;
-         }
-         if ($taskScene && $taskType == TaskXxljobLogModel::TASK_TYPE_ASYN && $mqCode )
-         {
-             $taskStatus  = TaskXxljobLogModel::TASK_STATUS_IN_PROCESS;
-             MQ::publish($mqCode, $params);
-         }
-         Log::debug(sprintf('-------- end deal %s msg --------', $taskId));
-         $taskXxlJobLogModel->task_status = $taskStatus;
-         $result_code  = isset($result)?($result?'200':'401'):'';
-
-         $taskXxlJobLogModel->save();
-         $callbackParams =[
-             'taskStatus'     => $taskStatus,
-             'taskId'         => $taskId,
-             'logId'          => $logId,
-             "logDateTim"     => Arr::get($params, 'logDateTime'),
-             "handleCode"     => $result_code,
-             "handleMsg"      => isset($result)?($result?'success':'fail'):'',
-             "executeResult" => [
-                 'code' => $result_code,
-                 'msg'  =>  isset($result)?($result?'success':'fail'):'',
-             ],
-         ];
-         ## step 4 . 插入回调队列处理
-
-         //任务处理完成，执行回调
-         // XxlJobService::XxlJobCallback($callbackParams);
-         return true;
-     }
- */
 
     public function handlerCurrent($handler, $taskId, $params)
     {
