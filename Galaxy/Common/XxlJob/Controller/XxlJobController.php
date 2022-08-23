@@ -11,7 +11,8 @@ class XxlJobController
 
 
     public function checkToken(Context $ctx):bool{
-        if ($ctx->header('XXL-JOB-ACCESS-TOKEN')==App::$innerConfig['xxl.job.accessToken']){
+
+        if ($ctx->header('xxl-job-access-token')==App::$innerConfig['xxl.job.accessToken']){
             return true;
         }else{
             return false;
@@ -61,7 +62,7 @@ class XxlJobController
                 if ($key==$param['executorHandler'])
                 {
                     co::create(function () use ($val,$param) {
-                        $val::handler($param);
+                        $val::instance()->handler($param);
                     });
 
                 }

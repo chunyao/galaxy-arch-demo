@@ -30,7 +30,7 @@ class XxlJobService
         $data = [
             "registryGroup" => 'EXECUTOR',                     // 固定值
             "registryKey"   => App::$innerConfig['app.name'],       // 执行器AppName
-            "registryValue" => "http://$ip:".APP::$bootConfig['management.server.port'],        // 执行器地址，内置服务跟地址
+            "registryValue" => "http://$ip:".APP::$innerConfig['xxl.job.executor.port'],        // 执行器地址，内置服务跟地址
         ];
 
         self::sendXxlJobRegistry($data, App::$innerConfig['xxl.job.admin.addresses'].'api/registry', App::$innerConfig['xxl.job.accessToken']);
@@ -45,7 +45,7 @@ class XxlJobService
         $data = [
             "registryGroup" => 'EXECUTOR',                     // 固定值
             "registryKey"   => App::$innerConfig['app.name'],       // 执行器AppName
-            "registryValue" => "http://$ip:".APP::$bootConfig['management.server.port'],   // 执行器地址，内置服务跟地址
+            "registryValue" => "http://$ip:".APP::$innerConfig['xxl.job.executor.port'],   // 执行器地址，内置服务跟地址
         ];
         return self::sendXxlJobRegistry($data, $url,  App::$innerConfig['xxl.job.accessToken']);
     }
@@ -53,7 +53,7 @@ class XxlJobService
 
     public static function XxlJobIdleBeat(array $params)
     {
-        $url = App::$innerConfig['xxl.job.admin.addresses'].'api/idleBeat';
+        $url = "http://$ip:".APP::$innerConfig['xxl.job.executor.port'].'/api/idleBeat';
         $ip = GetLocalIp::getIp();
         $data = [
             "registryGroup" => 'EXECUTOR',                     // 固定值
