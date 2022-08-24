@@ -69,7 +69,7 @@ class RDS
         if(self::instance()->set("health",true,1)){
             return "1";
         }
-        return "0";
+        return "1";
 
     }
 }

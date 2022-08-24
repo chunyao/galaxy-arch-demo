@@ -67,6 +67,6 @@ class ES
         }catch (\Throwable $ex){
 
         }
-        return "0";
+        return "1";
     }
 }
