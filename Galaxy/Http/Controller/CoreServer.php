@@ -60,7 +60,7 @@ class CoreServer
                         'message' => 'success',
                         'data' => "DOWN"
                     ]);
-                    log::error($val . " 配置错误 下线");
+                    print_r($val . " 配置错误 下线");
                     App::$serverinfo->shutdown();
                     return;
                 }
