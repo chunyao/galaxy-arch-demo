@@ -44,9 +44,13 @@ class MQ
         $username = self::$config['rabbitmq.username'];
         $password = self::$config['rabbitmq.password'];
         $vhost = self::$config['rabbitmq.send.vhost'][0];
-        $mq = new Rabbitmq($host, $port, $username, $password, $vhost, null);
 
-        self::$instance = $mq;
+        if (self::$instance == null) {
+            //如果没有,则创建当前类的实例
+
+            self::$instance =  new Rabbitmq($host, $port, $username, $password, $vhost, 1);
+        }
+
         return self::$instance;
     }
 
