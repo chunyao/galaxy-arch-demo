@@ -48,6 +48,7 @@ class CoreServer
 
     public function health(Context $ctx)
     {
+        echo "健康检测";
         try {
             $configs = ConfigLoad::findFile();
             foreach ($configs as $key => $val) {
