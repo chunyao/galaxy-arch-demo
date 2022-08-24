@@ -153,6 +153,7 @@ EOL;
             $xxljob = $this->server->addListener('0.0.0.0', 9999, SWOOLE_SOCK_TCP);
             $xxljobVega = XxlJobVega::new();
             $xxljob->on('Request', $xxljobVega->handler());
+            $process2= new Swoole\Process(function ($worker) use ($bootConfig, $register) {
             swoole_timer_tick(10000, function () use ($bootConfig, $xxlJobRegister) {
                 try {
                     $xxlJobRegister->XxlJobRegistry();
@@ -160,7 +161,8 @@ EOL;
                     //var_dump($e);
                 }
             });
-
+            });
+            $process2->start();
         }
 
         $coreVega = CoreVega::new();
