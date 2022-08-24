@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);//开启严格模式
 
-namespace App\Service;
+namespace Galaxy\Service;
 
 use App\Config\RDS;
 use App\Repository\Model\BaseModel;

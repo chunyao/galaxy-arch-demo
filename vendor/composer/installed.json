@@ -676,17 +676,17 @@
         },
         {
             "name": "google/protobuf",
-            "version": "v3.21.2",
-            "version_normalized": "3.21.2.0",
+            "version": "v3.21.5",
+            "version_normalized": "3.21.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/protocolbuffers/protobuf-php.git",
-                "reference": "374edda06747bb1d6899d11af646ccab38646e65"
+                "reference": "70649d33d2b6e8fd0db6d9b6fffc7f46f01f1438"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/protocolbuffers/protobuf-php/zipball/374edda06747bb1d6899d11af646ccab38646e65",
-                "reference": "374edda06747bb1d6899d11af646ccab38646e65",
+                "url": "https://api.github.com/repos/protocolbuffers/protobuf-php/zipball/70649d33d2b6e8fd0db6d9b6fffc7f46f01f1438",
+                "reference": "70649d33d2b6e8fd0db6d9b6fffc7f46f01f1438",
                 "shasum": ""
             },
             "require": {
@@ -698,7 +698,7 @@
             "suggest": {
                 "ext-bcmath": "Need to support JSON deserialization"
             },
-            "time": "2022-06-24T21:52:31+00:00",
+            "time": "2022-08-09T19:53:56+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -717,8 +717,7 @@
                 "proto"
             ],
             "support": {
-                "issues": "https://github.com/protocolbuffers/protobuf-php/issues",
-                "source": "https://github.com/protocolbuffers/protobuf-php/tree/v3.21.2"
+                "source": "https://github.com/protocolbuffers/protobuf-php/tree/v3.21.5"
             },
             "install-path": "../google/protobuf"
         },
@@ -1275,17 +1274,17 @@
         },
         {
             "name": "hyperf/engine",
-            "version": "v1.2.1",
-            "version_normalized": "1.2.1.0",
+            "version": "v1.2.2",
+            "version_normalized": "1.2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyperf/engine.git",
-                "reference": "be371c486d1e0809fd84d248f554229c985409a7"
+                "reference": "12fdb2b4cec9ee92fc808321a7378cc6251e52cd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hyperf/engine/zipball/be371c486d1e0809fd84d248f554229c985409a7",
-                "reference": "be371c486d1e0809fd84d248f554229c985409a7",
+                "url": "https://api.github.com/repos/hyperf/engine/zipball/12fdb2b4cec9ee92fc808321a7378cc6251e52cd",
+                "reference": "12fdb2b4cec9ee92fc808321a7378cc6251e52cd",
                 "shasum": ""
             },
             "require": {
@@ -1301,7 +1300,7 @@
             "suggest": {
                 "ext-swoole": ">=4.5"
             },
-            "time": "2022-01-22T14:24:31+00:00",
+            "time": "2022-08-06T05:25:43+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1324,7 +1323,7 @@
             ],
             "support": {
                 "issues": "https://github.com/hyperf/engine/issues",
-                "source": "https://github.com/hyperf/engine/tree/v1.2.1"
+                "source": "https://github.com/hyperf/engine/tree/v1.2.2"
             },
             "install-path": "../hyperf/engine"
         },
@@ -1434,17 +1433,17 @@
         },
         {
             "name": "hyperf/utils",
-            "version": "v2.2.33",
-            "version_normalized": "2.2.33.0",
+            "version": "v2.2.34",
+            "version_normalized": "2.2.34.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyperf/utils.git",
-                "reference": "2ed3ce8552a030406bc161dc58b2c7348434c72b"
+                "reference": "9c8519392166a6c8057cc52f7d02e1ac638581f5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hyperf/utils/zipball/2ed3ce8552a030406bc161dc58b2c7348434c72b",
-                "reference": "2ed3ce8552a030406bc161dc58b2c7348434c72b",
+                "url": "https://api.github.com/repos/hyperf/utils/zipball/9c8519392166a6c8057cc52f7d02e1ac638581f5",
+                "reference": "9c8519392166a6c8057cc52f7d02e1ac638581f5",
                 "shasum": ""
             },
             "require": {
@@ -1463,7 +1462,7 @@
                 "symfony/serializer": "Required to use SymfonyNormalizer (^5.0)",
                 "symfony/var-dumper": "Required to use the dd function (^5.0)."
             },
-            "time": "2022-05-24T13:10:54+00:00",
+            "time": "2022-07-21T05:42:54+00:00",
             "type": "library",
             "extra": {
                 "hyperf": {
@@ -1566,17 +1565,17 @@
         },
         {
             "name": "laminas/laminas-code",
-            "version": "4.5.2",
-            "version_normalized": "4.5.2.0",
+            "version": "4.6.0",
+            "version_normalized": "4.6.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-code.git",
-                "reference": "da01fb74c08f37e20e7ae49f1e3ee09aa401ebad"
+                "reference": "16ec7577ff315d53ac2e1b1f03a344d8fe680a6e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-code/zipball/da01fb74c08f37e20e7ae49f1e3ee09aa401ebad",
-                "reference": "da01fb74c08f37e20e7ae49f1e3ee09aa401ebad",
+                "url": "https://api.github.com/repos/laminas/laminas-code/zipball/16ec7577ff315d53ac2e1b1f03a344d8fe680a6e",
+                "reference": "16ec7577ff315d53ac2e1b1f03a344d8fe680a6e",
                 "shasum": ""
             },
             "require": {
@@ -1588,14 +1587,14 @@
                 "laminas/laminas-coding-standard": "^2.3.0",
                 "laminas/laminas-stdlib": "^3.6.1",
                 "phpunit/phpunit": "^9.5.10",
-                "psalm/plugin-phpunit": "^0.16.1",
+                "psalm/plugin-phpunit": "^0.17.0",
                 "vimeo/psalm": "^4.13.1"
             },
             "suggest": {
                 "doctrine/annotations": "Doctrine\\Common\\Annotations >=1.0 for annotation features",
                 "laminas/laminas-stdlib": "Laminas\\Stdlib component"
             },
-            "time": "2022-06-06T11:26:02+00:00",
+            "time": "2022-07-28T22:46:52+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -1635,17 +1634,17 @@
         },
         {
             "name": "lukasoppermann/http-status",
-            "version": "3.2.0",
-            "version_normalized": "3.2.0.0",
+            "version": "3.2.1",
+            "version_normalized": "3.2.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/lukasoppermann/http-status.git",
-                "reference": "3dfb178f30c18865366b63f3c7a732397fe7f514"
+                "reference": "2ea4e39d713ae7285080a993dcd96b3c0e2c5c0c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lukasoppermann/http-status/zipball/3dfb178f30c18865366b63f3c7a732397fe7f514",
-                "reference": "3dfb178f30c18865366b63f3c7a732397fe7f514",
+                "url": "https://api.github.com/repos/lukasoppermann/http-status/zipball/2ea4e39d713ae7285080a993dcd96b3c0e2c5c0c",
+                "reference": "2ea4e39d713ae7285080a993dcd96b3c0e2c5c0c",
                 "shasum": ""
             },
             "require": {
@@ -1657,7 +1656,7 @@
                 "php-coveralls/php-coveralls": "^2.4",
                 "phpunit/phpunit": "~9.0"
             },
-            "time": "2021-12-06T19:14:42+00:00",
+            "time": "2022-08-23T11:50:24+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1690,7 +1689,7 @@
             ],
             "support": {
                 "issues": "https://github.com/lukasoppermann/http-status/issues",
-                "source": "https://github.com/lukasoppermann/http-status/tree/3.2.0"
+                "source": "https://github.com/lukasoppermann/http-status/tree/3.2.1"
             },
             "install-path": "../lukasoppermann/http-status"
         },
@@ -3016,6 +3015,181 @@
             "install-path": "../react/promise"
         },
         {
+            "name": "swlib/http",
+            "version": "v1.0.8",
+            "version_normalized": "1.0.8.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/swlib/http.git",
+                "reference": "e97d9d05b741d4ee7ef58824a280acf983354d5e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/swlib/http/zipball/e97d9d05b741d4ee7ef58824a280acf983354d5e",
+                "reference": "e97d9d05b741d4ee7ef58824a280acf983354d5e",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1",
+                "psr/http-message": "~1.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~7"
+            },
+            "time": "2020-08-15T10:36:45+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "files": [
+                    "src/functions.php"
+                ],
+                "psr-4": {
+                    "Swlib\\Http\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "twosee",
+                    "email": "twose@qq.com"
+                }
+            ],
+            "description": "Swlib-HTTP base class repository, PSR implementation",
+            "keywords": [
+                "http",
+                "php",
+                "psr7",
+                "swoole"
+            ],
+            "support": {
+                "issues": "https://github.com/swlib/http/issues",
+                "source": "https://github.com/swlib/http/tree/v1.x"
+            },
+            "install-path": "../swlib/http"
+        },
+        {
+            "name": "swlib/saber",
+            "version": "v1.0.18",
+            "version_normalized": "1.0.18.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/swlib/saber.git",
+                "reference": "24034ea70d64063cc9032c4aa08cb888995df190"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/swlib/saber/zipball/24034ea70d64063cc9032c4aa08cb888995df190",
+                "reference": "24034ea70d64063cc9032c4aa08cb888995df190",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1",
+                "swlib/http": "^1.0",
+                "swlib/util": "^1.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~7"
+            },
+            "time": "2021-04-20T06:28:59+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "files": [
+                    "src/include/functions.php"
+                ],
+                "psr-4": {
+                    "Swlib\\Saber\\": "src"
+                },
+                "classmap": [
+                    "src/Saber.php",
+                    "src/SaberGM.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "twosee",
+                    "email": "twose@qq.com"
+                }
+            ],
+            "description": "Swoole coroutine HTTP client",
+            "keywords": [
+                "ajax",
+                "axios",
+                "client",
+                "coroutine",
+                "curl",
+                "http",
+                "php",
+                "psr7",
+                "requests",
+                "swoole"
+            ],
+            "support": {
+                "issues": "https://github.com/swlib/saber/issues",
+                "source": "https://github.com/swlib/saber/tree/v1.0.18"
+            },
+            "install-path": "../swlib/saber"
+        },
+        {
+            "name": "swlib/util",
+            "version": "v1.0.3",
+            "version_normalized": "1.0.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/swlib/util.git",
+                "reference": "300f551753702f5bfcbfb814d53bdbf057719a43"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/swlib/util/zipball/300f551753702f5bfcbfb814d53bdbf057719a43",
+                "reference": "300f551753702f5bfcbfb814d53bdbf057719a43",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~7"
+            },
+            "time": "2020-08-24T10:00:58+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Swlib\\Util\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "twosee",
+                    "email": "twose@qq.com"
+                }
+            ],
+            "description": "Swlib Toolkit",
+            "keywords": [
+                "php",
+                "swlib",
+                "swoole",
+                "util"
+            ],
+            "support": {
+                "issues": "https://github.com/swlib/util/issues",
+                "source": "https://github.com/swlib/util/tree/v1.0.3"
+            },
+            "install-path": "../swlib/util"
+        },
+        {
             "name": "symfony/deprecation-contracts",
             "version": "v2.5.2",
             "version_normalized": "2.5.2.0",
@@ -3087,17 +3261,17 @@
         },
         {
             "name": "symfony/finder",
-            "version": "v5.4.8",
-            "version_normalized": "5.4.8.0",
+            "version": "v5.4.11",
+            "version_normalized": "5.4.11.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/finder.git",
-                "reference": "9b630f3427f3ebe7cd346c277a1408b00249dad9"
+                "reference": "7872a66f57caffa2916a584db1aa7f12adc76f8c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/finder/zipball/9b630f3427f3ebe7cd346c277a1408b00249dad9",
-                "reference": "9b630f3427f3ebe7cd346c277a1408b00249dad9",
+                "url": "https://api.github.com/repos/symfony/finder/zipball/7872a66f57caffa2916a584db1aa7f12adc76f8c",
+                "reference": "7872a66f57caffa2916a584db1aa7f12adc76f8c",
                 "shasum": ""
             },
             "require": {
@@ -3105,7 +3279,7 @@
                 "symfony/deprecation-contracts": "^2.1|^3",
                 "symfony/polyfill-php80": "^1.16"
             },
-            "time": "2022-04-15T08:07:45+00:00",
+            "time": "2022-07-29T07:37:50+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -3133,7 +3307,7 @@
             "description": "Finds files and directories via an intuitive fluent interface",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/finder/tree/v5.4.8"
+                "source": "https://github.com/symfony/finder/tree/v5.4.11"
             },
             "funding": [
                 {

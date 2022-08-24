@@ -50,10 +50,8 @@ class XxlJobHandler
             $return = false;
         }
         //任务处理回调
-        co::create(function () use ($params)
-        {
+
             XxlJobService::XxlJobCallback($params);
-        });
 
         return $return;
     }

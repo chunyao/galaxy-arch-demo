@@ -9,7 +9,8 @@
         "mix/redis-subscriber": "^3.0",
         "mix/vega": "^3.0",
         "airmanbzh/pheign": "^1.0",
-        "elasticsearch/elasticsearch": "7.0.0"
+        "elasticsearch/elasticsearch": "7.0.0",
+        "swlib/saber": "^1.0"
     },
 
     "autoload-dev": {

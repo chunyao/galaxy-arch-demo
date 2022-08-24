@@ -7,8 +7,8 @@ namespace Composer\Autoload;
 class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
 {
     public static $files = array (
-        '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
+        '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
         '950e8c5ec01dc90f029c243f73011631' => __DIR__ . '/..' . '/goaop/parser-reflection/src/bootstrap.php',
         'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
@@ -18,6 +18,8 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         'bbeb7603826cb9296dde3ca1a840af47' => __DIR__ . '/..' . '/hyperf/utils/src/Functions.php',
         '253c157292f75eb38082b5acb06f3f01' => __DIR__ . '/..' . '/nikic/fast-route/src/functions.php',
         'decc78cc4436b1292c6c0d151b19445c' => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib/bootstrap.php',
+        '045cd5d476702c3529ef3e1b9f615e70' => __DIR__ . '/..' . '/swlib/http/src/functions.php',
+        '3a6b4a1bc7c69c0620b4ef88fb5d27d0' => __DIR__ . '/..' . '/swlib/saber/src/include/functions.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -34,6 +36,9 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         array (
             'Symfony\\Polyfill\\Php80\\' => 23,
             'Symfony\\Component\\Finder\\' => 25,
+            'Swlib\\Util\\' => 11,
+            'Swlib\\Saber\\' => 12,
+            'Swlib\\Http\\' => 11,
         ),
         'R' => 
         array (
@@ -126,6 +131,18 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         'Symfony\\Component\\Finder\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/finder',
+        ),
+        'Swlib\\Util\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/swlib/util/src',
+        ),
+        'Swlib\\Saber\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/swlib/saber/src',
+        ),
+        'Swlib\\Http\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/swlib/http/src',
         ),
         'React\\Promise\\' => 
         array (
@@ -320,6 +337,8 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'PhpToken' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/PhpToken.php',
         'Stringable' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Stringable.php',
+        'Swlib\\Saber' => __DIR__ . '/..' . '/swlib/saber/src/Saber.php',
+        'Swlib\\SaberGM' => __DIR__ . '/..' . '/swlib/saber/src/SaberGM.php',
         'UnhandledMatchError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/UnhandledMatchError.php',
         'ValueError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/ValueError.php',
     );
