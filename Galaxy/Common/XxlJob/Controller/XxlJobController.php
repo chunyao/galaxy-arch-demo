@@ -57,6 +57,7 @@ class XxlJobController
     {
         if ($this->checkToken($ctx))
         {
+
             $param = (array)$ctx->getJSON();
             co::create(function () use ($param) {
                  XxlJobHandler::handlerCurrent($param);

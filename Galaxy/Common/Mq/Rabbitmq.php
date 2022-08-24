@@ -26,12 +26,15 @@ class Rabbitmq
         $this->port = $port;
         $this->vhost = $vhost;
         $this->ch = $channel;
+
     }
 
     public function connect()
     {
         $this->con = new AMQPStreamConnection($this->host, $this->port, $this->username, $this->password, $this->vhost, false, 'AMQPLAIN', null, 'en_US', 3, 21, null, false, 10);
-        $this->channel = $this->con->channel(1);
+
+
+        $this->channel = $this->con->channel($this->ch);
 
         return true;
     }
@@ -46,6 +49,7 @@ class Rabbitmq
     public function publish($messageBody, $exchange, $routeKey, $head = [])
     {
         if (!$this->connect()) {
+            log::error("rabbit 连接丢失");
             return false;
         }
 
@@ -59,7 +63,6 @@ class Rabbitmq
     public function __destruct()
     {
         try {
-            $this->channel->close();
             $this->con->close();
         }catch (\Throwable $ex){
             Log::error(sprintf('%s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));

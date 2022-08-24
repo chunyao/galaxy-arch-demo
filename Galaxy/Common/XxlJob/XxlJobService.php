@@ -97,8 +97,8 @@ class XxlJobService
             "handleCode"     => 200,
             "handleMsg"      =>  'success',
             "executeResult"  => [
-                'code' => 200,
-                'msg'  =>  'success',
+                'code' => Arr::get($params, 'code'),
+                'msg'  =>  Arr::get($params, 'msg'),
             ],
         ]];
 

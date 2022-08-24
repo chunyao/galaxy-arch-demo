@@ -153,6 +153,18 @@ EOL;
             $xxljob = $this->server->addListener('0.0.0.0', $this->config['xxl.job.executor.port'], SWOOLE_SOCK_TCP);
             $xxljobVega = XxlJobVega::new();
             $xxljob->on('Request', $xxljobVega->handler());
+            $xxlbeat = new Swoole\Process(function ($worker) use ($bootConfig, $xxlJobRegister) {
+                echo "XxlJob注册中心进程ID:" . posix_getpid() . "\n";
+                log::info("XxlJob注册中心进程ID:" . posix_getpid());
+                swoole_timer_tick(10000, function () use ($worker, $bootConfig, $xxlJobRegister) {
+                    try {
+                        $xxlJobRegister->XxlJobRegistry();
+                    } catch (\Throwable $e) {
+                        //var_dump($e);
+                    }
+                });
+            }, false, 0, true);
+            $xxlbeat->start();
         }
 
         $coreVega = CoreVega::new();

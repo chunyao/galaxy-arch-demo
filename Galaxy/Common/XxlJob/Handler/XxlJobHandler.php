@@ -35,23 +35,27 @@ class XxlJobHandler
             }
 
             $obj = new $className;
+            Log::info("任务开始");
             $return =  $obj::instance()->handler($params);
+            $params['handleCode']=200;
+            $params['msg']='success';
 
         } catch (\Throwable $e) {
             Log::error(sprintf('deal %s msg error', $logId), [
-                'msg'    => $params,
+                'msg'    => json_encode($params),
                 'e_file' => $e->getFile(),
                 'e_line' => $e->getLine(),
                 'e_code' => $e->getCode(),
                 'e_msg' => $e->getMessage(),
-                'e_trace' => $e->getTraceAsString()
+                'e_trace' => json_encode($e->getTraceAsString())
             ]);
-
+            $params['handleCode']=500;
+            $params['msg']=$e->getMessage();
             $return = false;
         }
         //任务处理回调
 
-            XxlJobService::XxlJobCallback($params);
+        XxlJobService::XxlJobCallback($params);
 
         return $return;
     }
