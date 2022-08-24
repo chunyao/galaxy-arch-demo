@@ -13,6 +13,7 @@ use Galaxy\Core\Server;
 
 $opts = array('env:', 'user:', 'password:', 'dataId:', 'group:', 'url:', 'server.port:', 'management.server.port:', 'log.path:', 'tenant:', 'node.ip:', 'node.port:');
 $bootConfig = getopt('', $opts);
+var_dump($bootConfig);
 if ($bootConfig['env'] == "local") {
     SeasLog::setBasePath("./data/logs");
 }
