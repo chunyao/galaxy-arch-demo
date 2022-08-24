@@ -77,7 +77,6 @@ class XxlJobService
 
         $res = curl_exec($ch);
         curl_close($ch);
-        Log::debug('sendXxlJob:curl_res:'. json_encode($res));
 
         return $res;
     }
@@ -102,7 +101,7 @@ class XxlJobService
             ],
         ]];
 
-
+        Log::info('任务结束');
         return self::sendXxlJobRegistry($callbackParams, $url,  App::$innerConfig['xxl.job.accessToken']);
     }
 }

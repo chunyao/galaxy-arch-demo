@@ -1,5 +1,7 @@
 <?php
+
 namespace Galaxy\Common\XxlJob\Controller;
+
 use App;
 use App\Config\RDS;
 use Galaxy\Common\XxlJob\Handler\XxlJobHandler;
@@ -11,23 +13,25 @@ class XxlJobController
 {
 
 
-    public function checkToken(Context $ctx):bool{
+    public function checkToken(Context $ctx): bool
+    {
 
-        if ($ctx->header('xxl-job-access-token')==App::$innerConfig['xxl.job.accessToken']){
+        if ($ctx->header('xxl-job-access-token') == App::$innerConfig['xxl.job.accessToken']) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
-    public function idleBeat(Context $ctx){
-        if ($this->checkToken($ctx)){
+    public function idleBeat(Context $ctx)
+    {
+        if ($this->checkToken($ctx)) {
             $ctx->JSON(200, [
                 'code' => 200,
                 'msg' => null
             ]);
 
-        }else{
+        } else {
             $ctx->JSON(200, [
                 'code' => 500,
                 'msg' => 'fail'
@@ -36,15 +40,16 @@ class XxlJobController
         return;
     }
 
-    public function beat(Context $ctx){
+    public function beat(Context $ctx)
+    {
 
-        if ($this->checkToken($ctx)){
+        if ($this->checkToken($ctx)) {
             $ctx->JSON(200, [
                 'code' => 200,
                 'msg' => null
             ]);
 
-        }else{
+        } else {
             $ctx->JSON(200, [
                 'code' => 500,
                 'msg' => 'fail'
@@ -55,18 +60,17 @@ class XxlJobController
 
     public function run(Context $ctx)
     {
-        if ($this->checkToken($ctx))
-        {
+        if ($this->checkToken($ctx)) {
 
             $param = (array)$ctx->getJSON();
-            co::create(function () use ($param) {
-                 XxlJobHandler::handlerCurrent($param);
-            });
+
+            XxlJobHandler::handlerCurrent($param);
+
             $ctx->JSON(200, [
                 'code' => 200,
                 'msg' => null
             ]);
-        }else{
+        } else {
             $ctx->JSON(200, [
                 'code' => 500,
                 'msg' => 'fail'
