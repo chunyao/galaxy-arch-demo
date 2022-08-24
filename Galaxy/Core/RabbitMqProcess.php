@@ -87,7 +87,7 @@ class RabbitMqProcess
             }
 
         } catch (\Throwable $ex) {
-            Log::error(sprintf('%s error', $this->config['rabbitmq.queue'][$i]));
+            Log::error(sprintf('消息队列 %s error', $this->config['rabbitmq.queue'][$i]));
             Log::error(sprintf('%s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));
 
         }
@@ -109,6 +109,10 @@ class RabbitMqProcess
          */
         $exName = $this->config['rabbitmq.exchange'][$i];
         $channel[$num]->exchange_declare($exName, 'direct', false, true, false);
+        if(isset($this->config['rabbitmq.exchange.dead'][$i])){
+            $channel[$num]->exchange_declare($this->config['rabbitmq.exchange.dead'][$i], 'direct', false, true, false);
+        }
+
         // 创建队列
         /**
          * name:xxx             队列名称
@@ -118,8 +122,10 @@ class RabbitMqProcess
          * auto_delete:false    自动删除，最后一个
          */
         $queueName = $this->config['rabbitmq.queue'][$i];
-        $channel[$num]->queue_declare($queueName, false, true, false, false);
-
+        $channel[$num]->queue_declare($queueName, true, true, false, false);
+        if(isset($this->config['rabbitmq.queue.dead'][$i])){
+            $channel[$num]->queue_declare($this->config['rabbitmq.queue.dead'][$i],false, true, false, false);
+        }
         // 绑定
         /**
          * $queue           队列名称
@@ -128,7 +134,9 @@ class RabbitMqProcess
          */
         $routeKey = $this->config['rabbitmq.routekey'][$i];
         $channel[$num]->queue_bind($queueName, $exName, $routeKey);
-
+        if(isset($this->config['rabbitmq.routekey.dead'][$i])){
+            $channel[$num]->queue_bind( $this->config['rabbitmq.queue.dead'][$i], $this->config['rabbitmq.exchange.dead'][$i], $this->config['rabbitmq.routekey.dead'][$i]);
+        }
         // 消费
         /**
          * $queue = '',         被消费队列名称

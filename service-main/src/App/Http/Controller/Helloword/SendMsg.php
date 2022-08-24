@@ -10,7 +10,7 @@ use Mix\Vega\Context;
 
 class SendMsg
 {
-    private $exchange = "ARCH_TEST2_EXCHANEG";
+    private $exchange = "ARCH_TEST1_EXCHANEG";
     private $routekey = "Qwer1234";
     private $snowFlak ;
     public function __construct()

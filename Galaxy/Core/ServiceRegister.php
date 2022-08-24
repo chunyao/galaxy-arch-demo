@@ -4,27 +4,22 @@ namespace Galaxy\Core;
 
 
 
+use Galaxy\Common\Utils\GetLocalIp;
+
 class ServiceRegister
 {
-    private string $host;
-
     private string $serviceName;
 
     private string $namespaceId;
 
     private string $ip;
 
+    private string $host;
+
     public function __construct($host, $serviceName, $namespaceId)
     {
-
-        $ip = swoole_get_local_ip();
-        if (isset($ip['en0'])) {
-            $this->ip = $ip['en0'];
-        }
-        if (isset($ip['eth0'])) {
-            $this->ip = $ip['eth0'];
-        }
-        $this->host = $host;
+        $this->host=$host;
+        $this->ip = GetLocalIp::getIp();
         $this->serviceName = $serviceName;
         $this->namespaceId = $namespaceId;
     }
