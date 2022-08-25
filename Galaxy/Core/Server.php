@@ -87,7 +87,7 @@ class Server
                 echo "注册中心进程ID:" . posix_getpid() . "\n";
                 log::info("注册中心进程ID:" . posix_getpid());
                 swoole_timer_tick(10000, function () use ($worker, $bootConfig, $register) {
-                    $worker->exec('/bin/sh', array('-c', "rm -rf " . $bootConfig['log.path'] . "/" . $this->config['app.name'] . "/*" . date("Ymd", strtotime("-1 day")) . ".log"));
+                    $worker->exec('/bin/sh', array('-c', "rm -rf " . $bootConfig['log.path'] . "/*" . $this->config['app.name'] . "/*" . date("Ymd", strtotime("-1 day")) . ".log"));
                     self::$localcache = array();
                     try {
                         $register->beat();
