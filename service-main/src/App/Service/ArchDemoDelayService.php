@@ -15,14 +15,14 @@ class ArchDemoDelayService extends BaseService
     private $routekey_delay = "ARCH_TEST1_KEY_DELAY";
 
     public function sendMsg1():bool{
-        $data['id'] =  SnowFlakeUtils::generateID();
+        $data['messageId'] =  SnowFlakeUtils::generateID();
         $data['body'] = "With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s." ;
         $head=[];
         MQ::instance()->publish(json_encode($data), $this->exchange, $this->routekey,$head);
         return true;
     }
     public function sendMsgDelay1():bool{
-        $data['id'] =  SnowFlakeUtils::generateID();
+        $data['messageId'] =  SnowFlakeUtils::generateID();
         $data['body'] = "With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s." ;
         $head=[];
         MQ::instance()->publish(json_encode($data), $this->exchange_delay, $this->routekey_delay,$head);
