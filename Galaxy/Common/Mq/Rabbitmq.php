@@ -51,7 +51,7 @@ class Rabbitmq
             $this->channel = $this->con->channel($this->ch);
         }
 
-        $head = array_merge(array('content_type' => 'text/plain', 'content_encoding' => 'gzip', 'delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT), $head);
+        $head = array_merge(array('content_type' => 'text/json', 'content_encoding' => 'gzip', 'delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT), $head);
         $message = new AMQPMessage($messageBody, $head);
         $this->channel->basic_publish($message, $exchange, $routeKey);
         // 响应ack
