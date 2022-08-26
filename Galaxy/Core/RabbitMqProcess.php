@@ -37,7 +37,7 @@ class RabbitMqProcess
 
     public function initQueues($ch, $i)
     {
-        $up = 5;
+        $up = 3;
 
         try {
             /*       $host,
@@ -74,13 +74,11 @@ class RabbitMqProcess
             for ($chl = 0; $chl < $up; $chl++) {
                 $obj[$chl] = $this->consumeMessage($chl, $i);
             }
-
             while (1) {
                 for ($chl = 0; $chl < $up; $chl++) {
-                    if ($obj[$chl]->is_consuming()){
-                        $obj[$chl]->wait();
-                    }
-                    else{
+                    if ($obj[$chl]->is_consuming()) {
+                        $obj[$chl]->wait(null, true);
+                    } else {
                         $obj[$chl] = $this->consumeMessage($chl, $i);
                     }
                 }
@@ -99,7 +97,7 @@ class RabbitMqProcess
         $c = rand(0, 2000);
         // 创建通道
         $channel[$num] = $this->con->channel($c);
-        $channel[$num]->basic_qos(null, 20, null);
+        $channel[$num]->basic_qos(null, 1, false);
         /**
          * name:xxx             交换机名称
          * type:direct          类型 fanut,direct,topic,headers
@@ -109,7 +107,7 @@ class RabbitMqProcess
          */
         $exName = $this->config['rabbitmq.exchange'][$i];
         $channel[$num]->exchange_declare($exName, 'direct', false, true, false);
-        if(isset($this->config['rabbitmq.exchange.dead'][$i])){
+        if (isset($this->config['rabbitmq.exchange.dead'][$i])) {
             $channel[$num]->exchange_declare($this->config['rabbitmq.exchange.dead'][$i], 'direct', false, true, false);
         }
 
@@ -123,8 +121,8 @@ class RabbitMqProcess
          */
         $queueName = $this->config['rabbitmq.queue'][$i];
         $channel[$num]->queue_declare($queueName, true, true, false, false);
-        if(isset($this->config['rabbitmq.queue.dead'][$i])){
-            $channel[$num]->queue_declare($this->config['rabbitmq.queue.dead'][$i],false, true, false, false);
+        if (isset($this->config['rabbitmq.queue.dead'][$i])) {
+            $channel[$num]->queue_declare($this->config['rabbitmq.queue.dead'][$i], false, true, false, false);
         }
         // 绑定
         /**
@@ -134,8 +132,8 @@ class RabbitMqProcess
          */
         $routeKey = $this->config['rabbitmq.routekey'][$i];
         $channel[$num]->queue_bind($queueName, $exName, $routeKey);
-        if(isset($this->config['rabbitmq.routekey.dead'][$i])){
-            $channel[$num]->queue_bind( $this->config['rabbitmq.queue.dead'][$i], $this->config['rabbitmq.exchange.dead'][$i], $this->config['rabbitmq.routekey.dead'][$i]);
+        if (isset($this->config['rabbitmq.routekey.dead'][$i])) {
+            $channel[$num]->queue_bind($this->config['rabbitmq.queue.dead'][$i], $this->config['rabbitmq.exchange.dead'][$i], $this->config['rabbitmq.routekey.dead'][$i]);
         }
         // 消费
         /**
@@ -149,6 +147,7 @@ class RabbitMqProcess
          */
         // 回调
         $msgBody = array();
+        $req = $this->url;
         $callback[$num] = require __DIR__ . '/RabbitMqMsg.php';
         echo $this->config['rabbitmq.queue'][$i] . " 开始消费" . "Worker 进程ID:" . posix_getpid() . PHP_EOL;
         Log::info($this->config['rabbitmq.queue'][$i] . " 开始消费" . "Worker 进程ID:" . posix_getpid());
@@ -188,8 +187,15 @@ class RabbitMqProcess
                 if ($val) {
 
                     foreach (RobbitMqListener::rabbitQueueload($this->config['app.name']) as $key => $val) {
+                        if (isset($this->config['rabbitmq.queue.num'][$i])){
+                            for ($k=0;$k<$this->config['rabbitmq.queue.num'][$i];$k++){
+                                if ($val::getQueue() == $this->config['rabbitmq.queue'][$i]) $this->createProcess($worker, $this->channel_start + $channel_step, $i);
+                                sleep(0.2);
+                            }
+                        }else{
+                            if ($val::getQueue() == $this->config['rabbitmq.queue'][$i]) $this->createProcess($worker, $this->channel_start + $channel_step, $i);
+                        }
 
-                        if ($val::getQueue() == $this->config['rabbitmq.queue'][$i]) $this->createProcess($worker, $this->channel_start + $channel_step, $i);
                     }
                 }
                 $i++;

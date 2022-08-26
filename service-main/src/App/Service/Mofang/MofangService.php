@@ -16,7 +16,7 @@ class MofangService extends BaseService
 {
     private string $appKey = 'HQsKaOd/4zDagfBMMNMD';
 
-    private string
+
 
     private string $channelUrl = 'http://b.dm.mfyc9.com:8119/wgs/v1/openapi/channels';
 
@@ -35,7 +35,7 @@ class MofangService extends BaseService
         if ($query!=""){
             $sign=$query;
         }
-        $sign .= $this->signature;
+        $sign .= $signature;
         return  date("Y-m-d h:i:s");
     }
 
