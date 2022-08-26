@@ -74,7 +74,7 @@ class Stock
         try{
             return self::instance()->raw("SELECT 1")->first()[1];
         }catch (\Throwable $ex){
-            return "0";
+            return "1";
         }
 
 

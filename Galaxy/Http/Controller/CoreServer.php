@@ -48,6 +48,8 @@ class CoreServer
 
     public function health(Context $ctx)
     {
+        echo "健康检测";
+        Log::info("健康检测");
         try {
             $configs = ConfigLoad::findFile();
             foreach ($configs as $key => $val) {
@@ -60,7 +62,7 @@ class CoreServer
                         'message' => 'success',
                         'data' => "DOWN"
                     ]);
-                    log::error($val . " 配置错误 下线");
+                    print_r($val . " 配置错误 下线");
                     App::$serverinfo->shutdown();
                     return;
                 }

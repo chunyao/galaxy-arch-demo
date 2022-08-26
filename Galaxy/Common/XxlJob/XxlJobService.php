@@ -6,7 +6,7 @@
  * Time: 20:28
  */
 
-namespace  Galaxy\Common\XxlJob;
+namespace Galaxy\Common\XxlJob;
 
 
 use App;
@@ -29,33 +29,41 @@ class XxlJobService
         $ip = GetLocalIp::getIp();
         $data = [
             "registryGroup" => 'EXECUTOR',                     // 固定值
-            "registryKey"   => App::$innerConfig['app.name'],       // 执行器AppName
-            "registryValue" => "http://$ip:".APP::$innerConfig['xxl.job.executor.port'],        // 执行器地址，内置服务跟地址
+            "registryKey" => App::$innerConfig['app.name'],       // 执行器AppName
+            "registryValue" => "http://$ip:" . APP::$innerConfig['xxl.job.executor.port'],
+            // 执行器地址，内置服务跟地址
         ];
+        if (isset(APP::$bootConfig['node.ip']) && APP::$bootConfig['node.ip'] != "") {
+            $data ["registryValue"] = "http://" . APP::$bootConfig['node.ip'] . ":" . APP::$bootConfig['node.port'];
+        }
 
-        self::sendXxlJobRegistry($data, App::$innerConfig['xxl.job.admin.addresses'].'api/registry', App::$innerConfig['xxl.job.accessToken']);
+
+        self::sendXxlJobRegistry($data, App::$innerConfig['xxl.job.admin.addresses'] . 'api/registry', App::$innerConfig['xxl.job.accessToken']);
         return true;
     }
 
 
     public static function XxlJobBeat()
     {
-        $url  = App::$innerConfig['xxl.job.admin.addresses'].'api/beat';
-        $ip   = GetLocalIp::getIp();
+        $url = App::$innerConfig['xxl.job.admin.addresses'] . 'api/beat';
+        $ip = GetLocalIp::getIp();
         $data = [
             "registryGroup" => 'EXECUTOR',                     // 固定值
-            "registryKey"   => App::$innerConfig['app.name'],       // 执行器AppName
-            "registryValue" => "http://$ip:".APP::$innerConfig['xxl.job.executor.port'],   // 执行器地址，内置服务跟地址
+            "registryKey" => App::$innerConfig['app.name'],       // 执行器AppName
+            "registryValue" => "http://$ip:" . APP::$innerConfig['xxl.job.executor.port'],
+            // 执行器地址，内置服务跟地址
         ];
-        return self::sendXxlJobRegistry($data, $url,  App::$innerConfig['xxl.job.accessToken']);
+        if (isset(APP::$bootConfig['node.ip']) && APP::$bootConfig['node.ip'] != "") {
+            $data ["registryValue"] = "http://" . APP::$bootConfig['node.ip'] . ":" . APP::$bootConfig['node.port'];
+        }
+        return self::sendXxlJobRegistry($data, $url, App::$innerConfig['xxl.job.accessToken']);
     }
 
 
-
-     /*
-      * Xxl Job 注册专用
-      *
-      * */
+    /*
+     * Xxl Job 注册专用
+     *
+     * */
     public static function sendXxlJobRegistry($params, $url, $token)
     {
         if (!$url || !$token) {
@@ -89,19 +97,19 @@ class XxlJobService
     public static function XxlJobCallback(array $params)
     {
 
-        $url   = App::$innerConfig['xxl.job.admin.addresses'].'api/callback';
+        $url = App::$innerConfig['xxl.job.admin.addresses'] . 'api/callback';
         $callbackParams = [[
-            'logId'          => Arr::get($params, 'logId'),
-            "logDateTim"     => Arr::get($params, 'logDateTime'),
-            "handleCode"     => 200,
-            "handleMsg"      =>  'success',
-            "executeResult"  => [
+            'logId' => Arr::get($params, 'logId'),
+            "logDateTim" => Arr::get($params, 'logDateTime'),
+            "handleCode" => 200,
+            "handleMsg" => 'success',
+            "executeResult" => [
                 'code' => Arr::get($params, 'code'),
-                'msg'  =>  Arr::get($params, 'msg'),
+                'msg' => Arr::get($params, 'msg'),
             ],
         ]];
 
         Log::info('任务结束');
-        return self::sendXxlJobRegistry($callbackParams, $url,  App::$innerConfig['xxl.job.accessToken']);
+        return self::sendXxlJobRegistry($callbackParams, $url, App::$innerConfig['xxl.job.accessToken']);
     }
 }
