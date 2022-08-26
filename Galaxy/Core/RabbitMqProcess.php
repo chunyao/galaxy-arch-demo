@@ -37,7 +37,7 @@ class RabbitMqProcess
 
     public function initQueues($ch, $i)
     {
-        $up = 3;
+        $up = 2;
 
         try {
             /*       $host,
@@ -97,7 +97,7 @@ class RabbitMqProcess
         $c = rand(0, 2000);
         // 创建通道
         $channel[$num] = $this->con->channel($c);
-        $channel[$num]->basic_qos(null, 1, false);
+        $channel[$num]->basic_qos(null, 20, false);
         /**
          * name:xxx             交换机名称
          * type:direct          类型 fanut,direct,topic,headers
@@ -175,8 +175,7 @@ class RabbitMqProcess
         return $pid;
     }
 
-    public
-    function handler()
+    public function handler()
     {
         $channel_step = 0;
         for ($worker = 0; $worker < $this->workers; $worker++) {

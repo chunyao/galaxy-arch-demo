@@ -3,6 +3,7 @@
 use Galaxy\Core\Log;
 
 return static function ($msg) use ($i, $msgBody,$req,$num) {
+
             /*if (isset($this->config['rabbitmq.qps'][$i])) {
                 $sleep = round(1000000 / ((int)$this->config['rabbitmq.qps'][$i]));
                 usleep($sleep);
