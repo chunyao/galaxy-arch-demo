@@ -43,7 +43,7 @@ class DelayListener
   //      $this->msgService = new MsgService();
  //       $this->msgProxy = new MsgProxyService();
       //  var_dump($msg);
-        sleep(1);
+
         $this->msg = $msg;
 
     }

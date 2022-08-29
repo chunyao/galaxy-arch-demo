@@ -87,7 +87,6 @@ class RabbitMqProcess
         } catch (\Throwable $ex) {
             Log::error(sprintf('消息队列 %s error', $this->config['rabbitmq.queue'][$i]));
             Log::error(sprintf('%s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));
-
         }
 
     }
@@ -164,17 +163,28 @@ class RabbitMqProcess
             while (1) {
                 sleep(5);
                 log::info("消息进程ID:" . posix_getpid() . "\n");
-                $this->initQueues($ch, $queue);
+                try{
+                    $this->initQueues($ch, $queue);
+                }catch (\Throwable $e){
+                    Log::error(sprintf('%s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));
+                }
+
             }
         }, false, 0, true);
 
         $pid = $process->start();
-        $this->works[$index] = $pid;
+        $this->works[$queue][$index] = $pid;
+        $this->works[$queue]['name'] = $this->config['rabbitmq.queue'][$queue];
         $this->processes[$pid] = $process;
         echo "Mq Master: new worker, PID=" . $pid . "\n";
         return $pid;
     }
+    public function watchProcess()
+    {
+        var_dump($this->works);
 
+        return ;
+    }
     public function handler()
     {
         $channel_step = 0;
@@ -201,5 +211,6 @@ class RabbitMqProcess
                 $channel_step++;
             }
         }
+        $this->watchProcess();
     }
 }

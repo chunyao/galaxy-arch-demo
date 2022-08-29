@@ -64,9 +64,6 @@ class Server
         if ($bootConfig['env'] == "local") {
             $this->config = parse_ini_file(ROOT_PATH . '/local.ini');
             self::$innerConfig = $this->config;
-
-
-
         } else {
             $application = new Application(new Config([
                 'base_uri' => $bootConfig['url'],
@@ -95,7 +92,6 @@ class Server
                     try {
                         $register->beat();
                     } catch (\Throwable $e) {
-                        var_dump($e);
                     }
                 });
             }, false, 0, true);
