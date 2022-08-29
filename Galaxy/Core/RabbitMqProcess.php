@@ -79,14 +79,18 @@ class RabbitMqProcess
                     if ($obj[$chl]->is_consuming()) {
                         $obj[$chl]->wait(null, true);
                     } else {
-                        $obj[$chl] = $this->consumeMessage($chl, $i);
+                        try{
+                            $obj[$chl] = $this->consumeMessage($chl, $i);
+                        }catch (\Throwable $e){
+                            Log::error(sprintf('%s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));
+                        }
+
                     }
                 }
             }
-
         } catch (\Throwable $ex) {
             Log::error(sprintf('消息队列 %s error', $this->config['rabbitmq.queue'][$i]));
-            Log::error(sprintf('%s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));
+            $this->con->close();
         }
 
     }
@@ -181,7 +185,7 @@ class RabbitMqProcess
     }
     public function watchProcess()
     {
-        var_dump($this->works);
+       // var_dump($this->works);
 
         return ;
     }
