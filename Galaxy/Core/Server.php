@@ -2,7 +2,8 @@
 
 namespace Galaxy\Core;
 
-use Galaxy\Common\Utils\SnowFlakeUtils;
+use Galaxy\Common\Configur\Cache;
+use Galaxy\Common\Configur\SnowFlake;
 use Galaxy\Common\XxlJob\XxlJobApi;
 use Galaxy\Common\XxlJob\XxlJobVega;
 use \Swoole;
@@ -44,6 +45,7 @@ class Server
     public function __construct($bootConfig)
     {
         self::$bootConfig = $bootConfig;
+        Cache::init();
         Log::init();
         echo "主进程ID:" . posix_getpid() . "\n";
         log::info("主进程ID:" . posix_getpid());
@@ -83,16 +85,17 @@ class Server
             $register = new ServiceRegister($bootConfig['url'], $this->config['app.name'], $this->config['namespace.id']);
             $register->handle("register");
 
-            $process = new Swoole\Process(function ($worker) use ($bootConfig, $register) {
+            $process = new Swoole\Process(function () use ($bootConfig, $register) {
                 echo "注册中心进程ID:" . posix_getpid() . "\n";
                 log::info("注册中心进程ID:" . posix_getpid());
-                swoole_timer_tick(10000, function () use ($worker, $bootConfig, $register) {
-                    $worker->exec('/bin/sh', array('-c', "rm -rf " . $bootConfig['log.path'] . "/*" . $this->config['app.name'] . "/*" . date("Ymd", strtotime("-1 day")) . ".log"));
+                swoole_timer_tick(25000, function () use ( $bootConfig, $register) {
+                    exec('rm -f '. $bootConfig['log.path'] . "/*" . $this->config['app.name'] . "/*" . date("Ymd", strtotime("-1 day")) . ".log");
+                 //
                     self::$localcache = array();
                     try {
                         $register->beat();
                     } catch (\Throwable $e) {
-                        //var_dump($e);
+                        var_dump($e);
                     }
                 });
             }, false, 0, true);
@@ -218,7 +221,7 @@ EOL;
     {
         echo "Worker 进程id:" . posix_getpid() . "\n";
         log::info("Worker 进程ID:" . posix_getpid());
-        SnowFlakeUtils::init(rand(0, 1), rand(0, 31));
+        SnowFlake::init();
         //    CoreDB::init($this->coreConfig);
         //      CoreDB::enableCoroutine();
         //     CoreRDS::init($this->coreConfig);
