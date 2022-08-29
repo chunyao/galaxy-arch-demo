@@ -10,6 +10,8 @@ use App\Config\RDS;
 use App\Repository\Model\Mongo\Product;
 use App\Service\SayService;
 use App\Service\WishbrandService;
+use Galaxy\Common\Configur\Cache;
+use Galaxy\Common\Configur\SnowFlake;
 use Galaxy\Common\Utils\SnowFlakeUtils;
 use Galaxy\Core\BaseController;
 use Galaxy\Core\Log;
@@ -103,23 +105,18 @@ class Helloword extends BaseController
     public function snow(Context $ctx)
     {
         $n =0;
-        $snowId = SnowFlakeUtils::generateID();
-        if (RDS::instance()->set("snow:$snowId", 1, array('nx', 'ex' => 300))) {
-
-            $ctx->JSON(200, [
-                'code' => 10200,
-                'message' => 'success',
-                'data' => $snowId
-            ]);
-        } else {
+        $snowId = SnowFlake::instance()->generateID();
+        if ( Cache::instance()->get((string)$snowId)){
             echo "重复";
-            $n ++;
-            $ctx->JSON(200, [
-                'code' => 10200,
-                'message' => 'success',
-                'data' => "重复id $snowId"
-            ]);
         }
+        Cache::instance()->set((string)$snowId,"1",30000);
+
+
+        $ctx->JSON(200, [
+            'code' => 10200,
+            'message' => 'success',
+            'data' =>  Cache::instance()->count()
+        ]);
 
     }
 

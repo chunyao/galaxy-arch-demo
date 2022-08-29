@@ -7,6 +7,7 @@ use Galaxy\Common\Handler\InnerServer;
 use Galaxy\Core\ConfigLoad;
 use Galaxy\Core\Log;
 use Mix\Vega\Context;
+use Swoole;
 
 class CoreServer
 {
@@ -48,8 +49,7 @@ class CoreServer
 
     public function health(Context $ctx)
     {
-        echo "健康检测";
-        Log::info("健康检测");
+
         try {
             $configs = ConfigLoad::findFile();
             foreach ($configs as $key => $val) {
