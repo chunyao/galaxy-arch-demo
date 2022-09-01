@@ -105,17 +105,24 @@ class Helloword extends BaseController
     public function snow(Context $ctx)
     {
         $n =0;
-        $snowId = SnowFlake::instance()->generateID();
-        if ( Cache::instance()->get((string)$snowId)){
+        $chan1 = new Swoole\Coroutine\Channel(1);
+        co::create(function () use ($chan1) {
+            $snowId = SnowFlake::instance()->generateID();
+
+            $chan1->push($snowId);
+            sleep(5);
+        });
+
+       /* if ( Cache::instance()->get((string)$snowId)){
             echo "重复";
         }
         Cache::instance()->set((string)$snowId,"1",30000);
-
+*/
 
         $ctx->JSON(200, [
             'code' => 10200,
             'message' => 'success',
-            'data' =>  Cache::instance()->count()
+            'data' =>  $chan1->pop()
         ]);
 
     }

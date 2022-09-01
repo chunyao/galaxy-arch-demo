@@ -24,6 +24,7 @@ class InnerServer
 
         $this->route = [
             "rabbitmq",
+            "redis",
         ];
         self::$config = $config;
         // $this->rabbitmq();
@@ -36,6 +37,16 @@ class InnerServer
         $result = $mq->handler();
         unset($mq);
         return $result;
+    }
+
+    public function redis()
+    {
+        $mq = new RedisListener($this->data['message'], $this->data['queue'], self::$config);
+
+        $result = $mq->handler();
+        unset($mq);
+
+        return true;
     }
 
 
