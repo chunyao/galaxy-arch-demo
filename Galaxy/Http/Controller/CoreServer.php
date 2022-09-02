@@ -3,6 +3,7 @@
 namespace Galaxy\Http\Controller;
 
 use App;
+use Galaxy\Common\Configur\Cache;
 use Galaxy\Common\Handler\InnerServer;
 use Galaxy\Core\ConfigLoad;
 use Galaxy\Core\Log;
@@ -49,7 +50,9 @@ class CoreServer
 
     public function health(Context $ctx)
     {
-
+        if (Cache::instance()->getIncr('mysql-error')>=30){
+            App::$serverinfo->reload();
+        }
         try {
             $configs = ConfigLoad::findFile();
             foreach ($configs as $key => $val) {
