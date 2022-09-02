@@ -87,7 +87,9 @@ class Server
                 log::info("注册中心进程ID:" . posix_getpid());
                 swoole_timer_tick(25000, function () use ( $bootConfig, $register) {
                     exec('rm -f '. $bootConfig['log.path'] . "/*" . $this->config['app.name'] . "/*" . date("Ymd", strtotime("-1 day")) . ".log");
-                 //
+                    if (Cache::instance()->getIncr('mysql-error')>=30){
+                        $this->server->reload();
+                    }
                     self::$localcache = array();
                     try {
                         $register->beat();
@@ -216,6 +218,7 @@ EOL;
     public function onWorkerStart($server, $worker_id)
     {
         echo "Worker 进程id:" . posix_getpid() . "\n";
+        Cache::instance()->incr("mysql-error",1);
         log::info("Worker 进程ID:" . posix_getpid());
         SnowFlake::init();
         //    CoreDB::init($this->coreConfig);

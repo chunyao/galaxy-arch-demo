@@ -1,7 +1,10 @@
 <?php
 
 namespace Mix\Database;
+
+use Galaxy\Common\Configur\Cache;
 use Galaxy\Core\Log;
+
 /**
  * Class AbstractConnection
  * @package Mix\Database
@@ -595,9 +598,16 @@ abstract class AbstractConnection implements ConnectionInterface
      */
     public function inTransaction(): bool
     {
-        $pdo = $this->driver->instance();
-        return (bool)($pdo ? $pdo->inTransaction() : false);
+        try {
+            $pdo = $this->driver->instance();
+            return (bool)($pdo ? $pdo->inTransaction() : false);
+        } catch (\Throwable $e) {
+            Cache::instance()->incr("mysql-error",1);
+            Log::error(sprintf('inTransaction %s in %s on line %d', $e->getMessage(), $e->getFile(), $e->getLine()));
+           return false;
+        }
     }
+
 
     /**
      * 自动事务

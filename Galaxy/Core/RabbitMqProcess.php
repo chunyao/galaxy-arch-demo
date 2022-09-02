@@ -82,7 +82,7 @@ class RabbitMqProcess
                         try{
                             $obj[$chl] = $this->consumeMessage($chl, $i);
                         }catch (\Throwable $e){
-                            Log::error(sprintf('%s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));
+                            Log::error(sprintf('%s in %s on line %d', $e->getMessage(), $e->getFile(), $e->getLine()));
                         }
 
                     }

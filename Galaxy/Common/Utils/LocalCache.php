@@ -14,6 +14,7 @@ class LocalCache
         $this->table->column('ttl', Swoole\Table::TYPE_INT);
         $this->table->column('ctime', Swoole\Table::TYPE_INT);
         $this->table->column('data', Swoole\Table::TYPE_STRING,64);
+        $this->table->column('num', Swoole\Table::TYPE_INT);
         $this->table->create();
     }
 
@@ -39,14 +40,22 @@ class LocalCache
         return false;
     }
 
+    public function getIncr(string $key)
+    {
+        if ($tmp = $this->table->get($key)) {
+            return $tmp['num'];
+        }
+        return false;
+    }
+
     public function del(string $key)
     {
         return $this->table->del($key);
     }
 
-    public function incr()
+    public function incr(string $key,$incrby = 1):int
     {
-
+        return $this->table->incr($key,'num',$incrby);
     }
 
     public function decr()
