@@ -38,7 +38,7 @@ class RabbitMqProcess
     public function initQueues($ch, $i)
     {
         $up = 2;
-
+        $baseMemory = memory_get_usage();
         try {
             /*       $host,
                $port,
@@ -74,14 +74,21 @@ class RabbitMqProcess
             for ($chl = 0; $chl < $up; $chl++) {
                 $obj[$chl] = $this->consumeMessage($chl, $i);
             }
+
             while (1) {
+                /* 内存泄漏debug
+                 * if ( time() % 10 === 0 )
+                {
+                    sleep(2);
+                    echo sprintf( '%8d: ', time() ).(memory_get_usage() - $baseMemory). "\n";
+                }*/
                 for ($chl = 0; $chl < $up; $chl++) {
                     if ($obj[$chl]->is_consuming()) {
                         $obj[$chl]->wait(null, true);
                     } else {
-                        try{
+                        try {
                             $obj[$chl] = $this->consumeMessage($chl, $i);
-                        }catch (\Throwable $e){
+                        } catch (\Throwable $e) {
                             Log::error(sprintf('%s in %s on line %d', $e->getMessage(), $e->getFile(), $e->getLine()));
                         }
 
@@ -160,35 +167,43 @@ class RabbitMqProcess
 
     }
 
-    public function createProcess($index = null, $ch, $queue)
+    public function createProcess($ch, $queue)
     {
 
-        $process = new Swoole\Process(function ($worker) use ($index, $ch, $queue) {
+        $process = new Swoole\Process(function ($worker) use ( $ch, $queue) {
             while (1) {
                 sleep(5);
                 log::info("消息进程ID:" . posix_getpid() . "\n");
-                try{
+                try {
                     $this->initQueues($ch, $queue);
-                }catch (\Throwable $e){
-                    Log::error(sprintf('%s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));
+                } catch (\Throwable $e) {
+                    Log::error(sprintf('%s in %s on line %d', $e->getMessage(), $e->getFile(), $e->getLine()));
                 }
 
             }
         }, false, 0, true);
 
         $pid = $process->start();
-        $this->works[$queue][$index] = $pid;
-        $this->works[$queue]['name'] = $this->config['rabbitmq.queue'][$queue];
+        $this->works[$pid] = $queue;
         $this->processes[$pid] = $process;
         echo "Mq Master: new worker, PID=" . $pid . "\n";
         return $pid;
     }
+
     public function watchProcess()
     {
-       // var_dump($this->works);
-
-        return ;
+        while (1) {
+            if ($ret = Swoole\Process::wait(false)) {
+                $retPid = intval($ret["pid"] ?? 0);
+                if (isset($this->works[$retPid])) {
+                    $this->createProcess(rand(0,100),$this->works[$retPid]);
+                    unset($this->works[$retPid]);
+                    unset($this->processes[$retPid]);
+                }
+            }
+        }
     }
+
     public function handler()
     {
         $channel_step = 0;
@@ -200,13 +215,13 @@ class RabbitMqProcess
                 if ($val) {
 
                     foreach (RobbitMqListener::rabbitQueueload($this->config['app.name']) as $key => $val) {
-                        if (isset($this->config['rabbitmq.queue.num'][$i])){
-                            for ($k=0;$k<$this->config['rabbitmq.queue.num'][$i];$k++){
-                                if ($val::getQueue() == $this->config['rabbitmq.queue'][$i]) $this->createProcess($worker, $this->channel_start + $channel_step, $i);
+                        if (isset($this->config['rabbitmq.queue.num'][$i])) {
+                            for ($k = 0; $k < $this->config['rabbitmq.queue.num'][$i]; $k++) {
+                                if ($val::getQueue() == $this->config['rabbitmq.queue'][$i]) $this->createProcess($this->channel_start + $channel_step, $i);
                                 sleep(0.2);
                             }
-                        }else{
-                            if ($val::getQueue() == $this->config['rabbitmq.queue'][$i]) $this->createProcess($worker, $this->channel_start + $channel_step, $i);
+                        } else {
+                            if ($val::getQueue() == $this->config['rabbitmq.queue'][$i]) $this->createProcess($this->channel_start + $channel_step, $i);
                         }
 
                     }
@@ -215,6 +230,6 @@ class RabbitMqProcess
                 $channel_step++;
             }
         }
-        $this->watchProcess();
+          $this->watchProcess();
     }
 }
