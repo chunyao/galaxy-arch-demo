@@ -4,6 +4,7 @@ namespace App\Http\Controller\Helloword;
 
 use App;
 use App\Config\MQ;
+use Galaxy\Common\Configur\SnowFlake;
 use Galaxy\Common\Utils\SnowFlakeUtils;
 use Mix\Vega\Context;
 
@@ -31,7 +32,7 @@ class SendMsg
     }
 
     public function handler(Context $ctx)
-    {   $id = mt_rand(0,1000000000);
+    {   $id = SnowFlake::instance()->generateID();
         $data['id'] =  $id;
         $data['body'] = "With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s." ;
 
