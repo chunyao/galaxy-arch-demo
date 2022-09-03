@@ -64,9 +64,6 @@ class Server
         if ($bootConfig['env'] == "local") {
             $this->config = parse_ini_file(ROOT_PATH . '/local.ini');
             self::$innerConfig = $this->config;
-
-
-
         } else {
             $application = new Application(new Config([
                 'base_uri' => $bootConfig['url'],
@@ -90,12 +87,10 @@ class Server
                 log::info("注册中心进程ID:" . posix_getpid());
                 swoole_timer_tick(25000, function () use ( $bootConfig, $register) {
                     exec('rm -f '. $bootConfig['log.path'] . "/*" . $this->config['app.name'] . "/*" . date("Ymd", strtotime("-1 day")) . ".log");
-                 //
                     self::$localcache = array();
                     try {
                         $register->beat();
                     } catch (\Throwable $e) {
-                        var_dump($e);
                     }
                 });
             }, false, 0, true);
@@ -157,14 +152,14 @@ EOL;
             $xxljobVega = XxlJobVega::new();
             $xxljob->on('Request', $xxljobVega->handler());
             $process2= new Swoole\Process(function ($worker) use ($xxlJobRegister) {
-            swoole_timer_tick(25000, function () use ($xxlJobRegister) {
-                try {
-                    $xxlJobRegister->XxlJobRegistry();
-                } catch (\Throwable $e) {
-                    //var_dump($e);
-                }
-            });
-            });
+                swoole_timer_tick(25000, function () use ($xxlJobRegister) {
+                    try {
+                        $xxlJobRegister->XxlJobRegistry();
+                    } catch (\Throwable $e) {
+                        //var_dump($e);
+                    }
+                });
+            }, false, 0, true);
             $process2->start();
         }
 
@@ -210,16 +205,17 @@ EOL;
         Log::info("进程:" . $worker_id . " exit");
     }
 
-    public function onWorkerError($server, int $worker_id)
+    public function onWorkerError($server, int $worker_id, Swoole\Server\StatusInfo $info)
     {
         Log::info("进程:" . $worker_id . " error");
 
-
+        Log::info("服务器信息:" . $worker_id . " ".json_encode($info));
     }
 
     public function onWorkerStart($server, $worker_id)
     {
         echo "Worker 进程id:" . posix_getpid() . "\n";
+
         log::info("Worker 进程ID:" . posix_getpid());
         SnowFlake::init();
         //    CoreDB::init($this->coreConfig);
