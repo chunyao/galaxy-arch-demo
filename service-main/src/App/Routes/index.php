@@ -3,6 +3,7 @@ use App\Http\Controller\Helloword\Database;
 use App\Http\Controller\Helloword\Helloword;
 use App\Http\Controller\Helloword\SendMsg;
 use App\Http\Controller\LocalCache\LocalCacheController;
+use App\Http\Controller\MemCache\MemCacheController;
 use App\Http\Controller\Msg\Msg;
 use App\Http\Controller\Sql\SqlImprove;
 use App\Http\Controller\Es\Index;
@@ -23,6 +24,7 @@ return function (Mix\Vega\Engine $vega,$appName) {
     $sub->handle('/snow', [new Helloword(), 'snow'])->methods('GET');
     $sub->handle('/cache/set', [new LocalCacheController(), 'setTest'])->methods('GET');
     $sub->handle('/cache/get', [new LocalCacheController(), 'getTest'])->methods('GET');
+    $sub->handle('/mem/set', [new MemCacheController(), 'setTest'])->methods('GET');
 
     // $vega->handle('/auth', [new Auth(), 'index'])->methods('GET');
 };
