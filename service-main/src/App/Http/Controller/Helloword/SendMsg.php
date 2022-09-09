@@ -33,7 +33,7 @@ class SendMsg
 
     public function handler(Context $ctx)
     {   $id = SnowFlake::instance()->generateID();
-        $data['id'] =  $id;
+        $data['messageId'] =  $id;
         $data['body'] = "With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s." ;
 
         MQ::instance()->publish(json_encode($data), $this->exchange, $this->routekey);
