@@ -33,7 +33,27 @@ class Helloword extends BaseController
         //   $this->msgSevice = new MsgService();
         //   $this->wishbrandService = new WishbrandService();
     }
-
+    public function ht(Context $ctx){
+        co::set(['hook_flags' => SWOOLE_HOOK_CURL]);
+        co::create(function() {
+            co::create(function () {
+                co::create(function () {
+                    co::sleep(3.0);
+                    echo "co[3] end\n";
+                });
+                co::sleep(2.0);
+                echo "co[2] end\n";
+            });
+            co::sleep(1.0);
+            echo "co[1] end\n";
+        });
+        echo "1111".PHP_EOL;
+        $ctx->JSON(200, [
+            'code' => 10200,
+            'message' => 'success',
+            'data' => 1
+        ]);
+    }
     public function helloword(Context $ctx)
     {
         /*ES*/

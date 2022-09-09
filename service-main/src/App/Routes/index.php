@@ -11,6 +11,7 @@ return function (Mix\Vega\Engine $vega,$appName) {
     $sub = $vega->pathPrefix("/".$appName);
 
     $sub->handle('/helloword/helloword', [new Helloword(), 'helloword'])->methods('GET');
+    $sub->handle('/ht', [new Helloword(), 'ht'])->methods('GET');
     $sub->handle('/helloword/database', [new Database(), 'databasetest'])->methods('GET');
     $sub->handle('/helloword/redis', [new Database(), 'redistest'])->methods('GET');
     $sub->handle('/msg/send', [new SendMsg(), 'handler'])->methods('GET');
