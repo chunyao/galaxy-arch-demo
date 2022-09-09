@@ -2,6 +2,7 @@
 
 namespace App\Http\Controller\MemCache;
 
+use App\Config\MC;
 use Galaxy\Common\Configur\Cache;
 use Mix\Vega\Context;
 use Galaxy\Common\Memcache\Memcache;
@@ -12,22 +13,18 @@ class MemCacheController
     public function setTest(Context $ctx)
     {
 
-        $config = new Config();
-        $config->setHost("memcached.mabangerp.com");
-        $config->setPort("7101");
-        $memcache = new Memcache($config);
-        $memcache->connect();
-        $memcache->set("abc",123,5);
+
+        MC::instance()->set("abc",123,300);
         $ctx->JSON(200, [
             'code' => 10200,
             'message' => 'success',
-            'data' => $memcache->get("abc")
+            'data' => MC::instance()->get("abc")
         ]);
     }
 
     public function getTest(Context $ctx)
     {
-        $cache = Cache::instance()->get("test1");
+        $cache = MC::instance()->get("abc");
         $ctx->JSON(200, [
             'code' => 10200,
             'message' => 'success',
