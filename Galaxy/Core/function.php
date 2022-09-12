@@ -125,6 +125,7 @@ function dintval($int, $allowarray = false)
             return $int;
         }
     }
+
     return $ret;
 }
 
@@ -163,6 +164,7 @@ function rest_curl($url, $method, $header = null, $data = null)
     if ($errMsg) {
         throw new Exception('请求发生错误，出错信息为：' . $errMsg);
     }
+
     curl_close($handle);
     return $res;
 }
@@ -255,6 +257,79 @@ function rest_post($url, $data, $timeout = 10)
     //	print_r($data);
     return $data;
 }
+
+function httpRequest($url, $data, $method = 'POST', $timeout = 60, $isRetry = false, $debug=false)
+{
+    $urlarr = parse_url($url);
+    $ch = curl_init();
+    $data = is_array($data) ? http_build_query($data) : $data;
+    $timeout = $isRetry == true ? $timeout : 1;
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_MAXREDIRS, 5);
+    if (strtolower($urlarr['scheme']) == 'https') {
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+    }
+    if ($urlarr['port'])
+        curl_setopt($ch, CURLOPT_PORT, $urlarr['port']);
+    if (strtoupper($method) == 'POST') {
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+    } else //GET method
+    {
+        if ($data) {
+            if (false === strpos($url, '?'))
+                $url .= '?' . $data;
+            else
+                $url .= '&' . $data;
+        }
+    }
+    curl_setopt($ch, CURLOPT_URL, $url);
+    //额外增加$timeout秒的执行时间，php的默认timeout为30秒
+    set_time_limit($timeout + 30);
+    $output = curl_exec($ch);
+    // 如果curl错误，比如连接错误，看看是否需要重试
+    if (curl_errno($ch)) {
+        if ($isRetry) {
+            set_time_limit($timeout + 30);
+            $output = curl_exec($ch);
+        }
+    }
+    if (curl_errno($ch)) {
+        if ($debug) {
+            echo '<pre>';
+            echo '<p>WebService Debug Info</p>';
+            echo '<p>webservice: ' . curl_error($ch) . '</p>';
+            curl_close($ch);
+            exit;
+        }
+        return false;
+    }
+    curl_close($ch);
+    return $output;
+}
+
+function rest_post_wuxing($url, $data, $timeout = 10)
+{
+
+    $ch = curl_init($url);
+    // $data = http_build_query($data);
+    //curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            'Content-Type: application/text')
+    );
+    $data = curl_exec($ch);
+    curl_close($ch);
+    print_r($data);
+    return $data;
+}
+
 function arrayRecursive(&$array, $function, $apply_to_keys_also = false)
 {
     static $recursive_counter = 0;
@@ -278,32 +353,37 @@ function arrayRecursive(&$array, $function, $apply_to_keys_also = false)
     }
     $recursive_counter--;
 }
-function JSON($array) {
+
+function JSON($array)
+{
     arrayRecursive($array, 'urlencode', true);
     $json = json_encode($array);
     return urldecode($json);
 }
-function parseattach($message) {
+
+function parseattach($message)
+{
     $patterns = "/\[attach\]\d+\[\/attach\]/i";
     //$patterns = '/\[attach\]\d+/im';
-    preg_match_all($patterns,$message,$arr);
+    preg_match_all($patterns, $message, $arr);
 
     SeasLog::info(" attachment:" . json_encode($arr));
-    foreach ($arr[0] as $item){
+    foreach ($arr[0] as $item) {
         $patterns = '/\d+/';
 
-        preg_match($patterns,$item,$newitem);
+        preg_match($patterns, $item, $newitem);
 
-        $tableid=table_forum_attachment::fetch_tableid_all_by_aid($newitem[0]);
-        $attachment = table_forum_attachment_n::fetch($tableid[0]->tableid,$newitem[0],true);
+        $tableid = table_forum_attachment::fetch_tableid_all_by_aid($newitem[0]);
+        $attachment = table_forum_attachment_n::fetch($tableid[0]->tableid, $newitem[0], true);
         SeasLog::info(" attachment:" . json_encode($attachment));
-        $image=urlencode($attachment['attachment']);
+        $image = urlencode($attachment['attachment']);
 
-        $message = preg_replace("/\[attach\]".$newitem[0]."\[\/attach\]/i","[img]".Config::$data['imageserver']."v1/image/getimages?get=".$image."[/img]",$message);
+        $message = preg_replace("/\[attach\]" . $newitem[0] . "\[\/attach\]/i", "[img]" . Config::$data['imageserver'] . "v1/image/getimages?get=" . $image . "[/img]", $message);
         print_r($message);
     }
     return $message;
 }
+
 function rest_get($url)
 {
     $curl = curl_init();
@@ -337,26 +417,25 @@ function getavatarbak($uid, $size = 'middle', $token = "")
 function getavatar($uid, $size = 'middle', $token = "")
 {
     $defaultUrl = 'https://bkjk-public-dev-1256212241.image.myqcloud.com/gh-forum/lljr/709d1d31dc47636e4f5ccbfd07601c19-default-avator.png';
-    $return="";
+    $return = "";
     if ($return = getCache("avatar-aid-" . $uid) && $return != "") {
         SeasLog::info("avatar cache return :" . $return);
-        return Config::$data['oss'].$return;
+        return Config::$data['oss'] . $return;
     } else {
         $hash = table_ll_avatar::fetchbyuid($uid);
 
-        if (isset($hash['avatarhash'])){
+        if (isset($hash['avatarhash'])) {
             $return = $hash['avatarhash'];
-        }
-        else{
-            $return ="";
+        } else {
+            $return = "";
         }
 
         setCache("avatar-aid-" . $uid, $hash['avatarhash'], "3600");
     }
-    if ($return==""){
+    if ($return == "") {
         return $defaultUrl;
-    }else{
-        return Config::$data['oss'].$hash['avatarhash'];
+    } else {
+        return Config::$data['oss'] . $hash['avatarhash'];
     }
 }
 
