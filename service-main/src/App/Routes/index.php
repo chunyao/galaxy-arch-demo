@@ -3,6 +3,7 @@ use App\Http\Controller\Helloword\Database;
 use App\Http\Controller\Helloword\Helloword;
 use App\Http\Controller\Helloword\SendMsg;
 use App\Http\Controller\LocalCache\LocalCacheController;
+use App\Http\Controller\MemCache\MemCacheController;
 use App\Http\Controller\Msg\Msg;
 use App\Http\Controller\Sql\SqlImprove;
 use App\Http\Controller\Es\Index;
@@ -10,6 +11,7 @@ return function (Mix\Vega\Engine $vega,$appName) {
     $sub = $vega->pathPrefix("/".$appName);
 
     $sub->handle('/helloword/helloword', [new Helloword(), 'helloword'])->methods('GET');
+    $sub->handle('/ht', [new Helloword(), 'ht'])->methods('GET');
     $sub->handle('/helloword/database', [new Database(), 'databasetest'])->methods('GET');
     $sub->handle('/helloword/redis', [new Database(), 'redistest'])->methods('GET');
     $sub->handle('/msg/send', [new SendMsg(), 'handler'])->methods('GET');
@@ -23,6 +25,7 @@ return function (Mix\Vega\Engine $vega,$appName) {
     $sub->handle('/snow', [new Helloword(), 'snow'])->methods('GET');
     $sub->handle('/cache/set', [new LocalCacheController(), 'setTest'])->methods('GET');
     $sub->handle('/cache/get', [new LocalCacheController(), 'getTest'])->methods('GET');
-
+    $sub->handle('/mem/set', [new MemCacheController(), 'setTest'])->methods('GET');
+    $sub->handle('/mem/get', [new MemCacheController(), 'getTest'])->methods('GET');
     // $vega->handle('/auth', [new Auth(), 'index'])->methods('GET');
 };

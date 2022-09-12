@@ -9,7 +9,7 @@ class LocalCache
 
     public function __construct()
     {
-        $this->table = new Swoole\Table(8388608);
+        $this->table = new Swoole\Table(8192);
         $this->table->column('id', Swoole\Table::TYPE_INT);
         $this->table->column('ttl', Swoole\Table::TYPE_INT);
         $this->table->column('ctime', Swoole\Table::TYPE_INT);
