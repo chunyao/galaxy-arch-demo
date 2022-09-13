@@ -1,7 +1,9 @@
 <?php
 
-namespace App\MabangArchDemo\Spi\Service;
-use App\MabangArchDemo\Spi\Bo\HelloBo;
+namespace App\Spi\MabangArchDemo\Service;
+
+
+use App\Spi\MabangArchDemo\Bo\HelloBo;
 
 class ArchService extends BaseService
 {

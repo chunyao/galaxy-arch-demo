@@ -1,6 +1,6 @@
 <?php
 
-namespace App\MabangArchDemo\Spi\Bo;
+namespace App\Spi\MabangArchDemo\Bo;
 class HelloBo
 {
     private string $a;

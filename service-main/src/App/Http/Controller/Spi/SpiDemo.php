@@ -1,11 +1,11 @@
 <?php
 namespace App\Http\Controller\Spi;
 
-use App\MabangArchDemo\Spi\Bo\HelloBo;
-use App\MabangArchDemo\Spi\Service\ArchService;
+use App\Spi\MabangArchDemo\Bo\HelloBo;
+use App\Spi\MabangArchDemo\Service\ArchService;
 use Galaxy\Core\BaseController;
 use Mix\Vega\Context;
-use Swoole\Coroutine as co;
+
 
 class SpiDemo extends BaseController
 {

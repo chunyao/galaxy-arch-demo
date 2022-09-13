@@ -1,6 +1,6 @@
 <?php
 
-namespace App\MabangArchDemo\Spi\Service;
+namespace App\Spi\MabangArchDemo\Service;
 
 use App;
 use Galaxy\Common\Utils\Arr;
