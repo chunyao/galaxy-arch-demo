@@ -29,6 +29,7 @@ class BaseService
     public function __construct()
     {
     }
+
     public static $instance = [];
 
     /**
@@ -75,13 +76,13 @@ class BaseService
      */
     public static function request($url, $method, $data)
     {
-        $data = json_encode($data);
+        $data = (array)$data;
         $client = new Client([
             // 'base_uri' => $aiSearchAPIUrl,
             'timeout' => self::TIMEOUT,
         ]);
         $headers = [
-            'content-length' => strlen($data),
+            'content-length' => strlen(json_encode($data)),
             //'host'           => parse_url($aiSearchAPIUrl)['host'],
         ];
         try {
@@ -103,7 +104,7 @@ class BaseService
             $msg = $e->getMessage();
         } catch (\Exception $e) {
             $msg = $e->getMessage();
-        }catch (\Throwable $e) {
+        } catch (\Throwable $e) {
             $msg = $e->getMessage();
         }
         $code = -1;
