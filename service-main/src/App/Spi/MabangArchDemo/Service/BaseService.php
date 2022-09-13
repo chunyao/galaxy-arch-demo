@@ -51,10 +51,8 @@ class BaseService
             $api_url = env('PROJECT_URL_API_DOMAIN', 'http://mabang-arch-demo/mabang-arch-demo');
         }
 
-        $path = $api_url . $path;
 
-
-        $url = $api_url . '/' . $path;
+        $url = $api_url .  $path;
 
         $result = self::request($url, $method, $parmas);
         return $result;
