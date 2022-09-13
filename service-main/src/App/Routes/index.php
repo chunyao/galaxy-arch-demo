@@ -5,6 +5,7 @@ use App\Http\Controller\Helloword\SendMsg;
 use App\Http\Controller\LocalCache\LocalCacheController;
 use App\Http\Controller\MemCache\MemCacheController;
 use App\Http\Controller\Msg\Msg;
+use App\Http\Controller\Spi\SpiDemo;
 use App\Http\Controller\Sql\SqlImprove;
 use App\Http\Controller\Es\Index;
 return function (Mix\Vega\Engine $vega,$appName) {
