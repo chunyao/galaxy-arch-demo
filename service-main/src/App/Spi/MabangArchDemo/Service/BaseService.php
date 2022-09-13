@@ -46,7 +46,7 @@ class BaseService
     public static function call($path, $parmas, $method = 'POST')
     {
         if (App::$bootConfig['env'] == "local") {
-            $api_url = env('PROJECT_URL_API_DOMAIN', 'http://' . MabangUtil::mabangUrl('api.mabangerp.com') . '/v2');
+            $api_url = env('PROJECT_URL_API_DOMAIN', 'https://api.mabangerp.com/mabang-arch-demo');
         } else {
             $api_url = env('PROJECT_URL_API_DOMAIN', 'http://mabang-arch-demo/mabang-arch-demo');
         }
@@ -54,14 +54,8 @@ class BaseService
 
         $url = $api_url .  $path;
 
-        $result = self::request($url, $method, $parmas);
+        $result = self::request($url, $parmas,$method);
         return $result;
-        /* $code   = Arr::get($data, 'code', 0);
-         if ( $code == self::SUCCESS ) {
-             return $data;
-         }
-         return [];
-        */
     }
 
 
@@ -84,10 +78,15 @@ class BaseService
             //'host'           => parse_url($aiSearchAPIUrl)['host'],
         ];
         try {
+            if ($method=="POST"){
             $options = [
                 'headers' => $headers,
             ];
             $options += ['json' => $data];
+            }
+            if ($method=="GET"){
+                $options += ['query' => $data];
+            }
             $response = $client->request($method, $url, $options);
             $res = json_decode($response->getBody()->getContents(), 1);
             if (Arr::get($res, 'code', false) === 0) {
