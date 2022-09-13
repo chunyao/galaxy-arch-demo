@@ -5,6 +5,9 @@ namespace App\Spi\MabangArchDemo\Service;
 use App;
 use Galaxy\Common\Utils\Arr;
 use Galaxy\Core\Log;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Exception\RequestException;
 
 class BaseService
 {
@@ -85,7 +88,7 @@ class BaseService
             $options = [
                 'headers' => $headers,
             ];
-            $options += ['form_params' => $data];
+            $options += ['json' => $data];
             $response = $client->request($method, $url, $options);
             $res = json_decode($response->getBody()->getContents(), 1);
             if (Arr::get($res, 'code', false) === 0) {
