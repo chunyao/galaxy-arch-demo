@@ -66,7 +66,7 @@ class BaseService
      * @return array|mixed
      * @throws \ReflectionException
      */
-    public static function request($url, $method, $data)
+    public static function request($url, $data,$method)
     {
         $data = (array)$data;
         $client = new Client([
