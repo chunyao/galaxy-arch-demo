@@ -44,7 +44,7 @@ class BaseService
         if (App::$bootConfig['env'] == "local") {
             $api_url = env('PROJECT_URL_API_DOMAIN', 'http://' . MabangUtil::mabangUrl('api.mabangerp.com') . '/v2');
         } else {
-            $api_url = env('PROJECT_URL_API_DOMAIN', 'http://mabang-arch-demo');
+            $api_url = env('PROJECT_URL_API_DOMAIN', 'http://mabang-arch-demo/mabang-arch-demo');
         }
 
         $path = $api_url . $path;

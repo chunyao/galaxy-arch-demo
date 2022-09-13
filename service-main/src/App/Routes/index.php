@@ -27,5 +27,7 @@ return function (Mix\Vega\Engine $vega,$appName) {
     $sub->handle('/cache/get', [new LocalCacheController(), 'getTest'])->methods('GET');
     $sub->handle('/mem/set', [new MemCacheController(), 'setTest'])->methods('GET');
     $sub->handle('/mem/get', [new MemCacheController(), 'getTest'])->methods('GET');
+    $sub->handle('/spi/test', [new SpiDemo(), 'callSpiDemo'])->methods('GET');
+
     // $vega->handle('/auth', [new Auth(), 'index'])->methods('GET');
 };
