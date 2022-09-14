@@ -49,7 +49,7 @@ class Helloword extends BaseController
         });
         echo "1111".PHP_EOL;
         $ctx->JSON(200, [
-            'code' => 10200,
+            'code' => 200,
             'message' => 'success',
             'data' => 1
         ]);
@@ -83,7 +83,7 @@ class Helloword extends BaseController
         if (!RDS::instance()->set(App::$innerConfig['rabbitmq.queue'][0] . ":" . $this->msg['messageId'], 1, array('nx', 'ex' => 30000))) {
 
             $ctx->JSON(200, [
-                'code' => 10200,
+                'code' => 200,
                 'message' => 'success',
                 'data' => RDS::instance()->set("qweqwe", 1, array('nx', 'ex' => 30000))
             ]);
@@ -93,7 +93,7 @@ class Helloword extends BaseController
             return true;
         } else {
             $ctx->JSON(200, [
-                'code' => 10200,
+                'code' => 200,
                 'message' => 'success',
                 'data' => RDS::instance()->set("qweqwe", 1, array('nx', 'ex' => 30000))
             ]);

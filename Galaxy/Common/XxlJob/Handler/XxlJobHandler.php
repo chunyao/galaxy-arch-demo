@@ -36,10 +36,10 @@ class XxlJobHandler
 
             //$obj = new $className;
             Log::info("任务开始");
-            co::create(function () use ($params, $className) {
+           // co::create(function () use ($params, $className) {
                 $className::instance()->handler($params);
 
-            });
+      //      });
             $params['handleCode'] = 200;
             $params['msg'] = 'success';
 
