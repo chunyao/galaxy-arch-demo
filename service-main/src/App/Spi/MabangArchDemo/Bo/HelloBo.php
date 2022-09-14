@@ -4,7 +4,7 @@ namespace App\Spi\MabangArchDemo\Bo;
 class HelloBo
 {
     private string $a;
-
+    private string $b;
     /**
      * @return string
      */
@@ -36,7 +36,7 @@ class HelloBo
     {
         $this->b = $b;
     }
-    private string $b;
+
 
 
 }

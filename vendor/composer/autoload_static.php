@@ -8,12 +8,9 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
 {
     public static $files = array (
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
-        '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
-        'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
-        '950e8c5ec01dc90f029c243f73011631' => __DIR__ . '/..' . '/goaop/parser-reflection/src/bootstrap.php',
         'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
-        'c2aad8997a98dfc4771bdbffea3d62b7' => __DIR__ . '/..' . '/laminas/laminas-code/polyfill/ReflectionEnumPolyfill.php',
         'ad155f8f1cf0d418fe49e248db8c661b' => __DIR__ . '/..' . '/react/promise/src/functions_include.php',
+        '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
         'bbeb7603826cb9296dde3ca1a840af47' => __DIR__ . '/..' . '/hyperf/utils/src/Functions.php',
         '253c157292f75eb38082b5acb06f3f01' => __DIR__ . '/..' . '/nikic/fast-route/src/functions.php',
@@ -23,19 +20,12 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
     );
 
     public static $prefixLengthsPsr4 = array (
-        't' => 
-        array (
-            'test\\' => 5,
-        ),
         'p' => 
         array (
             'phpseclib3\\' => 11,
-            'pheign\\' => 7,
         ),
         'S' => 
         array (
-            'Symfony\\Polyfill\\Php80\\' => 23,
-            'Symfony\\Component\\Finder\\' => 25,
             'Swlib\\Util\\' => 11,
             'Swlib\\Saber\\' => 12,
             'Swlib\\Http\\' => 11,
@@ -49,9 +39,7 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
             'Psr\\Log\\' => 8,
             'Psr\\Http\\Message\\' => 17,
             'Psr\\Http\\Client\\' => 16,
-            'Psr\\Cache\\' => 10,
             'Php\\' => 4,
-            'PhpParser\\' => 10,
             'PhpAmqpLib\\' => 11,
             'ParagonIE\\ConstantTime\\' => 23,
         ),
@@ -70,7 +58,6 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         'L' => 
         array (
             'Lukasoppermann\\Httpstatus\\' => 26,
-            'Laminas\\Code\\' => 13,
         ),
         'H' => 
         array (
@@ -89,8 +76,6 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
             'GuzzleHttp\\Promise\\' => 19,
             'GuzzleHttp\\' => 11,
             'Google\\Protobuf\\' => 16,
-            'Go\\ParserReflection\\' => 20,
-            'Go\\' => 3,
             'GPBMetadata\\Google\\Protobuf\\' => 28,
             'GPBMetadata\\' => 12,
         ),
@@ -105,32 +90,13 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         'D' => 
         array (
             'Doctrine\\Inflector\\' => 19,
-            'Doctrine\\Common\\Lexer\\' => 22,
-            'Doctrine\\Common\\Cache\\' => 22,
-            'Doctrine\\Common\\Annotations\\' => 28,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'test\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/airmanbzh/pheign/private/test',
-        ),
         'phpseclib3\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib',
-        ),
-        'pheign\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/airmanbzh/pheign/src/pheign',
-        ),
-        'Symfony\\Polyfill\\Php80\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/polyfill-php80',
-        ),
-        'Symfony\\Component\\Finder\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/finder',
         ),
         'Swlib\\Util\\' => 
         array (
@@ -161,17 +127,9 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         array (
             0 => __DIR__ . '/..' . '/psr/http-client/src',
         ),
-        'Psr\\Cache\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/psr/cache/src',
-        ),
         'Php\\' => 
         array (
             0 => __DIR__ . '/../..' . '/archDemoSpi/Php',
-        ),
-        'PhpParser\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser',
         ),
         'PhpAmqpLib\\' => 
         array (
@@ -221,10 +179,6 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         array (
             0 => __DIR__ . '/..' . '/lukasoppermann/http-status/src',
         ),
-        'Laminas\\Code\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/laminas/laminas-code/src',
-        ),
         'Hyperf\\Utils\\' => 
         array (
             0 => __DIR__ . '/..' . '/hyperf/utils/src',
@@ -273,14 +227,6 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         array (
             0 => __DIR__ . '/..' . '/google/protobuf/src/Google/Protobuf',
         ),
-        'Go\\ParserReflection\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/goaop/parser-reflection/src',
-        ),
-        'Go\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/goaop/framework/src',
-        ),
         'GPBMetadata\\Google\\Protobuf\\' => 
         array (
             0 => __DIR__ . '/..' . '/google/protobuf/src/GPBMetadata/Google/Protobuf',
@@ -301,46 +247,12 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         array (
             0 => __DIR__ . '/..' . '/doctrine/inflector/lib/Doctrine/Inflector',
         ),
-        'Doctrine\\Common\\Lexer\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/doctrine/lexer/lib/Doctrine/Common/Lexer',
-        ),
-        'Doctrine\\Common\\Cache\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/doctrine/cache/lib/Doctrine/Common/Cache',
-        ),
-        'Doctrine\\Common\\Annotations\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations',
-        ),
-    );
-
-    public static $prefixesPsr0 = array (
-        'D' => 
-        array (
-            'Dissect' => 
-            array (
-                0 => __DIR__ . '/..' . '/jakubledl/dissect/src',
-            ),
-        ),
-        'C' => 
-        array (
-            'Curl' => 
-            array (
-                0 => __DIR__ . '/..' . '/curl/curl/src',
-            ),
-        ),
     );
 
     public static $classMap = array (
-        'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
-        'PhpToken' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/PhpToken.php',
-        'Stringable' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Stringable.php',
         'Swlib\\Saber' => __DIR__ . '/..' . '/swlib/saber/src/Saber.php',
         'Swlib\\SaberGM' => __DIR__ . '/..' . '/swlib/saber/src/SaberGM.php',
-        'UnhandledMatchError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/UnhandledMatchError.php',
-        'ValueError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/ValueError.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
@@ -348,7 +260,6 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03::$prefixesPsr0;
             $loader->classMap = ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03::$classMap;
 
         }, null, ClassLoader::class);
