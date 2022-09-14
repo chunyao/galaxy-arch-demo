@@ -85,17 +85,16 @@ class BaseService
             $options += ['json' => $data];
             }
             if ($method=="GET"){
-                $options += ['query' => $data];
+                $options = ['query' => $data];
             }
             $response = $client->request($method, $url, $options);
             $res = json_decode($response->getBody()->getContents(), 1);
-            if (Arr::get($res, 'code', false) === 0) {
-                return ['code' => $res['code'], 'data' => $res['data'], 'msg' => $res['msg']];
+            if (Arr::get($res, 'code', false) === 200) {
+                return $res['data'];
             }
-            $msg = $res;
-        } catch (RequestException $e) {
-            $msg = $e->getMessage();
-        } catch (\InvalidArgumentException $e) {
+
+            $msg = $res['message'];
+        } catch (RequestException $e  ) {
             $msg = $e->getMessage();
         } catch (GuzzleException $e) {
             $msg = $e->getMessage();
@@ -104,10 +103,6 @@ class BaseService
         } catch (\Throwable $e) {
             $msg = $e->getMessage();
         }
-        $code = -1;
-        if (isset($res['code'])) {
-            $code = $res['code'];
-        }
-        return ['code' => $code, 'data' => [], 'msg' => $msg];
+        throw new \Exception($msg);
     }
 }
