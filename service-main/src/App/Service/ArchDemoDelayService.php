@@ -25,7 +25,7 @@ class ArchDemoDelayService extends BaseService
         $data['messageId'] =   SnowFlake::instance()->generateID();
         $data['body'] = "With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s.With thick pages cut into the s." ;
         $head=[];
-        MQ::instance()->publish(json_encode($data), $this->exchange_delay, $this->routekey_delay,$head,1);
+        MQ::instance()->publish(json_encode($data), $this->exchange_delay, $this->routekey_delay,$head,0);
         return true;
     }
 }
