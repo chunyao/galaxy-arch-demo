@@ -73,6 +73,7 @@ class RabbitMqProcess
             $obj = $this->consumeMessage(0, $i);
 
             while ($obj->is_consuming()) {
+                usleep(50000);
                 $obj->wait(null, true);
             }
         } catch (\Throwable $ex) {

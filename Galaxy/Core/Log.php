@@ -43,7 +43,12 @@ class Log
             //记录当前请求的uri，便于寻找记录日志的地址
             $msg['url'] = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
             $msg['msg'] = $message;
-            SeasLog::log($level, json_encode($message, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), $data, $module); //中文和斜杠不转义，正常显示。
+            try {
+                SeasLog::log($level, json_encode($message, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), $data, $module); //中文和斜杠不转义，正常显示。
+            }catch (\Throwable $e){
+
+            }
+
             if (PHP_SAPI == "cli" or defined('STDIN')) {
                 //运行模式是否是cli模式,是的话手动清除缓存
                 SeasLog::closeLoggerStream(SEASLOG_CLOSE_LOGGER_STREAM_MOD_ALL);
