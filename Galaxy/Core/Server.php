@@ -96,7 +96,7 @@ class Server
             }, false, 0, true);
             $process->start();
         }
-
+        SeasLog::setLogger($this->config['app.name']);
         self::$appName = $this->config['app.name'];
         $vega = Vega::new(self::$appName);
 
