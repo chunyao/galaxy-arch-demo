@@ -205,11 +205,11 @@ EOL;
         Log::info("进程:" . $worker_id . " exit");
     }
 
-    public function onWorkerError($server, int $worker_id, Swoole\Server\StatusInfo $info)
+    public function onWorkerError($server, int $worker_id)
     {
         Log::info("进程:" . $worker_id . " error");
 
-        Log::info("服务器信息:" . $worker_id . " ".json_encode($info));
+        Log::info("服务器信息:" . $worker_id );
     }
 
     public function onWorkerStart($server, $worker_id)
