@@ -18,7 +18,7 @@ class RobbitMqListener
         $this->msg = $msg;
         $this->queue = $queue;
         self::$config = $config;
-        $this->rabbitQueueload(self::$config['app.name']);
+        self::rabbitQueueload(self::$config['app.name']);
     }
 
     public static function rabbitQueueload($appName)
@@ -29,23 +29,24 @@ class RobbitMqListener
             DIRECTORY_SEPARATOR."Listener".DIRECTORY_SEPARATOR;
 
         if (is_dir($dir)) {
-
             $info = opendir($dir);
             $i = 0;
+            if(is_resource($info)) {
+                while (($file = readdir($info)) !== false) {
 
-            while (($file = readdir($info)) !== false) {
+                    if (is_file($dir . $file)) {
 
-                if (is_file($dir.$file)) {
+                        $class = str_replace(".php", "", $file);
 
-                    $class = str_replace(".php", "", $file);
+                        self::$mqClasses[$i] = 'App\Listener\\' . $class;
+                        $i++;
+                    }
 
-                    self::$mqClasses[$i] = 'App\Listener\\'.$class;
-                    $i++;
                 }
-
+                closedir($info);
+            }else{
+                self::rabbitQueueload(self::$config['app.name']);
             }
-            closedir($info);
-
         }
         return self::$mqClasses;
     }

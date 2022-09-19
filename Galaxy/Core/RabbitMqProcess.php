@@ -70,30 +70,11 @@ class RabbitMqProcess
 
             // 建立连接
             $this->con = new AMQPStreamConnection(...$params);
+            $obj = $this->consumeMessage(0, $i);
 
-            for ($chl = 0; $chl < $up; $chl++) {
-                $obj[$chl] = $this->consumeMessage($chl, $i);
-            }
-
-            while (1) {
-                /* 内存泄漏debug
-                 * if ( time() % 10 === 0 )
-                {
-                    sleep(2);
-                    echo sprintf( '%8d: ', time() ).(memory_get_usage() - $baseMemory). "\n";
-                }*/
-                for ($chl = 0; $chl < $up; $chl++) {
-                    if ($obj[$chl]->is_consuming()) {
-                        $obj[$chl]->wait(null, true);
-                    } else {
-                        try {
-                            $obj[$chl] = $this->consumeMessage($chl, $i);
-                        } catch (\Throwable $e) {
-                            Log::error(sprintf('%s in %s on line %d', $e->getMessage(), $e->getFile(), $e->getLine()));
-                        }
-
-                    }
-                }
+            while ($obj->is_consuming()) {
+                usleep(50000);
+                $obj->wait(null, true);
             }
         } catch (\Throwable $ex) {
             Log::error(sprintf('消息队列 %s error', $this->config['rabbitmq.queue'][$i]));

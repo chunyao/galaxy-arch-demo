@@ -12,6 +12,7 @@ class ArchService extends BaseService
 
     public function HelloWord(HelloBo $helloBo){
         /*固定方法*/
+        $arr = require
         $path = '/helloword/helloword';
         return parent::call($path,$helloBo,'GET');
     }
