@@ -5,8 +5,10 @@ namespace App\Http\Controller\Helloword;
 
 
 use App;
+use App\Common\Utils\Test;
 use App\Config\ES;
 use App\Config\RDS;
+
 use App\Repository\Model\Mongo\Product;
 use App\Service\SayService;
 use App\Service\WishbrandService;
@@ -57,7 +59,11 @@ class Helloword extends BaseController
     public function helloword(Context $ctx)
     {
         /*ES*/
-
+        $ctx->JSON(200, [
+            'code' => 200,
+            'message' => 'success',
+            'data' => Test::test()
+        ]);
         /*mongo*/
         /* $data = $this->product->insertData();
          $ctx->JSON(200, [
