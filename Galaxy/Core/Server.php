@@ -13,7 +13,7 @@ use \GuzzleHttp;
 use \Galaxy\Common\Handler\InnerServer;
 use \Galaxy\Common\Configur\CoreDB;
 use \Galaxy\Common\Configur\CoreRDS;
-
+use SeasLog;
 class Server
 {
     protected Swoole\Http\Server $server;
