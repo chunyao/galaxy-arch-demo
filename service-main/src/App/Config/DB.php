@@ -73,7 +73,8 @@ class DB
     public static function health() :string
     {
         try{
-            return self::instance()->raw("SELECT 1")->first()[1];
+            return "1";
+            //return self::instance()->raw("SELECT 1")->first()[1];
         }catch (\Throwable $ex){
             return "1";
         }

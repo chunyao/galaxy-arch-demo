@@ -25,6 +25,7 @@ class Msg
     public function handler(Context $ctx)
     {
         echo "start:" . self::getMillisecond()."\n";
+
         RDS::instance()->get(App::$innerConfig['rabbitmq.queue'][0] . ":e94cbf36-cd9e-40fb-b268-3e7334ca8928-3a");
         echo "end:" . self::getMillisecond();
         $ctx->JSON(200, [
