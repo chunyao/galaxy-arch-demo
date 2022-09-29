@@ -52,6 +52,7 @@ class Helloword extends BaseController
     }
     public function helloword(Context $ctx)
     {
+        var_dump($ctx->getQuery('test'));
         /*ES*/
         $ctx->JSON(200, [
             'code' => 200,
@@ -88,7 +89,7 @@ class Helloword extends BaseController
                 'data' => RDS::instance()->set("qweqwe", 1, array('nx', 'ex' => 30000))
             ]);
 
-            echo "消息重复消费 id:" . $this->msg['id'] . "\n";
+          //  echo "消息重复消费 id:" . $this->msg['id'] . "\n";
             //   log::info("消息重复消费 id:". $this->msg['id']);
             return true;
         } else {
