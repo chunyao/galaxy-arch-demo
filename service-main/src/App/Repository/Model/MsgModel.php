@@ -17,14 +17,14 @@ class MsgModel
     public function findById(int $id)
     {
 
-        $data =  Stock::instance()->table( $this->table )->where('id = ?', $id)->first();
+        $data =  DB::instance()->table( $this->table )->where('id = ?', $id)->first();
 
         return $data;
     }
 
     public function insertMsg(array $msg):int
     {
-        $id = Stock::instance()->insert($this->table,$msg)->lastInsertId();
+        $id = DB::instance()->insert($this->table,$msg)->lastInsertId();
         return $id;
     }
 

@@ -11,7 +11,7 @@ use function Swoole\Coroutine\run;
 use GuzzleHttp;
 use Swoole;
 
-class RabbitMqProcess
+class ShareRabbitMqProcess
 {
     private $channel_start = 20;
     private $works = [];
@@ -35,9 +35,9 @@ class RabbitMqProcess
         self::$httpClient = new GuzzleHttp\Client();
     }
 
-    public function initQueues($ch, $i)
+    public function initQueues($ch)
     {
-        $up = 2;
+        $up =2;
         $baseMemory = memory_get_usage();
         try {
             /*       $host,
@@ -62,21 +62,58 @@ class RabbitMqProcess
                 $this->config['rabbitmq.port'],
                 $this->config['rabbitmq.username'],
                 $this->config['rabbitmq.password'],
-                $this->config['rabbitmq.vhost'][$i],
+                $this->config['rabbitmq.vhost'][0],
                 false,
                 "AMQPLAIN", null, 'en_US', 5, 61, null, true, 30
             ];
 
-
+            $obj = array();
             // 建立连接
-            $this->con = new AMQPStreamConnection(...$params);
-            $obj = $this->consumeMessage(0, $i);
 
-            while ($obj->is_consuming()) {
-                usleep(50000);
-                $obj->wait(null, true);
+            $this->con = new AMQPStreamConnection(...$params);
+            for ($chl = 0; $chl < $up; $chl++) {
+                $i = 0;
+                foreach ($this->config['rabbitmq.enable'] as $key => $val) {
+                    if ($val) {
+                        foreach (RobbitMqListener::rabbitQueueload($this->config['app.name']) as $keys => $value) {
+                            if ($value::getQueue() == $this->config['rabbitmq.queue'][$key]) {
+                                $obj[$chl][$i] = $this->consumeMessage($chl, $key);
+                                $i++;
+                            }
+                        }
+                    }
+
+                }
             }
-        } catch (\Throwable $ex) {
+
+
+            while (1) {
+                for ($chl = 0; $chl < $up; $chl++) {
+                    $i = 0;
+                    foreach ($this->config['rabbitmq.enable'] as $key => $val) {
+                        if ($val) {
+                            foreach (RobbitMqListener::rabbitQueueload($this->config['app.name']) as $keys => $value) {
+                                if ($value::getQueue() == $this->config['rabbitmq.queue'][$key]) {
+                                    if ($obj[$chl][$i]->is_consuming()) {
+                                        $obj[$chl][$i]->wait(null, true);
+                                    } else {
+                                        try {
+                                            $obj[$chl][$i] = $this->consumeMessage($chl, $key);
+                                        } catch
+                                        (\Throwable $e) {
+                                            Log::error(sprintf('%s in %s on line %d', $e->getMessage(), $e->getFile(), $e->getLine()));
+                                        }
+                                    }
+                                    $i++;
+                                }
+                            }
+
+                        }
+                    }
+                }
+            }
+        } catch
+        (\Throwable $ex) {
             Log::error(sprintf('消息队列 %s error', $this->config['rabbitmq.queue'][$i]));
             $this->con->close();
         }
@@ -87,8 +124,8 @@ class RabbitMqProcess
     {
         $c = rand(0, 2000);
         // 创建通道
-        $channel[$num] = $this->con->channel($c);
-        $channel[$num]->basic_qos(null, 20, false);
+        $channel[$num][$i] = $this->con->channel($c);
+        $channel[$num][$i]->basic_qos(null, 20, false);
         /**
          * name:xxx             交换机名称
          * type:direct          类型 fanut,direct,topic,headers
@@ -97,9 +134,9 @@ class RabbitMqProcess
          * auto_delete:false    自动删除，最后一个
          */
         $exName = $this->config['rabbitmq.exchange'][$i];
-        $channel[$num]->exchange_declare($exName, 'direct', false, true, false);
+        $channel[$num][$i]->exchange_declare($exName, 'direct', false, true, false);
         if (isset($this->config['rabbitmq.exchange.dead'][$i])) {
-            $channel[$num]->exchange_declare($this->config['rabbitmq.exchange.dead'][$i], 'direct', false, true, false);
+            $channel[$num][$i]->exchange_declare($this->config['rabbitmq.exchange.dead'][$i], 'direct', false, true, false);
         }
 
         // 创建队列
@@ -111,9 +148,9 @@ class RabbitMqProcess
          * auto_delete:false    自动删除，最后一个
          */
         $queueName = $this->config['rabbitmq.queue'][$i];
-        $channel[$num]->queue_declare($queueName, true, true, false, false);
+        $channel[$num][$i]->queue_declare($queueName, true, true, false, false);
         if (isset($this->config['rabbitmq.queue.dead'][$i])) {
-            $channel[$num]->queue_declare($this->config['rabbitmq.queue.dead'][$i], false, true, false, false);
+            $channel[$num][$i]->queue_declare($this->config['rabbitmq.queue.dead'][$i], false, true, false, false);
         }
         // 绑定
         /**
@@ -122,9 +159,9 @@ class RabbitMqProcess
          * $routing_key     路由名称
          */
         $routeKey = $this->config['rabbitmq.routekey'][$i];
-        $channel[$num]->queue_bind($queueName, $exName, $routeKey);
+        $channel[$num][$i]->queue_bind($queueName, $exName, $routeKey);
         if (isset($this->config['rabbitmq.routekey.dead'][$i])) {
-            $channel[$num]->queue_bind($this->config['rabbitmq.queue.dead'][$i], $this->config['rabbitmq.exchange.dead'][$i], $this->config['rabbitmq.routekey.dead'][$i]);
+            $channel[$num][$i]->queue_bind($this->config['rabbitmq.queue.dead'][$i], $this->config['rabbitmq.exchange.dead'][$i], $this->config['rabbitmq.routekey.dead'][$i]);
         }
         // 消费
         /**
@@ -139,24 +176,24 @@ class RabbitMqProcess
         // 回调
         $msgBody = array();
         $req = $this->url;
-        $callback[$num] = require __DIR__ . '/RabbitMqMsg.php';
+        $callback[$num][$i] = require __DIR__ . '/RabbitMqMsg.php';
         echo $this->config['rabbitmq.queue'][$i] . " 开始消费" . "Worker 进程ID:" . posix_getpid() . PHP_EOL;
         Log::info($this->config['rabbitmq.queue'][$i] . " 开始消费" . "Worker 进程ID:" . posix_getpid());
-        $channel[$num]->basic_consume($queueName, "", false, false, false, false, $callback[$num]);
+        $channel[$num][$i]->basic_consume($queueName, "", false, false, false, false, $callback[$num][$i]);
         //消费
-        return $channel[$num];
+        return $channel[$num][$i];
 
     }
 
-    public function createProcess($ch, $queue)
+    public function createProcess($ch, $i)
     {
 
-        $process = new Swoole\Process(function ($worker) use ( $ch, $queue) {
+        $process = new Swoole\Process(function ($worker) use ($ch) {
             while (1) {
                 sleep(5);
                 log::info("消息进程ID:" . posix_getpid() . "\n");
                 try {
-                    $this->initQueues($ch, $queue);
+                    $this->initQueues($ch);
                 } catch (\Throwable $e) {
                     Log::error(sprintf('%s in %s on line %d', $e->getMessage(), $e->getFile(), $e->getLine()));
                 }
@@ -165,7 +202,7 @@ class RabbitMqProcess
         }, false, 0, true);
 
         $pid = $process->start();
-        $this->works[$pid] = $queue;
+        $this->works[$pid] = $i;
         $this->processes[$pid] = $process;
         echo "Mq Master: new worker, PID=" . $pid . "\n";
         return $pid;
@@ -177,7 +214,7 @@ class RabbitMqProcess
             if ($ret = Swoole\Process::wait(false)) {
                 $retPid = intval($ret["pid"] ?? 0);
                 if (isset($this->works[$retPid])) {
-                    $this->createProcess(rand(0,100),$this->works[$retPid]);
+                    $this->createProcess(rand(0, 100), $this->works[$retPid]);
                     unset($this->works[$retPid]);
                     unset($this->processes[$retPid]);
                 }
@@ -187,31 +224,11 @@ class RabbitMqProcess
 
     public function handler()
     {
-        if (empty($this->config['rabbitmq.enable'])) return ;
+        if (empty($this->config['rabbitmq.enable'])) return;
         $channel_step = 0;
         for ($worker = 0; $worker < $this->workers; $worker++) {
-
-            $i = 0;
-            foreach ($this->config['rabbitmq.enable'] as $key => $value) {
-
-                if ($value) {
-
-                    foreach (RobbitMqListener::rabbitQueueload($this->config['app.name']) as $key => $val) {
-                        if (isset($this->config['rabbitmq.queue.num'][$i])) {
-                            for ($k = 0; $k < $this->config['rabbitmq.queue.num'][$i]; $k++) {
-                                if ($val::getQueue() == $this->config['rabbitmq.queue'][$i]) $this->createProcess($this->channel_start + $channel_step, $i);
-                                sleep(0.2);
-                            }
-                        } else {
-                            if ($val::getQueue() == $this->config['rabbitmq.queue'][$i]) $this->createProcess($this->channel_start + $channel_step, $i);
-                        }
-
-                    }
-                }
-                $i++;
-                $channel_step++;
-            }
+            $this->createProcess($this->channel_start + $channel_step, $worker);
         }
-          $this->watchProcess();
+        $this->watchProcess();
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+use Galaxy\Common\Utils\Parallel;
+
 function getTableSuffix(string $table, int $companyId, $subTable = 100): string
 {
     // 根据企业编号，对100取余分表
@@ -128,19 +130,36 @@ function dintval($int, $allowarray = false)
 
     return $ret;
 }
+if (! function_exists('parallel')) {
+    /**
+     * @param callable[] $callables
+     * @param int $concurrent if $concurrent is equal to 0, that means unlimited
+     */
+    function parallel(array $callables, int $concurrent = 0)
+    {
+        $parallel = new Parallel($concurrent);
+        foreach ($callables as $key => $callable) {
+            $parallel->add($callable, $key);
+        }
+        return $parallel->wait();
+    }
+}
 
-function rest_curl($url, $method, $header = null, $data = null)
+function rest_curl($url, $method, $header = array(), $data = null)
 {
+    $headers = array("Expect :");
+    $headers = array_merge($headers,$header);
     $handle = curl_init();
     if ($header) {
-        curl_setopt($handle, CURLOPT_HTTPHEADER, $header);
+        curl_setopt($handle, CURLOPT_HTTPHEADER, $headers);
     }
     curl_setopt($handle, CURLOPT_URL, $url);
     curl_setopt($handle, CURLOPT_HEADER, 0);
     curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($handle, CURLOPT_SSL_VERIFYHOST, false);
     curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, false);
-
+    curl_setopt($handle, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0);
+    curl_setopt($handle, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
     switch (strtoupper($method)) {
         case 'GET':
             break;

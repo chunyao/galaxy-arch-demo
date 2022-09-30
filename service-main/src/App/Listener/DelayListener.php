@@ -30,7 +30,7 @@ class DelayListener
     public static function getQueue()
     {
 
-        return App::$innerConfig['rabbitmq.queue'][2];
+        return App::$innerConfig['rabbitmq.queue'][1];
     }
 
     public function __construct($msg)
@@ -58,6 +58,7 @@ class DelayListener
        // if (!RDS::instance()->set(App::$innerConfig['rabbitmq.queue'][0] . ":" . $this->msg['id'],1, array('nx', 'ex' => 30))) {
         //echo "消息重复消费 id:". $this->msg['id']."\n";
          //   log::info("消息重复消费 id:". $this->msg['id']);
+          //  sleep(1);
             return true;
        // }else{
        //     echo "start:" . self::getMillisecond()."\n";

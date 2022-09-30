@@ -28,7 +28,7 @@ class MsgService
     public function saveMsg($msg)
     {
         $body = array();
-        $body['msg_id']=$msg['id'];
+        $body['msg_id']=$msg['messageId'];
         $body['msgBody']=JSON($msg);
         $return = $this->msgModel->insertMsg($body);
 
