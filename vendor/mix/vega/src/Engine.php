@@ -96,7 +96,14 @@ class Engine
             }
         };
     }
+    public function handler2($request, $response)
+    {
+        $this->startDispatcher();
 
+        $ctx = Context::fromSwoole($this->mode, $request, $response, $this->htmlRender);
+        $this->dispatch($request->server['request_method'], $request->server['path_info'] ?: '/', $ctx);
+
+    }
     /**
      * 立即执行
      * 支持 PHP-FPM, cli-server

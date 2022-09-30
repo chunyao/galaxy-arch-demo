@@ -35,7 +35,7 @@ class Server
     public static \GuzzleHttp\Client $httpClient;
 
     protected array $headers;
-
+    protected $vega;
     protected string $url;
 
     protected static string $appName;
@@ -98,7 +98,7 @@ class Server
         }
         SeasLog::setLogger($this->config['app.name']);
         self::$appName = $this->config['app.name'];
-        $vega = Vega::new(self::$appName);
+
 
         if (isset($bootConfig['server.port'])) {
             $serverPort = $bootConfig['server.port'];
@@ -182,7 +182,10 @@ EOL;
         });
         $this->server->on('WorkerExit', array($this, 'onWorkerExit'));
         $this->server->on('WorkerError', array($this, 'onWorkerError'));
-        $this->server->on('Request', $vega->handler());
+
+        $this->vega = Vega::new(self::$appName);
+        $this->server->on('Request', array($this, 'onRequest'));
+
         $this->server->on('Receive', array($this, 'onReceive'));
         self::$serverinfo = $this->server;
     }
@@ -190,6 +193,10 @@ EOL;
     public function httpStart()
     {
         $this->server->start();
+    }
+    public function onRequest($request, $response)
+    {
+        $this->vega->handler2($request, $response);
     }
 
 

@@ -36,11 +36,9 @@ class Helloword extends BaseController
         //   $this->wishbrandService = new WishbrandService();
     }
     public function ht(Context $ctx){
-        $body = $ctx->mustGetJSON();
-
+        $body = $ctx->getQuery("get");
         co::set(['hook_flags' => SWOOLE_HOOK_CURL]);
         co::create(function() use($body) {
-
           var_dump($body);
         });
 
@@ -81,7 +79,7 @@ class Helloword extends BaseController
         //  $indexData = ES::instance()->getDocumentById("57ce61f064e915204367f296");
 
 
-        if (!RDS::instance()->set(App::$innerConfig['rabbitmq.queue'][0] . ":" . $this->msg['messageId'], 1, array('nx', 'ex' => 30000))) {
+       // if (!RDS::instance()->set(App::$innerConfig['rabbitmq.queue'][0] . ":" . $this->msg['messageId'], 1, array('nx', 'ex' => 30000))) {
 
             $ctx->JSON(200, [
                 'code' => 200,
@@ -91,14 +89,14 @@ class Helloword extends BaseController
 
           //  echo "消息重复消费 id:" . $this->msg['id'] . "\n";
             //   log::info("消息重复消费 id:". $this->msg['id']);
-            return true;
-        } else {
+       //     return true;
+      /*  } else {
             $ctx->JSON(200, [
                 'code' => 200,
                 'message' => 'success',
                 'data' => RDS::instance()->set("qweqwe", 1, array('nx', 'ex' => 30000))
             ]);
-        }
+        }*/
 
         /*
           $id = rand(1, 239368);
