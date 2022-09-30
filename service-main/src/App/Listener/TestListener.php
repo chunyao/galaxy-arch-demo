@@ -40,7 +40,7 @@ class TestListener
          * 私有云 1 对应 qqqq
          **/
         //    $this->queueService = new QueueService();
-        //      $this->msgService = new MsgService();
+        $this->msgService = new MsgService();
         //       $this->msgProxy = new MsgProxyService();
         $this->msg = $msg;
 
@@ -53,19 +53,19 @@ class TestListener
         /* 整理 接受msseage 消息*/
         /* 方案一 自己处理消息*/
 
-        if (!RDS::instance()->set(App::$innerConfig['rabbitmq.queue'][0] . ":" . $this->msg['id'],1, array('nx', 'ex' => 30))) {
-        //echo "消息重复消费 id:". $this->msg['id']."\n";
-           log::info("消息重复消费 id:". $this->msg['id']);
-
-        return true;
-         }else{
-             echo "start:" . self::getMillisecond()."\n";
-           $result = $this->msgService->saveMsg($this->msg);
-           echo "end:" . self::getMillisecond()."\n";
-        //   echo "漏了";
+        if (!RDS::instance()->set(App::$innerConfig['rabbitmq.queue'][0] . ":" . $this->msg['messageId'], 1, array('nx', 'ex' => 30))) {
+            echo "消息重复消费 id:" . $this->msg['messageId'] . "\n";
+            // log::info("消息重复消费 id:" . $this->msg['messageId']);
 
             return true;
-         }
+        } else {
+            echo "start:" . self::getMillisecond() . "\n";
+            $result = $this->msgService->saveMsg($this->msg);
+            echo "end:" . self::getMillisecond() . "\n";
+            //   echo "漏了";
+
+            return true;
+        }
 
         /* 方案二转发消息*/
         //   return $this->msgProxy->sendMessage("http://192.168.2.21:11181/api/default/testSwooleRabbitMq", $this->msg);
@@ -75,7 +75,7 @@ class TestListener
     public
     function __destruct()
     {
-        //    unset($this->msgService);
+            unset($this->msgService);
         //  unset($this->QueueService);
         //  unset($this->msgProxy);
 
