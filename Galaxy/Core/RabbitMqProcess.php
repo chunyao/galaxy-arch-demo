@@ -187,6 +187,7 @@ class RabbitMqProcess
 
     public function handler()
     {
+        if (empty($this->config['rabbitmq.enable'])) return ;
         $channel_step = 0;
         for ($worker = 0; $worker < $this->workers; $worker++) {
 

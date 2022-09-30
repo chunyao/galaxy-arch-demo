@@ -62,7 +62,8 @@ class ES
     {
 
         try{
-           if (self::instance()->existsIndex()){return "1";}
+            return "1";
+          // if (self::instance()->existsIndex()){return "1";}
 
         }catch (\Throwable $ex){
 

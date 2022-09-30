@@ -13,7 +13,7 @@ use \GuzzleHttp;
 use \Galaxy\Common\Handler\InnerServer;
 use \Galaxy\Common\Configur\CoreDB;
 use \Galaxy\Common\Configur\CoreRDS;
-
+use SeasLog;
 class Server
 {
     protected Swoole\Http\Server $server;
@@ -35,7 +35,7 @@ class Server
     public static \GuzzleHttp\Client $httpClient;
 
     protected array $headers;
-
+    protected $vega;
     protected string $url;
 
     protected static string $appName;
@@ -96,9 +96,9 @@ class Server
             }, false, 0, true);
             $process->start();
         }
-
+        SeasLog::setLogger($this->config['app.name']);
         self::$appName = $this->config['app.name'];
-        $vega = Vega::new(self::$appName);
+
 
         if (isset($bootConfig['server.port'])) {
             $serverPort = $bootConfig['server.port'];
@@ -182,7 +182,10 @@ EOL;
         });
         $this->server->on('WorkerExit', array($this, 'onWorkerExit'));
         $this->server->on('WorkerError', array($this, 'onWorkerError'));
-        $this->server->on('Request', $vega->handler());
+
+        $this->vega = Vega::new(self::$appName);
+        $this->server->on('Request', array($this, 'onRequest'));
+
         $this->server->on('Receive', array($this, 'onReceive'));
         self::$serverinfo = $this->server;
     }
@@ -190,6 +193,10 @@ EOL;
     public function httpStart()
     {
         $this->server->start();
+    }
+    public function onRequest($request, $response)
+    {
+        $this->vega->handler2($request, $response);
     }
 
 
@@ -205,11 +212,11 @@ EOL;
         Log::info("进程:" . $worker_id . " exit");
     }
 
-    public function onWorkerError($server, int $worker_id, Swoole\Server\StatusInfo $info)
+    public function onWorkerError($server, int $worker_id)
     {
         Log::info("进程:" . $worker_id . " error");
 
-        Log::info("服务器信息:" . $worker_id . " ".json_encode($info));
+        Log::info("服务器信息:" . $worker_id );
     }
 
     public function onWorkerStart($server, $worker_id)

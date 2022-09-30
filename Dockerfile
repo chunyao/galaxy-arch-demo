@@ -1,4 +1,4 @@
-FROM mabangerp-docker.pkg.coding.net/public/php-project/php-7.4-swoole:20220819
+FROM mabangerp-docker.pkg.coding.net/public/php-project/php-7.4-swoole:20220927
 
 # 设置环境
 #默认dev

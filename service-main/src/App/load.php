@@ -6,7 +6,6 @@ class AppLoader
     public static $vendorMap = array(
         'App' => __DIR__ . DIRECTORY_SEPARATOR . '',
         'Controller' => __DIR__ . DIRECTORY_SEPARATOR.'App'. DIRECTORY_SEPARATOR .'Http'. DIRECTORY_SEPARATOR .'Controller',
-
     );
 
     /**

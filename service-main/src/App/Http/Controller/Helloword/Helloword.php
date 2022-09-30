@@ -5,8 +5,10 @@ namespace App\Http\Controller\Helloword;
 
 
 use App;
+use App\Common\Utils\Test;
 use App\Config\ES;
 use App\Config\RDS;
+
 use App\Repository\Model\Mongo\Product;
 use App\Service\SayService;
 use App\Service\WishbrandService;
@@ -34,20 +36,12 @@ class Helloword extends BaseController
         //   $this->wishbrandService = new WishbrandService();
     }
     public function ht(Context $ctx){
+        $body = $ctx->getQuery("get");
         co::set(['hook_flags' => SWOOLE_HOOK_CURL]);
-        co::create(function() {
-            co::create(function () {
-                co::create(function () {
-                    co::sleep(3.0);
-                    echo "co[3] end\n";
-                });
-                co::sleep(2.0);
-                echo "co[2] end\n";
-            });
-            co::sleep(1.0);
-            echo "co[1] end\n";
+        co::create(function() use($body) {
+          var_dump($body);
         });
-        echo "1111".PHP_EOL;
+
         $ctx->JSON(200, [
             'code' => 200,
             'message' => 'success',
@@ -56,8 +50,13 @@ class Helloword extends BaseController
     }
     public function helloword(Context $ctx)
     {
+        var_dump($ctx->getQuery('test'));
         /*ES*/
-
+        $ctx->JSON(200, [
+            'code' => 200,
+            'message' => 'success',
+            'data' => Test::test()
+        ]);
         /*mongo*/
         /* $data = $this->product->insertData();
          $ctx->JSON(200, [
@@ -80,7 +79,7 @@ class Helloword extends BaseController
         //  $indexData = ES::instance()->getDocumentById("57ce61f064e915204367f296");
 
 
-        if (!RDS::instance()->set(App::$innerConfig['rabbitmq.queue'][0] . ":" . $this->msg['messageId'], 1, array('nx', 'ex' => 30000))) {
+       // if (!RDS::instance()->set(App::$innerConfig['rabbitmq.queue'][0] . ":" . $this->msg['messageId'], 1, array('nx', 'ex' => 30000))) {
 
             $ctx->JSON(200, [
                 'code' => 200,
@@ -88,16 +87,16 @@ class Helloword extends BaseController
                 'data' => RDS::instance()->set("qweqwe", 1, array('nx', 'ex' => 30000))
             ]);
 
-            echo "消息重复消费 id:" . $this->msg['id'] . "\n";
+          //  echo "消息重复消费 id:" . $this->msg['id'] . "\n";
             //   log::info("消息重复消费 id:". $this->msg['id']);
-            return true;
-        } else {
+       //     return true;
+      /*  } else {
             $ctx->JSON(200, [
                 'code' => 200,
                 'message' => 'success',
                 'data' => RDS::instance()->set("qweqwe", 1, array('nx', 'ex' => 30000))
             ]);
-        }
+        }*/
 
         /*
           $id = rand(1, 239368);

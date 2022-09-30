@@ -66,10 +66,11 @@ class RDS
     }
     public static function health() :string
     {
-        if(self::instance()->set("health",true,1)){
-            return "1";
-        }
         return "1";
+     //   if(self::instance()->set("health",true,1)){
+     //       return "1";
+     //   }
+    //    return "1";
 
     }
 }

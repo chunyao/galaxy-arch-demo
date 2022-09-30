@@ -29,7 +29,7 @@ class XxlJobService
         $ip = GetLocalIp::getIp();
         $data = [
             "registryGroup" => 'EXECUTOR',                     // 固定值
-            "registryKey" => App::$innerConfig['app.name'],       // 执行器AppName
+            "registryKey" => App::$innerConfig['xxl.job.executor.appname'],       // 执行器AppName
             "registryValue" => "http://$ip:" . APP::$innerConfig['xxl.job.executor.port'],
             // 执行器地址，内置服务跟地址
         ];
@@ -49,7 +49,7 @@ class XxlJobService
         $ip = GetLocalIp::getIp();
         $data = [
             "registryGroup" => 'EXECUTOR',                     // 固定值
-            "registryKey" => App::$innerConfig['app.name'],       // 执行器AppName
+            "registryKey" => App::$innerConfig['xxl.job.executor.appname'],       // 执行器AppName
             "registryValue" => "http://$ip:" . APP::$innerConfig['xxl.job.executor.port'],
             // 执行器地址，内置服务跟地址
         ];
