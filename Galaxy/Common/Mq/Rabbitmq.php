@@ -26,7 +26,7 @@ class Rabbitmq
         $this->port = $port;
         $this->vhost = $vhost;
         $this->ch = $channel;
-        $this->con = new AMQPStreamConnection($this->host, $this->port, $this->username, $this->password, $this->vhost, false, 'AMQPLAIN', null, 'en_US', 3, 21, null, false, 10);
+        $this->con = new AMQPStreamConnection($this->host[0], $this->port[0], $this->username, $this->password, $this->vhost, false, 'AMQPLAIN', null, 'en_US', 3, 21, null, false, 10);
         swoole_timer_tick(10000, function ()  {
             try {
                 $this->con->checkHeartBeat();
@@ -50,7 +50,7 @@ class Rabbitmq
         $status=0;
         static $i = 0;
         if (empty($this->channel)) {
-            $this->con = new AMQPStreamConnection($this->host, $this->port, $this->username, $this->password, $this->vhost, false, 'AMQPLAIN', null, 'en_US', 3, 21, null, false, 10);
+            $this->con = new AMQPStreamConnection($this->host[0], $this->port[0], $this->username, $this->password, $this->vhost, false, 'AMQPLAIN', null, 'en_US', 3, 21, null, false, 10);
         }
         try{
             $this->channel = $this->con->channel(rand(0,1000));
@@ -82,7 +82,7 @@ class Rabbitmq
                 $this->channel->close();
             }
         }catch (\Throwable $e){
-            $this->con = new AMQPStreamConnection($this->host, $this->port, $this->username, $this->password, $this->vhost, false, 'AMQPLAIN', null, 'en_US', 3, 21, null, false, 10);
+            $this->con = new AMQPStreamConnection($this->host[0], $this->port[0], $this->username, $this->password, $this->vhost, false, 'AMQPLAIN', null, 'en_US', 3, 21, null, false, 10);
             swoole_timer_tick(10000, function ()  {
                 try {
                     $this->con->checkHeartBeat();
