@@ -6,7 +6,7 @@ use App;
 use App\Config\RDS;
 use Galaxy\Common\Configur\CoreRDS;
 use Galaxy\Core\RobbitMqListener;
-use PhpAmqpLib\Connection\AMQPStreamConnection;
+use PhpAmqpLib\Connection\AMQPSocketConnection;
 use function Swoole\Coroutine\run;
 use GuzzleHttp;
 use Swoole;
@@ -57,20 +57,21 @@ class ShareRabbitMqProcess
                $channel_rpc_timeout = 0.0,
                $ssl_protocol = null,*/
             //
-            $params = [
-                $this->config['rabbitmq.host'],
-                $this->config['rabbitmq.port'],
-                $this->config['rabbitmq.username'],
-                $this->config['rabbitmq.password'],
-                $this->config['rabbitmq.vhost'][0],
-                false,
-                "AMQPLAIN", null, 'en_US', 5, 61, null, true, 30
-            ];
-
-            $obj = array();
-            // 建立连接
-
-            $this->con = new AMQPStreamConnection(...$params);
+            $this->con = AMQPSocketConnection::create_connection([
+                    ['host' =>   $this->config['rabbitmq.host'][0], 'port' => $this->config['rabbitmq.port'][0], 'user' => $this->config['rabbitmq.username'], 'password' => $this->config['rabbitmq.password'], 'vhost' =>  $this->config['rabbitmq.vhost'][0]],
+                    ['host' =>  $this->config['rabbitmq.host'][1], 'port' => $this->config['rabbitmq.port'][1], 'user' => $this->config['rabbitmq.username'], 'password' => $this->config['rabbitmq.password'], 'vhost' =>  $this->config['rabbitmq.vhost'][0]],
+                    ['host' =>  $this->config['rabbitmq.host'][2], 'port' => $this->config['rabbitmq.port'][2], 'user' => $this->config['rabbitmq.username'], 'password' => $this->config['rabbitmq.password'], 'vhost' =>  $this->config['rabbitmq.vhost'][0]],
+                ]
+                ,[
+                    'insist' => false,
+                    'login_method' => 'AMQPLAIN',
+                    'login_response' => null,
+                    'locale' => 'en_US',
+                    'read_timeout' => 60,
+                    'keepalive' => true,
+                    'write_timeout' => 10,
+                    'heartbeat' => 30
+                ]);
             for ($chl = 0; $chl < $up; $chl++) {
                 $i = 0;
                 foreach ($this->config['rabbitmq.enable'] as $key => $val) {
