@@ -39,6 +39,7 @@ class RabbitMqProcess
     {
         $up = 2;
         $baseMemory = memory_get_usage();
+        var_dump($baseMemory);
         try {
             $this->con = AMQPSocketConnection::create_connection([
                     ['host' =>   $this->config['rabbitmq.host'][0], 'port' => $this->config['rabbitmq.port'][0], 'user' => $this->config['rabbitmq.username'], 'password' => $this->config['rabbitmq.password'], 'vhost' =>  $this->config['rabbitmq.vhost'][0]],
@@ -60,6 +61,7 @@ class RabbitMqProcess
             while ($obj->is_consuming()) {
                 usleep(50000);
                 $obj->wait(null, true);
+             //   var_dump(memory_get_usage());
             }
         } catch (\Throwable $ex) {
             Log::error(sprintf('消息队列 %s error', $this->config['rabbitmq.queue'][$i]));

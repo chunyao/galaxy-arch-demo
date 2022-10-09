@@ -29,6 +29,7 @@ return function (Mix\Vega\Engine $vega,$appName) {
     $sub->handle('/mem/set', [new MemCacheController(), 'setTest'])->methods('GET');
     $sub->handle('/mem/get', [new MemCacheController(), 'getTest'])->methods('GET');
     $sub->handle('/spi/test', [new SpiDemo(), 'callSpiDemo'])->methods('GET');
+    $sub->handle('/gethtml', [new Helloword(), 'gethtml'])->methods('GET');
 
     // $vega->handle('/auth', [new Auth(), 'index'])->methods('GET');
 };

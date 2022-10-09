@@ -48,6 +48,23 @@ class Helloword extends BaseController
             'data' => 1
         ]);
     }
+
+    public function gethtml(Context $ctx)
+    {
+        $content = rest_curl("https://www.aliexpress.com/item/1005004776275393.html?spm=a2g0o.store_pc_allProduct.8148356.70.71af1012crtwjQ&pdp_npi=2%40dis%21USD%21US%20%2442.28%21US%20%2417.33%21US%20%2417.33%21%21%21%21%400bb47a1916652226221503654e5492%2112000030439459006%21sh", "GET");
+
+        $preg='/window\._dida_config_\._init_data_= (.*?)<\/script>/';
+        preg_match_all($preg,$content,$array);
+
+        $str=preg_replace('/data/','"data"',$array[1][0],1);
+
+        echo $str;
+        $ctx->JSON(200, [
+            'code' => 200,
+            'message' => 'success',
+            'data' => 1
+        ]);
+    }
     public function helloword(Context $ctx)
     {
         var_dump($ctx->getQuery('test'));
