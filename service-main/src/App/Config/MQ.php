@@ -39,8 +39,6 @@ class MQ
      */
     public static function instance(): Rabbitmq
     {
-
-
         if (!isset(self::$instance)) {
             static::$once->do(function () {
                 $host = self::$config['rabbitmq.host'];
