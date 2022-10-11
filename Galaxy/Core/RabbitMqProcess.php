@@ -39,7 +39,7 @@ class RabbitMqProcess
     {
         $up = 2;
         $baseMemory = memory_get_usage();
-        var_dump($baseMemory);
+  
         try {
             $this->con = AMQPSocketConnection::create_connection([
                     ['host' =>   $this->config['rabbitmq.host'][0], 'port' => $this->config['rabbitmq.port'][0], 'user' => $this->config['rabbitmq.username'], 'password' => $this->config['rabbitmq.password'], 'vhost' =>  $this->config['rabbitmq.vhost'][0]],
@@ -50,6 +50,7 @@ class RabbitMqProcess
                     'insist' => false,
                     'login_method' => 'AMQPLAIN',
                     'login_response' => null,
+                    'connection_timeout'=>5,
                     'locale' => 'en_US',
                     'read_timeout' => 60,
                     'keepalive' => true,
@@ -59,7 +60,7 @@ class RabbitMqProcess
             $obj = $this->consumeMessage(0, $i);
 
             while ($obj->is_consuming()) {
-                usleep(50000);
+              //  usleep(50000);
                 $obj->wait(null, true);
              //   var_dump(memory_get_usage());
             }
