@@ -5,7 +5,6 @@ namespace Galaxy\Core;
 
 use PhpAmqpLib\Connection\AMQPSocketConnection;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
-use function Swoole\Coroutine\run;
 use GuzzleHttp;
 use Swoole;
 
