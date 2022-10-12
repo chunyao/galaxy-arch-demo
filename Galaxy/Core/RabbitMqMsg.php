@@ -56,7 +56,11 @@ return static function ($msg) use ($i, $msgBody,$req,$num) {
                 Log::error(sprintf('重试: ' . APP::$localcache[$msgBody['messageId']] . ' messageId ack : %s 进程 %s', $msgBody['messageId'], posix_getpid()));
             } else {
                 try {
-                    $data = (string)self::$httpClient->request('POST', $req, ['json' => $msgBody])->getBody();
+
+                    $data = (string)(new GuzzleHttp\Client())->request('POST',$req, ['json' => $msgBody, 'curl' => [
+                        CURLOPT_UNIX_SOCKET_PATH => ROOT_PATH.'/myserv.sock'
+                    ]])->getBody();
+
                     $resp = json_decode($data);
                     if ($resp->code === 10200) {
                         $msg->delivery_info["channel"]->basic_ack($msg->delivery_info["delivery_tag"]);
