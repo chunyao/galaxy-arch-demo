@@ -49,7 +49,8 @@ class TestListener
     /* handler 为固定函数，return true or false，ack 强依赖 */
     public function handler(): bool
     {
-
+        log::info("消息消费 id:" . $this->msg['messageId']);
+        sleep(1);
         /* 整理 接受msseage 消息*/
         /* 方案一 自己处理消息*/
         return true;

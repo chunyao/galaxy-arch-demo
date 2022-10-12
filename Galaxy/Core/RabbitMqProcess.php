@@ -2,11 +2,9 @@
 
 namespace Galaxy\Core;
 
-use App;
-use App\Config\RDS;
-use Galaxy\Common\Configur\CoreRDS;
-use Galaxy\Core\RobbitMqListener;
+
 use PhpAmqpLib\Connection\AMQPSocketConnection;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
 use function Swoole\Coroutine\run;
 use GuzzleHttp;
 use Swoole;
@@ -41,6 +39,7 @@ class RabbitMqProcess
         $baseMemory = memory_get_usage();
   
         try {
+            if (isset($this->config['rabbitmq.host'][1])){
             $this->con = AMQPSocketConnection::create_connection([
                     ['host' =>   $this->config['rabbitmq.host'][0], 'port' => $this->config['rabbitmq.port'][0], 'user' => $this->config['rabbitmq.username'], 'password' => $this->config['rabbitmq.password'], 'vhost' =>  $this->config['rabbitmq.vhost'][0]],
                     ['host' =>  $this->config['rabbitmq.host'][1], 'port' => $this->config['rabbitmq.port'][1], 'user' => $this->config['rabbitmq.username'], 'password' => $this->config['rabbitmq.password'], 'vhost' =>  $this->config['rabbitmq.vhost'][0]],
@@ -57,6 +56,21 @@ class RabbitMqProcess
                     'write_timeout' => 10,
                     'heartbeat' => 30
                 ]);
+            }else{
+                $params = [
+                    $this->config['rabbitmq.host'],
+                    $this->config['rabbitmq.port'],
+                    $this->config['rabbitmq.username'],
+                    $this->config['rabbitmq.password'],
+                    $this->config['rabbitmq.vhost'][$i],
+                    false,
+                    "AMQPLAIN", null, 'en_US', 5, 61, null, true, 30
+                ];
+
+
+                // 建立连接
+                $this->con = new AMQPStreamConnection(...$params);
+            }
             $obj = $this->consumeMessage(0, $i);
 
             while ($obj->is_consuming()) {
