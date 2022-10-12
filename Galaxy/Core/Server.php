@@ -140,7 +140,7 @@ EOL;
             'reactor_num' => swoole_cpu_num(),
             'worker_num' => $this->config['worker.num'],
             'enable_coroutine' => true,
-            'max_request' => 0,
+            'max_request' =>$this->config['max.request'],
             'reload_async' => true,
             'max_wait_time' => 6
         ));
@@ -173,7 +173,7 @@ EOL;
 
         });
         $this->server->on("ManagerStart", function ($server) {
-            $rabbitMq = new ShareRabbitMqProcess($this->config, 3, $this->url, $this->tcpClient);
+            $rabbitMq = new RabbitMqProcess($this->config, 3, $this->url, $this->tcpClient);
             $rabbitMq->handler();
         });
         $this->server->on('WorkerStart', array($this, 'onWorkerStart'));

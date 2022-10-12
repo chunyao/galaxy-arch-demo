@@ -17,6 +17,7 @@ class Rabbitmq
     protected $username;
     protected $password;
     protected $vhost;
+    private $i = 0;
 
     public function __construct($host, $port, $username, $password, $vhost, $channel)
     {
@@ -26,16 +27,22 @@ class Rabbitmq
         $this->port = $port;
         $this->vhost = $vhost;
         $this->ch = $channel;
+        $this->connect();
+
+        $this->channel = $this->con->channel($this->ch);
+    }
+
+    private function connect()
+    {
         $this->con = new AMQPStreamConnection($this->host[0], $this->port[0], $this->username, $this->password, $this->vhost, false, 'AMQPLAIN', null, 'en_US', 3, 21, null, false, 10);
-        swoole_timer_tick(10000, function ()  {
+
+        swoole_timer_tick(10000, function () {
             try {
                 $this->con->checkHeartBeat();
             } catch (\Throwable $e) {
                 //var_dump($e);
             }
         });
-
-        $this->channel = $this->con->channel($this->ch);
     }
 
     /**
@@ -45,20 +52,19 @@ class Rabbitmq
      * @param array $head
      * @return bool
      */
-    public function publish($messageBody, $exchange, $routeKey, $head = [],$ack=0)
+    public function publish($messageBody, $exchange, $routeKey, $head = [], $ack = 0, $retry = 0)
     {
-        $status=0;
-        static $i = 0;
+        $status = 0;
+        $this->i = $retry;
         if (empty($this->channel)) {
-            $this->con = new AMQPStreamConnection($this->host[0], $this->port[0], $this->username, $this->password, $this->vhost, false, 'AMQPLAIN', null, 'en_US', 3, 21, null, false, 10);
+            $this->connect();
         }
-        try{
-            $this->channel = $this->con->channel(rand(0,1000));
-            $head = array_merge(array('content_type' => 'text/json', 'content_encoding' => 'gzip', 'delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT), $head);
+        try {
+            $this->channel = $this->con->channel(rand(0, 1000));
+            $head = array_merge(array('content_type' => 'text/json', 'delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT), $head);
             $message = new AMQPMessage($messageBody, $head);
             //推送成功
-
-            if ($ack===1) {
+            if ($ack === 1) {
                 $this->channel->set_ack_handler(
                     function (AMQPMessage $message) use (&$status) {
                         $status = 1;
@@ -77,35 +83,35 @@ class Rabbitmq
             }
 
             $this->channel->basic_publish($message, $exchange, $routeKey);
-            if ($ack===1){
+            if ($ack === 1) {
                 $this->channel->wait_for_pending_acks();
                 $this->channel->close();
             }
-        }catch (\Throwable $e){
-            $this->con = new AMQPStreamConnection($this->host[0], $this->port[0], $this->username, $this->password, $this->vhost, false, 'AMQPLAIN', null, 'en_US', 3, 21, null, false, 10);
-            swoole_timer_tick(10000, function ()  {
-                try {
-                    $this->con->checkHeartBeat();
-                } catch (\Throwable $e) {
-                    //var_dump($e);
-                }
-            });
-            if($i<3){
-                $this->publish($messageBody, $exchange, $routeKey, $head = [],$ack=0);
+            unset($message);
+        } catch (\Throwable $ex) {
+            Log::error(sprintf('message publish: %s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));
+            if ($this->i < 3) {
+                $this->con->close();
+                $this->connect();
+                $status = $this->publish($messageBody, $exchange, $routeKey, $head, $ack, $this->i++);
+                Log::error(sprintf('message publish retry: ' . $this->i . ' status %s ', $status));
             }
+
+
         }
 
 
         // 响应ack
-
+        unset($messageBody);
         return $status;
     }
 
     public function __destruct()
     {
         try {
+            Log::info(sprintf('connect close'));
             $this->con->close();
-        }catch (\Throwable $ex){
+        } catch (\Throwable $ex) {
             Log::error(sprintf('%s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));
         }
 

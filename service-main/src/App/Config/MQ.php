@@ -39,19 +39,17 @@ class MQ
      */
     public static function instance(): Rabbitmq
     {
-        $host = self::$config['rabbitmq.host'];
-        $port = self::$config['rabbitmq.port'];
+        if (!isset(self::$instance)) {
+            static::$once->do(function () {
+                $host = self::$config['rabbitmq.host'];
+                $port = self::$config['rabbitmq.port'];
 
-        $username = self::$config['rabbitmq.username'];
-        $password = self::$config['rabbitmq.password'];
-        $vhost = self::$config['rabbitmq.send.vhost'][0];
+                $username = self::$config['rabbitmq.username'];
+                $password = self::$config['rabbitmq.password'];
+                $vhost = self::$config['rabbitmq.send.vhost'][0];
+                self::$instance = new Rabbitmq($host, $port, $username, $password, $vhost, 1);
 
-
-       if (self::$instance == null) {
-            //如果没有,则创建当前类的实例
-
-            self::$instance=  new Rabbitmq($host, $port, $username, $password, $vhost, 1);
-
+            });
         }
 
         return self::$instance;
@@ -64,7 +62,8 @@ class MQ
     {
 
     }
-    public static function health() :string
+
+    public static function health(): string
     {
         return "1";
 

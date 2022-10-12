@@ -68,6 +68,7 @@ class ShareRabbitMqProcess
                     'login_response' => null,
                     'locale' => 'en_US',
                     'read_timeout' => 60,
+                    'connection_timeout'=>5,
                     'keepalive' => true,
                     'write_timeout' => 10,
                     'heartbeat' => 30
@@ -78,6 +79,7 @@ class ShareRabbitMqProcess
                     if ($val) {
                         foreach (RobbitMqListener::rabbitQueueload($this->config['app.name']) as $keys => $value) {
                             if ($value::getQueue() == $this->config['rabbitmq.queue'][$key]) {
+
                                 $obj[$chl][$i] = $this->consumeMessage($chl, $key);
                                 $i++;
                             }
