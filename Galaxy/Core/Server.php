@@ -210,8 +210,8 @@ EOL;
 
     public function onWorkerExit($server, int $worker_id)
     {
-
-        Log::info("进程:" . $worker_id . " exit");
+        echo "工作进程退出: " . $worker_id;
+        Log::info("工作进程退出:" . $worker_id . " exit");
     }
 
     public function onWorkerError($server, int $worker_id)
