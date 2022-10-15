@@ -139,6 +139,7 @@ EOL;
         $this->server->set(array(
             'reactor_num' => swoole_cpu_num(),
             'worker_num' => $this->config['worker.num'],
+            'enable_coroutine' => true,
             'max_request' =>$this->config['max.request'],
             'reload_async' => true,
             'max_wait_time' => 6
@@ -175,9 +176,6 @@ EOL;
             $rabbitMq = new RabbitMqProcess($this->config, 1, $this->url, $this->tcpClient);
             $rabbitMq->handler();
         });
-        $this->server->on("ManagerStop", function ($server, $worker_id) {
-            echo "主进程停止: " . $worker_id;
-        });
         $this->server->on('WorkerStart', array($this, 'onWorkerStart'));
         $this->server->on('WorkerStop', function ($server, $worker_id) {
             echo "工作进程停止: " . $worker_id;
@@ -210,8 +208,8 @@ EOL;
 
     public function onWorkerExit($server, int $worker_id)
     {
-        echo "工作进程退出: " . $worker_id;
-        Log::info("工作进程退出:" . $worker_id . " exit");
+
+        Log::info("进程:" . $worker_id . " exit");
     }
 
     public function onWorkerError($server, int $worker_id)

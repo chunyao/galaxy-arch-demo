@@ -50,10 +50,10 @@ class RabbitMqProcess
                     'login_response' => null,
                     'connection_timeout'=>5,
                     'locale' => 'en_US',
-                    'read_timeout' => 60,
+                    'read_timeout' => 180,
                     'keepalive' => true,
-                    'write_timeout' => 10,
-                    'heartbeat' => 30
+                    'write_timeout' => 180,
+                    'heartbeat' => 90
                 ]);
             }else{
                 $params = [
