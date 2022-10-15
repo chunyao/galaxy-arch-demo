@@ -18,7 +18,10 @@ return static function ($msg) use ($i, $msgBody,$req,$num) {
             if (isset($tmp['id'])) {
                 $tmp['messageId'] = $tmp['id'];
             }
-            if(empty($tmp['messageId'])) return ;
+            if(empty($tmp['messageId'])) {
+                Log::error("messageId 为空");
+                $msg->delivery_info["channel"]->basic_ack($msg->delivery_info["delivery_tag"]);
+                return ;}
             $msgBody['message'] = $tmp;
             $msgBody['messageId']=$tmp['messageId'];
 
@@ -29,6 +32,7 @@ return static function ($msg) use ($i, $msgBody,$req,$num) {
 
             // $resp = json_decode((string)rest_post( $this->url,$msgBody,3));
             if (Cache::instance()->getIncr($msgBody['messageId'])!==null) {
+                echo Cache::instance()->getIncr($msgBody['messageId']);
                 if (((int)Cache::instance()->getIncr($msgBody['messageId'])) >= 3 ) {
                     Log::info(sprintf('重试: ' .$msgBody['messageId'] . ' messageId ack : %s 进程Id %s', $msgBody['messageId'], posix_getpid()));
                     try {
