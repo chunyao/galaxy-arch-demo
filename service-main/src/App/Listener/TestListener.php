@@ -57,7 +57,7 @@ class TestListener
         if ($i==1){
             return true;
         }*/
-        return false;
+        return true;
         /*if (!RDS::instance()->set(App::$innerConfig['rabbitmq.queue'][0] . ":" . $this->msg['messageId'], 1, array('nx', 'ex' => 30))) {
             echo "消息重复消费 id:" . $this->msg['messageId'] . "\n";
             // log::info("消息重复消费 id:" . $this->msg['messageId']);
