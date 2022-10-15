@@ -34,7 +34,7 @@ return static function ($msg) use ($i, $msgBody,$req,$num) {
             if (Cache::instance()->getIncr($msgBody['messageId'])!==null) {
                 echo Cache::instance()->getIncr($msgBody['messageId']);
                 if (((int)Cache::instance()->getIncr($msgBody['messageId'])) >= 3 ) {
-                    Log::info(sprintf('重试: ' .$msgBody['messageId'] . ' messageId ack : %s 进程Id %s', $msgBody['messageId'], posix_getpid()));
+                    Log::info(sprintf('重试: ' .Cache::instance()->getIncr($msgBody['messageId']) . ' messageId 丢弃 : %s 进程Id %s', $msgBody['messageId'], posix_getpid()));
                     try {
                         $msg->delivery_info["channel"]->basic_reject($msg->delivery_info["delivery_tag"], false);
                     }catch (\Throwable $ex){
@@ -58,7 +58,7 @@ return static function ($msg) use ($i, $msgBody,$req,$num) {
                 }
                 Cache::instance()->incr($msgBody['messageId']);
                 $msg->delivery_info["channel"]->basic_reject($msg->delivery_info["delivery_tag"],true);
-                Log::error(sprintf('重试: ' .$msgBody['messageId']. ' messageId ack : %s 进程 %s', $msgBody['messageId'], posix_getpid()));
+                Log::error(sprintf('重试: ' .Cache::instance()->getIncr($msgBody['messageId']). ' messageId basic_reject : %s 进程 %s', $msgBody['messageId'], posix_getpid()));
             } else {
                 try {
                     $data = (string)(new GuzzleHttp\Client())->request('POST',$req, ['json' => $msgBody])->getBody();
