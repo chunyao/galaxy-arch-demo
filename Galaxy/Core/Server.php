@@ -142,6 +142,7 @@ EOL;
             'enable_coroutine' => true,
             'max_request' =>$this->config['max.request'],
             'reload_async' => true,
+            'dispatch_mode'=>3,
             'max_wait_time' => 6
         ));
         //集成 xxl job
