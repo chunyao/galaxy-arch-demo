@@ -32,7 +32,6 @@ return static function ($msg) use ($i, $msgBody,$req,$num) {
 
             // $resp = json_decode((string)rest_post( $this->url,$msgBody,3));
             if (Cache::instance()->getIncr($msgBody['messageId'])!==null) {
-                echo Cache::instance()->getIncr($msgBody['messageId']);
                 if (((int)Cache::instance()->getIncr($msgBody['messageId'])) >= 3 ) {
                     Log::info(sprintf('重试: ' .Cache::instance()->getIncr($msgBody['messageId']) . ' messageId 丢弃 : %s 进程Id %s', $msgBody['messageId'], posix_getpid()));
                     try {
