@@ -50,7 +50,7 @@ class TestListener
     public function handler(): bool
     {
         log::info("消息消费 id:" . $this->msg['messageId']);
-        sleep(1);
+
         /* 整理 接受msseage 消息*/
         /* 方案一 自己处理消息*/
         return true;
