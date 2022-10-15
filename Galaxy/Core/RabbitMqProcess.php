@@ -77,9 +77,11 @@ class RabbitMqProcess
                 $obj->wait(null, true);
              //   var_dump(memory_get_usage());
             }
+            $obj->close();
         } catch (\Throwable $ex) {
             Log::error(sprintf('消息队列 %s error', $this->config['rabbitmq.queue'][$i]));
             try {
+
                 $this->con->close();
             }catch (\Exception $e){
                 Log::error(sprintf('%s in %s on line %d', $e->getMessage(), $e->getFile(), $e->getLine()));
