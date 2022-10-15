@@ -63,7 +63,7 @@ class RabbitMqProcess
                     $this->config['rabbitmq.password'],
                     $this->config['rabbitmq.vhost'][$i],
                     false,
-                    "AMQPLAIN", null, 'en_US', 5, 61, null, true, 30
+                    "AMQPLAIN", null, 'en_US', 5, 60, null, true, 30
                 ];
 
 

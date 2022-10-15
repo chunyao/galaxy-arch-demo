@@ -139,7 +139,6 @@ EOL;
         $this->server->set(array(
             'reactor_num' => swoole_cpu_num(),
             'worker_num' => $this->config['worker.num'],
-            'enable_coroutine' => true,
             'max_request' =>$this->config['max.request'],
             'reload_async' => true,
             'max_wait_time' => 6
