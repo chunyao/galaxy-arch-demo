@@ -38,9 +38,7 @@ return static function ($msg) use ($i, $msgBody,$req,$num) {
                 }
                 try {
 
-                    $data = (string)self::$httpClient->request('POST',$req, ['json' => $msgBody, 'curl' => [
-                        CURLOPT_UNIX_SOCKET_PATH => ROOT_PATH.'/myserv.sock'
-                    ]])->getBody();
+                    $data = (string)self::$httpClient->request('POST',$req, ['json' => $msgBody])->getBody();
                     $resp = json_decode($data);
                     if ($resp->code === 10200) {
                         $msg->delivery_info["channel"]->basic_ack($msg->delivery_info["delivery_tag"]);
@@ -57,9 +55,7 @@ return static function ($msg) use ($i, $msgBody,$req,$num) {
             } else {
                 try {
 
-                    $data = (string)(new GuzzleHttp\Client())->request('POST',$req, ['json' => $msgBody, 'curl' => [
-                        CURLOPT_UNIX_SOCKET_PATH => ROOT_PATH.'/myserv.sock'
-                    ]])->getBody();
+                    $data = (string)(new GuzzleHttp\Client())->request('POST',$req, ['json' => $msgBody])->getBody();
 
                     $resp = json_decode($data);
                     if ($resp->code === 10200) {
