@@ -14,9 +14,11 @@ return static function ($msg) use ($i, $msgBody,$req,$num) {
 
             $tmp = json_decode($msg->body, true);
             $tmp['queue'] = App::$innerConfig['rabbitmq.queue'][$i];
+
             if (isset($tmp['id'])) {
                 $tmp['messageId'] = $tmp['id'];
             }
+            if(empty($tmp['messageId'])) return ;
             $msgBody['message'] = $tmp;
             $msgBody['messageId']=$tmp['messageId'];
 
