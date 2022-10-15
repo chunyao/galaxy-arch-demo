@@ -44,7 +44,7 @@ return static function ($msg) use ($i, $msgBody,$req,$num) {
                     return;
                 }
                 try {
-                    $data = (string)self::$httpClient->request('POST',$req, ['timeout' => 170,'json' => $msgBody])->getBody();
+                    $data = (string)self::$httpClient->request('POST',$req, ['timeout' => 120,'json' => $msgBody])->getBody();
                     $resp = json_decode($data);
                     if ($resp->code === 10200) {
                         $msg->delivery_info["channel"]->basic_ack($msg->delivery_info["delivery_tag"]);
@@ -60,7 +60,7 @@ return static function ($msg) use ($i, $msgBody,$req,$num) {
                 Log::error(sprintf('重试: ' .Cache::instance()->getIncr($msgBody['messageId']). ' messageId basic_reject : %s 进程 %s', $msgBody['messageId'], posix_getpid()));
             } else {
                 try {
-                    $data = (string)self::$httpClient->request('POST',$req, ['timeout' => 170,'json' => $msgBody])->getBody();
+                    $data = (string)self::$httpClient->request('POST',$req, ['timeout' => 120,'json' => $msgBody])->getBody();
                     $resp = json_decode($data);
                     if ($resp->code === 10200) {
                         $msg->delivery_info["channel"]->basic_ack($msg->delivery_info["delivery_tag"]);

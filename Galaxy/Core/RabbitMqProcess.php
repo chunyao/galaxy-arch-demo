@@ -218,6 +218,6 @@ class RabbitMqProcess
                 $channel_step++;
             }
         }
-          $this->watchProcess();
+         // $this->watchProcess();
     }
 }

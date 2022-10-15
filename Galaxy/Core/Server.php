@@ -140,7 +140,7 @@ EOL;
             'reactor_num' => swoole_cpu_num(),
             'worker_num' => $this->config['worker.num'],
             'enable_coroutine' => true,
-            'max_request' =>$this->config['max.request'],
+            'max_request' => $this->config['max.request'],
             'reload_async' => true,
             'dispatch_mode'=>3,
             'max_wait_time' => 6
@@ -165,6 +165,8 @@ EOL;
         }
 
         $coreVega = CoreVega::new();
+        $rabbitMq = new RabbitMqProcess($this->config, 1, $this->url, $this->tcpClient);
+        $rabbitMq->handler();
         $socket->on('Request', $coreVega->handler());
         $health->on('Request', $coreVega->handler());
 
@@ -174,8 +176,7 @@ EOL;
 
         });
         $this->server->on("ManagerStart", function ($server) {
-            $rabbitMq = new RabbitMqProcess($this->config, 1, $this->url, $this->tcpClient);
-            $rabbitMq->handler();
+
         });
         $this->server->on('WorkerStart', array($this, 'onWorkerStart'));
         $this->server->on('WorkerStop', function ($server, $worker_id) {
