@@ -176,6 +176,9 @@ EOL;
             $rabbitMq = new RabbitMqProcess($this->config, 1, $this->url, $this->tcpClient);
             $rabbitMq->handler();
         });
+        $this->server->on("ManagerStop", function ($server, $worker_id) {
+            echo "主进程停止: " . $worker_id;
+        });
         $this->server->on('WorkerStart', array($this, 'onWorkerStart'));
         $this->server->on('WorkerStop', function ($server, $worker_id) {
             echo "工作进程停止: " . $worker_id;
