@@ -143,6 +143,7 @@ EOL;
             'max_request' => $this->config['max.request'],
             'reload_async' => true,
             'dispatch_mode'=>3,
+            'enable_deadlock_check' => false,
             'max_wait_time' => 6
         ));
         //集成 xxl job
