@@ -7,11 +7,12 @@ use Galaxy\Service\BaseService;
 
 class ImproveSqlService extends BaseService
 {
-    public function improveSql():array
+    public function improveSql(): array
     {
         return ImproveSqlModel::instance()->findByCompanyId(212548);
     }
-    public function sycncByCompanyId():array
+
+    public function sycncByCompanyId(): array
     {
         return ImproveSqlModel::instance()->sycncByCompanyId(212548);
     }
@@ -28,6 +29,31 @@ class ImproveSqlService extends BaseService
             $ret[] = array_merge($array3[$value[$field1]], $value);
         }
         return $ret;
+    }
+
+    function multi_array_sort($multi_array, $sort_key, $sort = SORT_DESC)
+    {
+        if (is_array($multi_array)) {
+            foreach ($multi_array as $row_array) {
+                if (is_array($row_array)) {
+                    $key_array[] = $row_array[$sort_key];
+
+                } else {
+                    return FALSE;
+
+                }
+
+            }
+
+        } else {
+            return FALSE;
+
+        }
+
+        array_multisort($key_array, $sort, $multi_array);
+
+        return $multi_array;
+
     }
 
 }
