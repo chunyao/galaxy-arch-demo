@@ -6,14 +6,14 @@
                    value="%date{Ymd\TH:i:s} #%t %logger %-5level %msg%n" />
         </layout>
     </appender>
-    <appender name="default" class="LoggerAppenderDailyFile">
+    <appender name="default" class="LoggerAppenderRollingFile">
         <layout class="LoggerLayoutPattern">
             <param name="conversionPattern"
                    value="%date{Ymd H:i:s} #%t %logger %-5level %msg %n" />
         </layout>
         <param name="maxFileSize" value="10MB" />
         <param name="maxBackupIndex" value="5" />
-        <param name="file" value="/data/logs/mabang-arch-demo/file-%s.log" />
+        <param name="file" value="/data/logs/mabang-arch-demo/mabang-arch-demo.log" />
         <param name="datePattern" value="Ymd" />
         <param name="append" value="true" />
     </appender>

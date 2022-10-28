@@ -3,14 +3,14 @@
 namespace Galaxy\Core;
 
 use Logger;
-
+use App;
 class Log
 {
 
 
     public static function __callStatic($name, $args)
     {
-        $log = Logger::getLogger('app');
+        $log = Logger::getLogger("Application");
 
         switch ($name) {
             case 'error':

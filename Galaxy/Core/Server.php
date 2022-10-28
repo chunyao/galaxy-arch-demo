@@ -14,7 +14,6 @@ use \GuzzleHttp;
 use \Galaxy\Common\Handler\InnerServer;
 use \Galaxy\Common\Configur\CoreDB;
 use \Galaxy\Common\Configur\CoreRDS;
-use SeasLog;
 class Server
 {
     protected Swoole\Http\Server $server;
@@ -47,7 +46,6 @@ class Server
     {
         self::$bootConfig = $bootConfig;
         Cache::init();
-        Log::init();
         echo "主进程ID:" . posix_getpid() . "\n";
         log::info("主进程ID:" . posix_getpid());
         self::$httpClient = new GuzzleHttp\Client();
@@ -229,6 +227,7 @@ EOL;
         echo "Worker 进程id:" . posix_getpid() . "\n";
 
         log::info("Worker 进程ID:" . posix_getpid());
+        log::info("Worker 进程ID:",["data"=>"1","data2"=>"1"]);
         SnowFlake::init();
         //    CoreDB::init($this->coreConfig);
         //      CoreDB::enableCoroutine();
