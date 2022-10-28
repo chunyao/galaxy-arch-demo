@@ -14,6 +14,4 @@ return array(
     'bbeb7603826cb9296dde3ca1a840af47' => $vendorDir . '/hyperf/utils/src/Functions.php',
     '253c157292f75eb38082b5acb06f3f01' => $vendorDir . '/nikic/fast-route/src/functions.php',
     'decc78cc4436b1292c6c0d151b19445c' => $vendorDir . '/phpseclib/phpseclib/phpseclib/bootstrap.php',
-    '045cd5d476702c3529ef3e1b9f615e70' => $vendorDir . '/swlib/http/src/functions.php',
-    '3a6b4a1bc7c69c0620b4ef88fb5d27d0' => $vendorDir . '/swlib/saber/src/include/functions.php',
 );

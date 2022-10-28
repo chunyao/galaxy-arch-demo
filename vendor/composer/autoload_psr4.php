@@ -7,9 +7,6 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'phpseclib3\\' => array($vendorDir . '/phpseclib/phpseclib/phpseclib'),
-    'Swlib\\Util\\' => array($vendorDir . '/swlib/util/src'),
-    'Swlib\\Saber\\' => array($vendorDir . '/swlib/saber/src'),
-    'Swlib\\Http\\' => array($vendorDir . '/swlib/http/src'),
     'React\\Promise\\' => array($vendorDir . '/react/promise/src'),
     'Psr\\Log\\' => array($vendorDir . '/psr/log/Psr/Log'),
     'Psr\\Http\\Message\\' => array($vendorDir . '/psr/http-factory/src', $vendorDir . '/psr/http-message/src'),

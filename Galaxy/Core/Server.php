@@ -6,6 +6,7 @@ use Galaxy\Common\Configur\Cache;
 use Galaxy\Common\Configur\SnowFlake;
 use Galaxy\Common\XxlJob\XxlJobApi;
 use Galaxy\Common\XxlJob\XxlJobVega;
+use Logger;
 use \Swoole;
 use \Hyperf\Nacos\Application;
 use \Hyperf\Nacos\Config;
@@ -96,7 +97,8 @@ class Server
             }, false, 0, true);
             $process->start();
         }
-        SeasLog::setLogger($this->config['app.name']);
+
+
         self::$appName = $this->config['app.name'];
 
 

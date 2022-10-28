@@ -1,6 +1,51 @@
 {
     "packages": [
         {
+            "name": "apache/log4php",
+            "version": "2.3.0",
+            "version_normalized": "2.3.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/apache/logging-log4php.git",
+                "reference": "cac428b6f67d2035af39784da1d1a299ef42fcf2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/apache/logging-log4php/zipball/cac428b6f67d2035af39784da1d1a299ef42fcf2",
+                "reference": "cac428b6f67d2035af39784da1d1a299ef42fcf2",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.2.7"
+            },
+            "time": "2012-10-26T09:13:25+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "classmap": [
+                    "src/main/php/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "A versatile logging framework for PHP",
+            "homepage": "http://logging.apache.org/log4php/",
+            "keywords": [
+                "log",
+                "logging",
+                "php"
+            ],
+            "support": {
+                "email": "log4php-user@logging.apache.org",
+                "issues": "https://issues.apache.org/jira/browse/LOG4PHP",
+                "source": "https://svn.apache.org/repos/asf/logging/log4php"
+            },
+            "abandoned": true,
+            "install-path": "../apache/log4php"
+        },
+        {
             "name": "doctrine/inflector",
             "version": "2.0.5",
             "version_normalized": "2.0.5.0",
@@ -2267,181 +2312,6 @@
                 }
             ],
             "install-path": "../react/promise"
-        },
-        {
-            "name": "swlib/http",
-            "version": "v1.0.8",
-            "version_normalized": "1.0.8.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/swlib/http.git",
-                "reference": "e97d9d05b741d4ee7ef58824a280acf983354d5e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/swlib/http/zipball/e97d9d05b741d4ee7ef58824a280acf983354d5e",
-                "reference": "e97d9d05b741d4ee7ef58824a280acf983354d5e",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.1",
-                "psr/http-message": "~1.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "~7"
-            },
-            "time": "2020-08-15T10:36:45+00:00",
-            "type": "library",
-            "installation-source": "dist",
-            "autoload": {
-                "files": [
-                    "src/functions.php"
-                ],
-                "psr-4": {
-                    "Swlib\\Http\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "twosee",
-                    "email": "twose@qq.com"
-                }
-            ],
-            "description": "Swlib-HTTP base class repository, PSR implementation",
-            "keywords": [
-                "http",
-                "php",
-                "psr7",
-                "swoole"
-            ],
-            "support": {
-                "issues": "https://github.com/swlib/http/issues",
-                "source": "https://github.com/swlib/http/tree/v1.x"
-            },
-            "install-path": "../swlib/http"
-        },
-        {
-            "name": "swlib/saber",
-            "version": "v1.0.18",
-            "version_normalized": "1.0.18.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/swlib/saber.git",
-                "reference": "24034ea70d64063cc9032c4aa08cb888995df190"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/swlib/saber/zipball/24034ea70d64063cc9032c4aa08cb888995df190",
-                "reference": "24034ea70d64063cc9032c4aa08cb888995df190",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.1",
-                "swlib/http": "^1.0",
-                "swlib/util": "^1.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "~7"
-            },
-            "time": "2021-04-20T06:28:59+00:00",
-            "type": "library",
-            "installation-source": "dist",
-            "autoload": {
-                "files": [
-                    "src/include/functions.php"
-                ],
-                "psr-4": {
-                    "Swlib\\Saber\\": "src"
-                },
-                "classmap": [
-                    "src/Saber.php",
-                    "src/SaberGM.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "twosee",
-                    "email": "twose@qq.com"
-                }
-            ],
-            "description": "Swoole coroutine HTTP client",
-            "keywords": [
-                "ajax",
-                "axios",
-                "client",
-                "coroutine",
-                "curl",
-                "http",
-                "php",
-                "psr7",
-                "requests",
-                "swoole"
-            ],
-            "support": {
-                "issues": "https://github.com/swlib/saber/issues",
-                "source": "https://github.com/swlib/saber/tree/v1.0.18"
-            },
-            "install-path": "../swlib/saber"
-        },
-        {
-            "name": "swlib/util",
-            "version": "v1.0.3",
-            "version_normalized": "1.0.3.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/swlib/util.git",
-                "reference": "300f551753702f5bfcbfb814d53bdbf057719a43"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/swlib/util/zipball/300f551753702f5bfcbfb814d53bdbf057719a43",
-                "reference": "300f551753702f5bfcbfb814d53bdbf057719a43",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "~7"
-            },
-            "time": "2020-08-24T10:00:58+00:00",
-            "type": "library",
-            "installation-source": "dist",
-            "autoload": {
-                "psr-4": {
-                    "Swlib\\Util\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "twosee",
-                    "email": "twose@qq.com"
-                }
-            ],
-            "description": "Swlib Toolkit",
-            "keywords": [
-                "php",
-                "swlib",
-                "swoole",
-                "util"
-            ],
-            "support": {
-                "issues": "https://github.com/swlib/util/issues",
-                "source": "https://github.com/swlib/util/tree/v1.0.3"
-            },
-            "install-path": "../swlib/util"
         },
         {
             "name": "symfony/deprecation-contracts",
