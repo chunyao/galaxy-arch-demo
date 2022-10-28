@@ -225,9 +225,7 @@ EOL;
     public function onWorkerStart($server, $worker_id)
     {
         echo "Worker 进程id:" . posix_getpid() . "\n";
-
         log::info("Worker 进程ID:" . posix_getpid());
-        log::info("Worker 进程ID:",["data"=>"1","data2"=>"1"]);
         SnowFlake::init();
         //    CoreDB::init($this->coreConfig);
         //      CoreDB::enableCoroutine();
