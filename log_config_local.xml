@@ -13,7 +13,7 @@
         </layout>
         <param name="maxFileSize" value="10MB" />
         <param name="maxBackupIndex" value="5" />
-        <param name="file" value="/data/logs/mabang-arch-demo/file-%s.log" />
+        <param name="file" value="./data/logs/mabang-arch-demo/file-%s.log" />
         <param name="datePattern" value="Ymd" />
         <param name="append" value="true" />
     </appender>
