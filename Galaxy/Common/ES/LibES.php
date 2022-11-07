@@ -58,7 +58,6 @@ class LibES
     private static $multiBody = [];
 
 
-
     /**
      * LibES constructor.
      * @param array $config
@@ -112,14 +111,16 @@ class LibES
         $params = ['index' => $this->indexName];
         return $this->esClient->indices()->delete($params);
     }
+
     public function setIndex($index)
     {
-       $this->indexName=$index;
-       return $this;
+        $this->indexName = $index;
+        return $this;
     }
+
     public function setType($type)
     {
-        $this->typeName=$type;
+        $this->typeName = $type;
         return $this;
     }
 
@@ -167,12 +168,12 @@ class LibES
 
         $params = [
             'index' => $this->indexName,
-            'type' =>$this->typeName,
+            'type' => $this->typeName,
             'id' => $esID
         ];
         $params['body']['doc'] = $body;
 
-      //  $startTime = microtime(true);
+        //  $startTime = microtime(true);
         $rs = $this->esClient->update($params);
         /*$logData = [
             'method' => __FUNCTION__,
@@ -214,7 +215,7 @@ class LibES
             }
             $fields = $fields . ' ' . $fieldes;
             $fields = stripslashes(rtrim($fields, ";"));
-        }else{
+        } else {
             return false;
         }
 
@@ -230,7 +231,7 @@ class LibES
         $query['query']['bool']['must'] = $body;
         $query ['script'] = [
             'inline' => $fields,
-         //   'lang' => 'painless'
+            //   'lang' => 'painless'
         ];
 
         $params = [
@@ -258,7 +259,7 @@ class LibES
             'id' => $esID
         ];
 
-       // $startTime = microtime(true);
+        // $startTime = microtime(true);
         $rs = $this->esClient->get($params);
         /*$logData = [
             'method' => __FUNCTION__,
@@ -287,13 +288,13 @@ class LibES
 
         //$startTime = microtime(true);
         $rs = $this->esClient->delete($params);
-       /* $logData = [
-            'method' => __FUNCTION__,
-            'result' => $rs,
-            'exec_time' => round(microtime(true) - $startTime, 3)
-        ];
-        $logData = array_merge($logData, $params);
-        Log::info('ELASTIC', $logData);*/
+        /* $logData = [
+             'method' => __FUNCTION__,
+             'result' => $rs,
+             'exec_time' => round(microtime(true) - $startTime, 3)
+         ];
+         $logData = array_merge($logData, $params);
+         Log::info('ELASTIC', $logData);*/
         return $rs;
     }
 
@@ -327,6 +328,36 @@ class LibES
         $this->offset = $offset;
         $this->limit = $limit;
         return $this;
+    }
+
+    /**
+     * User: 刘永胜
+     * 新增或者更新
+     * @param $esID
+     * @param $create
+     * @param $update
+     * @return array|bool
+     */
+    public function createOrUpdate($esID, $create, $update)
+    {
+        if (!$this->existsIndex()) {
+            return false;
+        }
+
+        if (empty($esID)) {
+            return false;
+        }
+
+        $params = [
+            'body' => [
+                'doc' => $update,
+                'upsert' => $create,
+            ],
+            'index' => $this->indexName,
+            'type' => $this->typeName,
+            'id' => $esID
+        ];
+        return $this->esClient->update($params);
     }
 
     /**
@@ -429,7 +460,7 @@ class LibES
             $params['routing'] = $this->routing;
         }
 
-       // $startTime = microtime(true);
+        // $startTime = microtime(true);
 
         $rs = $this->esClient->search($params);
         $this->resetParams();

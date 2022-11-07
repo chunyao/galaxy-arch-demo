@@ -6,6 +6,7 @@ use Galaxy\Common\Configur\Cache;
 use Galaxy\Common\Configur\SnowFlake;
 use Galaxy\Common\XxlJob\XxlJobApi;
 use Galaxy\Common\XxlJob\XxlJobVega;
+use Logger;
 use \Swoole;
 use \Hyperf\Nacos\Application;
 use \Hyperf\Nacos\Config;
@@ -13,7 +14,6 @@ use \GuzzleHttp;
 use \Galaxy\Common\Handler\InnerServer;
 use \Galaxy\Common\Configur\CoreDB;
 use \Galaxy\Common\Configur\CoreRDS;
-use SeasLog;
 class Server
 {
     protected Swoole\Http\Server $server;
@@ -46,7 +46,6 @@ class Server
     {
         self::$bootConfig = $bootConfig;
         Cache::init();
-        Log::init();
         echo "主进程ID:" . posix_getpid() . "\n";
         log::info("主进程ID:" . posix_getpid());
         self::$httpClient = new GuzzleHttp\Client();
@@ -96,7 +95,8 @@ class Server
             }, false, 0, true);
             $process->start();
         }
-        SeasLog::setLogger($this->config['app.name']);
+
+
         self::$appName = $this->config['app.name'];
 
 
@@ -140,8 +140,10 @@ EOL;
             'reactor_num' => swoole_cpu_num(),
             'worker_num' => $this->config['worker.num'],
             'enable_coroutine' => true,
-            'max_request' =>$this->config['max.request'],
+            'max_request' => $this->config['max.request'],
             'reload_async' => true,
+            'dispatch_mode'=>3,
+            'enable_deadlock_check' => false,
             'max_wait_time' => 6
         ));
         //集成 xxl job
@@ -164,6 +166,7 @@ EOL;
         }
 
         $coreVega = CoreVega::new();
+
         $socket->on('Request', $coreVega->handler());
         $health->on('Request', $coreVega->handler());
 
@@ -173,7 +176,7 @@ EOL;
 
         });
         $this->server->on("ManagerStart", function ($server) {
-            $rabbitMq = new RabbitMqProcess($this->config, 3, $this->url, $this->tcpClient);
+            $rabbitMq = new RabbitMqProcess($this->config, 1, $this->url, $this->tcpClient);
             $rabbitMq->handler();
         });
         $this->server->on('WorkerStart', array($this, 'onWorkerStart'));
@@ -222,7 +225,6 @@ EOL;
     public function onWorkerStart($server, $worker_id)
     {
         echo "Worker 进程id:" . posix_getpid() . "\n";
-
         log::info("Worker 进程ID:" . posix_getpid());
         SnowFlake::init();
         //    CoreDB::init($this->coreConfig);

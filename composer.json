@@ -9,7 +9,7 @@
         "mix/redis-subscriber": "^3.0",
         "mix/vega": "^3.0",
         "elasticsearch/elasticsearch": "7.0.0",
-        "swlib/saber": "^1.0"
+        "apache/log4php": "^2.3"
     },
 
     "autoload-dev": {

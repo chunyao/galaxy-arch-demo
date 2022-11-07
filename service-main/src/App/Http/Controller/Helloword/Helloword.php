@@ -68,6 +68,7 @@ class Helloword extends BaseController
     public function helloword(Context $ctx)
     {
         var_dump($ctx->getQuery('test'));
+        var_dump($ctx->getQuery('test2'));
         /*ES*/
         $ctx->JSON(200, [
             'code' => 200,

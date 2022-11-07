@@ -50,9 +50,13 @@ class TestListener
     public function handler(): bool
     {
         log::info("消息消费 id:" . $this->msg['messageId']);
-        sleep(1);
+
         /* 整理 接受msseage 消息*/
         /* 方案一 自己处理消息*/
+        /*$i=rand(0,2);
+        if ($i==1){
+            return true;
+        }*/
         return true;
         /*if (!RDS::instance()->set(App::$innerConfig['rabbitmq.queue'][0] . ":" . $this->msg['messageId'], 1, array('nx', 'ex' => 30))) {
             echo "消息重复消费 id:" . $this->msg['messageId'] . "\n";

@@ -29,12 +29,25 @@ class LocalCache
         $value['data'] = json_encode($data);
         return $this->table->set($key, $value);
     }
+    public function setIncr(string $key, int $ttl = 0): bool
+    {
+        if (empty($ttl)){
+            $ttl=30;
+        }
+        $value = array();
+        $value['ctime'] = time();
+        $value['ttl'] = $ttl;
+        $value['num'] = 0;
+        return $this->table->set($key, $value);
+    }
 
     public function get(string $key)
     {
         if ($tmp = $this->table->get($key)) {
             if (time() < ($tmp['ctime'] + $tmp['ttl'])) {
                 return json_decode($tmp['data']);
+            }else{
+                $this->table->del($key);
             }
         }
         return false;

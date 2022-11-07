@@ -1,8 +1,10 @@
 <?php
 
 namespace App\Config;
+
 use Galaxy\Core\Once;
 use Galaxy\Common\ES\LibES;
+
 class ES
 {
 
@@ -27,7 +29,7 @@ class ES
     public static function init(array $config): void
     {
         self::$once = new Once();
-         self::$config = $config;
+        self::$config = $config;
     }
 
     /**
@@ -38,9 +40,11 @@ class ES
 
 
         //检测当前类属性$instance是否已经保存了当前类的实例
-        if (self::$instance == null) {
-            //如果没有,则创建当前类的实例
-            self::$instance = new LibES(self::$config);
+        if (!isset(self::$instance)) {
+            static::$once->do(function () {
+                //如果没有,则创建当前类的实例
+                self::$instance = new LibES(self::$config);
+            });
         }
         //如果已经有了当前类实例,就直接返回,不要重复创建类实例
 
@@ -54,18 +58,19 @@ class ES
     {
 
     }
+
     /**
      * health
      * @return void
      */
-    public static function health() :string
+    public static function health(): string
     {
 
-        try{
+        try {
             return "1";
-          // if (self::instance()->existsIndex()){return "1";}
+            // if (self::instance()->existsIndex()){return "1";}
 
-        }catch (\Throwable $ex){
+        } catch (\Throwable $ex) {
 
         }
         return "1";
