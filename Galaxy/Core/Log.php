@@ -3,7 +3,6 @@
 namespace Galaxy\Core;
 
 use Logger;
-use App;
 class Log
 {
 
