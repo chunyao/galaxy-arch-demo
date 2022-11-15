@@ -32,6 +32,6 @@ try {
     $server = new App($bootConfig);
     $server->httpStart();
 } catch (\Throwable $ex) {
-    Log::error(sprintf('%s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));
+    print_r(sprintf('%s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));
 
 }
