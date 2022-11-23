@@ -579,7 +579,24 @@ class LibES
         return $this->esClient->indices()->refresh($params);
 
     }
-
+    /**
+     * User: 刘永胜
+     * 新增或者更新
+     * @param $bulk
+     * @return array|callable|false
+     */
+    public function bulk($bulk)
+    {
+        if (!$this->existsIndex()) {
+            return false;
+        }
+        $params = [
+            'body'=>$bulk,
+            'index' => $this->indexName,
+            'type' =>$this->typeName,
+        ];
+        return $this->esClient->bulk($params);
+    }
     /**
      * 格式化 es 的查询结果
      * @param $rs
