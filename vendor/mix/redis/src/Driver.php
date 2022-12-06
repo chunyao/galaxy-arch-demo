@@ -94,10 +94,20 @@ class Driver
     public function connect()
     {
         $redis = new \Redis();
-        $result = $redis->connect($this->host, $this->port, $this->timeout, null, $this->retryInterval);
-        if ($result === false) {
-            throw new \RedisException(sprintf('Redis connect failed (host: %s, port: %s) %s', $this->host, $this->port, $redis->getLastError()));
+        $result = false;
+        $count = 3;
+        $index = 0;
+        while ($result == false) {
+            $result = $redis->connect($this->host, $this->port, $this->timeout, null, $this->retryInterval);
+            if ($index > 0) {
+                sleep(1);
+            };
+            if ($index++ > $count) {
+                throw new \RedisException(sprintf('Redis connect failed (host: %s, port: %s) %s', $this->host, $this->port, $redis->getLastError()));;
+                break;
+            }
         }
+
         $redis->setOption(\Redis::OPT_READ_TIMEOUT, $this->readTimeout);
         // 假设密码是字符串 0 也能通过这个校验
         if ('' != (string)$this->password) {

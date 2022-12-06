@@ -20,6 +20,26 @@ class RobbitMqListener
         self::$config = $config;
         self::rabbitQueueload(self::$config['app.name']);
     }
+    static  function getDir($path)
+    {
+        //判断目录是否为空
+        if(!file_exists($path)) {
+            return [];
+        }
+
+        $files = scandir($path);
+        $fileItem = [];
+        foreach($files as $v) {
+            $newPath = $path .DIRECTORY_SEPARATOR . $v;
+            if(is_dir($newPath) && $v != '.' && $v != '..') {
+                $fileItem = array_merge($fileItem, self::getDir($newPath));
+            }else if(is_file($newPath)){
+                $fileItem[] = $newPath;
+            }
+        }
+
+        return $fileItem;
+    }
 
     public static function rabbitQueueload($appName)
     {
@@ -27,26 +47,13 @@ class RobbitMqListener
         $dir = ROOT_PATH  .
             DIRECTORY_SEPARATOR."service-main".DIRECTORY_SEPARATOR."src".DIRECTORY_SEPARATOR."App".
             DIRECTORY_SEPARATOR."Listener".DIRECTORY_SEPARATOR;
+        $i = 0;
+        foreach (self::getDir($dir) as $item){
 
-        if (is_dir($dir)) {
-            $info = opendir($dir);
-            $i = 0;
-            if(is_resource($info)) {
-                while (($file = readdir($info)) !== false) {
+            $class = str_replace(".php", "", str_replace("/", "\\", explode("//",$item)[1]));
 
-                    if (is_file($dir . $file)) {
-
-                        $class = str_replace(".php", "", $file);
-
-                        self::$mqClasses[$i] = 'App\Listener\\' . $class;
-                        $i++;
-                    }
-
-                }
-                closedir($info);
-            }else{
-                self::rabbitQueueload(self::$config['app.name']);
-            }
+            self::$mqClasses[$i] = 'App\Listener\\' . $class;
+            $i++;
         }
         return self::$mqClasses;
     }

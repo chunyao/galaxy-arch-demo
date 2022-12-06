@@ -3,6 +3,17 @@
 namespace Galaxy\Core;
 
 use Logger;
+/**
+ * @method static void emergency(mixed $message)
+ * @method static void alert(mixed $message)
+ * @method static void critical(mixed $message)
+ * @method static void error(mixed $message)
+ * @method static void warning(mixed $message)
+ * @method static void notice(mixed $message)
+ * @method static void info(mixed $message)
+ * @method static void debug(mixed $message)
+ *
+ */
 class Log
 {
 

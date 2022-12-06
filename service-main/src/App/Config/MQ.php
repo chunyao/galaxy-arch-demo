@@ -3,8 +3,7 @@
 namespace App\Config;
 
 use Galaxy\Common\Mq\Rabbitmq;
-use Galaxy\Core\Once;
-use Mix\Database\Database;
+
 
 class MQ
 {
@@ -30,7 +29,6 @@ class MQ
      */
     public static function init(array $config): void
     {
-        self::$once = new Once();
         self::$config = $config;
     }
 
@@ -40,7 +38,7 @@ class MQ
     public static function instance(): Rabbitmq
     {
         if (!isset(self::$instance)) {
-            static::$once->do(function () {
+
                 $host = self::$config['rabbitmq.host'];
                 $port = self::$config['rabbitmq.port'];
 
@@ -49,7 +47,6 @@ class MQ
                 $vhost = self::$config['rabbitmq.send.vhost'][0];
                 self::$instance = new Rabbitmq($host, $port, $username, $password, $vhost, 1);
 
-            });
         }
 
         return self::$instance;
