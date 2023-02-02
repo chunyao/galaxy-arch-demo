@@ -168,14 +168,6 @@ EOL;
             }, false, 0, true);
             $process2->start();
         }
-        if (isset($this->config['ws.server.enable']) && $this->config['ws.server.enable']) {
-            $this->wsVega = Vega::new(self::$appName);
-            $host = '0.0.0.0';
-            $port = 9508;
-            $server = new Swoole\Coroutine\Http\Server($host, $port, false, false);
-            $server->handle('/',  $this->wsVega->handler());
-
-        }
         $coreVega = CoreVega::new();
 
         $socket->on('Request', $coreVega->handler());
@@ -213,7 +205,11 @@ EOL;
     {
         $this->vega->handler2($request, $response);
     }
+    public function onMessage($request, $response)
+    {
+        $this->wsVega->handler2($request, $response);
 
+    }
 
     public function onReceive($server, int $worker_id)
     {

@@ -12,7 +12,7 @@ class Session
      * @var Connection
      */
     protected $conn;
-
+    public static $handlerClasses;
     /**
      * @var Channel
      */
@@ -36,15 +36,24 @@ class Session
         $this->writeChan->push($data);
     }
 
-    public function start(): void
+    public function start($class): void
     {
+
         // 接收消息
-        go(function () {
+        go(function () use($class) {
             while (true) {
-                $frame = $this->conn->recv();
+                $frame = $this->conn->readMessage(-1);
                 $message = $frame->data;
-                var_dump($message);
-              //  (new Hello($this))->index($message);
+
+                $pre= "App\Handler\\";
+                try{
+                    $handler =  $pre.$class;
+                    (new $handler($this))->handler($message);
+                }catch (\Throwable $e){
+                    var_dump($e->getMessage());
+                }
+
+
             }
         });
 
@@ -58,8 +67,10 @@ class Session
                 $frame = new \Swoole\WebSocket\Frame();
                 $frame->data = $data;
                 $frame->opcode = WEBSOCKET_OPCODE_TEXT; // or WEBSOCKET_OPCODE_BINARY
-                $this->conn->send($frame);
+                $this->conn->writeMessage($frame);
             }
         });
     }
+
+
 }

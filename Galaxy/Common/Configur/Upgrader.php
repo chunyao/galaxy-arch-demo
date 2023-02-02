@@ -3,12 +3,11 @@
 namespace Galaxy\Common\Configur;
 
 use Galaxy\Core\Once;
+use Mix\WebSocket\Upgrader as mUpgrader;
 
 class Upgrader
 {
-    /**
-     * @var \Mix\WebSocket\Upgrader
-     */
+
     private static $instance;
 
     /**
@@ -25,17 +24,14 @@ class Upgrader
         self::$once = new Once();
     }
 
-    /**
-     * @return  \Mix\WebSocket\Upgrader
-     */
-    public static function instance():  \Mix\WebSocket\Upgrader
+
+    public static function instance()
     {
         if (!isset(self::$instance)) {
             static::$once->do(function () {
 
-                $upgrader =  new Upgrader();
+                self::$instance =   new mUpgrader();
 
-                self::$instance = $upgrader;
             });
         }
         return self::$instance;
@@ -46,6 +42,6 @@ class Upgrader
      */
     public static function enableCoroutine(): void
     {
-
+        \Swoole\Runtime::enableCoroutine(); // 必须放到最后，防止触发协程调度导致异常
     }
 }

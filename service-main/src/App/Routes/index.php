@@ -2,12 +2,16 @@
 use App\Http\Controller\Helloword\Database;
 use App\Http\Controller\Helloword\Helloword;
 use App\Http\Controller\Helloword\SendMsg;
+
+use App\Http\Controller\Helloword\WebSocket;
 use App\Http\Controller\LocalCache\LocalCacheController;
 use App\Http\Controller\MemCache\MemCacheController;
 use App\Http\Controller\Msg\Msg;
 use App\Http\Controller\Spi\SpiDemo;
 use App\Http\Controller\Sql\SqlImprove;
 use App\Http\Controller\Es\Index;
+
+
 return function (Mix\Vega\Engine $vega,$appName) {
     $sub = $vega->pathPrefix("/".$appName);
 
@@ -30,6 +34,8 @@ return function (Mix\Vega\Engine $vega,$appName) {
     $sub->handle('/mem/get', [new MemCacheController(), 'getTest'])->methods('GET');
     $sub->handle('/spi/test', [new SpiDemo(), 'callSpiDemo'])->methods('GET');
     $sub->handle('/gethtml', [new Helloword(), 'gethtml'])->methods('GET');
+    //ws
+    $sub->handle('/ws/hello', [new WebSocket(), 'index'])->methods('GET');
 
     // $vega->handle('/auth', [new Auth(), 'index'])->methods('GET');
 };
