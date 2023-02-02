@@ -14,6 +14,7 @@ return array(
     'Php\\' => array($baseDir . '/archDemoSpi/Php'),
     'PhpAmqpLib\\' => array($vendorDir . '/php-amqplib/php-amqplib/PhpAmqpLib'),
     'ParagonIE\\ConstantTime\\' => array($vendorDir . '/paragonie/constant_time_encoding/src'),
+    'Mix\\WebSocket\\' => array($vendorDir . '/mix/websocket/src'),
     'Mix\\View\\' => array($vendorDir . '/mix/view/src'),
     'Mix\\Vega\\' => array($vendorDir . '/mix/vega/src'),
     'Mix\\Validator\\' => array($vendorDir . '/mix/validator/src'),

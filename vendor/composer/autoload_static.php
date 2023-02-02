@@ -37,6 +37,7 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         ),
         'M' => 
         array (
+            'Mix\\WebSocket\\' => 14,
             'Mix\\View\\' => 9,
             'Mix\\Vega\\' => 9,
             'Mix\\Validator\\' => 14,
@@ -118,6 +119,10 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         'ParagonIE\\ConstantTime\\' => 
         array (
             0 => __DIR__ . '/..' . '/paragonie/constant_time_encoding/src',
+        ),
+        'Mix\\WebSocket\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/mix/websocket/src',
         ),
         'Mix\\View\\' => 
         array (

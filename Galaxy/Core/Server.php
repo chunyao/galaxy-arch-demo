@@ -4,6 +4,7 @@ namespace Galaxy\Core;
 
 use Galaxy\Common\Configur\Cache;
 use Galaxy\Common\Configur\SnowFlake;
+use Galaxy\Common\Configur\Upgrader;
 use Galaxy\Common\XxlJob\XxlJobApi;
 use Galaxy\Common\XxlJob\XxlJobVega;
 use Logger;
@@ -14,6 +15,7 @@ use \GuzzleHttp;
 use \Galaxy\Common\Handler\InnerServer;
 use \Galaxy\Common\Configur\CoreDB;
 use \Galaxy\Common\Configur\CoreRDS;
+
 class Server
 {
     protected Swoole\Http\Server $server;
@@ -41,6 +43,8 @@ class Server
     protected static string $appName;
 
     protected $tcpClient;
+
+    private $wsVega;
 
     public function __construct($bootConfig)
     {
@@ -84,8 +88,8 @@ class Server
             $process = new Swoole\Process(function () use ($bootConfig, $register) {
                 echo "注册中心进程ID:" . posix_getpid() . "\n";
                 log::info("注册中心进程ID:" . posix_getpid());
-                swoole_timer_tick(25000, function () use ( $bootConfig, $register) {
-                    exec('rm -f '. $bootConfig['log.path'] . "/" . $this->config['app.name'] . "/*" . date("Ymd", strtotime("-1 day")) . ".log");
+                swoole_timer_tick(25000, function () use ($bootConfig, $register) {
+                    exec('rm -f ' . $bootConfig['log.path'] . "/" . $this->config['app.name'] . "/*" . date("Ymd", strtotime("-1 day")) . ".log");
                     self::$localcache = array();
                     try {
                         $register->beat();
@@ -142,18 +146,18 @@ EOL;
             'enable_coroutine' => true,
             'max_request' => $this->config['max.request'],
             'reload_async' => true,
-            'dispatch_mode'=>3,
+            'dispatch_mode' => 3,
             'enable_deadlock_check' => false,
             'max_wait_time' => 6
         ));
         //集成 xxl job
-        if (isset( $this->config['xxl.job.enable'])&&$this->config['xxl.job.enable']){
+        if (isset($this->config['xxl.job.enable']) && $this->config['xxl.job.enable']) {
             $xxlJobRegister = new XxlJobApi();
             $xxlJobRegister->XxlJobRegistry();
             $xxljob = $this->server->addListener('0.0.0.0', 9999, SWOOLE_SOCK_TCP);
             $xxljobVega = XxlJobVega::new();
             $xxljob->on('Request', $xxljobVega->handler());
-            $process2= new Swoole\Process(function ($worker) use ($xxlJobRegister) {
+            $process2 = new Swoole\Process(function ($worker) use ($xxlJobRegister) {
                 swoole_timer_tick(25000, function () use ($xxlJobRegister) {
                     try {
                         $xxlJobRegister->XxlJobRegistry();
@@ -164,7 +168,14 @@ EOL;
             }, false, 0, true);
             $process2->start();
         }
+        if (isset($this->config['ws.server.enable']) && $this->config['ws.server.enable']) {
+            $this->wsVega = Vega::new(self::$appName);
+            $host = '0.0.0.0';
+            $port = 9508;
+            $server = new Swoole\Coroutine\Http\Server($host, $port, false, false);
+            $server->handle('/',  $this->wsVega->handler());
 
+        }
         $coreVega = CoreVega::new();
 
         $socket->on('Request', $coreVega->handler());
@@ -197,6 +208,7 @@ EOL;
     {
         $this->server->start();
     }
+
     public function onRequest($request, $response)
     {
         $this->vega->handler2($request, $response);
@@ -219,7 +231,7 @@ EOL;
     {
         Log::info("进程:" . $worker_id . " error");
 
-        Log::info("服务器信息:" . $worker_id );
+        Log::info("服务器信息:" . $worker_id);
     }
 
     public function onWorkerStart($server, $worker_id)
@@ -227,7 +239,7 @@ EOL;
         echo "Worker 进程id:" . posix_getpid() . "\n";
         log::info("Worker 进程ID:" . posix_getpid());
         SnowFlake::init();
-        //    CoreDB::init($this->coreConfig);
+        Upgrader::init();
         //      CoreDB::enableCoroutine();
         //     CoreRDS::init($this->coreConfig);
         //     CoreRDS::enableCoroutine();
