@@ -35,12 +35,13 @@ class Rabbitmq
     private function connect()
     {
         if (isset($this->host[1])) {
-            $this->con = new AMQPStreamConnection($this->host[0], $this->port[0], $this->username, $this->password, $this->vhost, false, 'AMQPLAIN', null, 'en_US', 3, 21, null, false, 10);
+            $i = rand(0,2);
+            $this->con = new AMQPStreamConnection($this->host[$i], $this->port[$i], $this->username, $this->password, $this->vhost, false, 'AMQPLAIN', null, 'en_US', 10, 60, null, false, 30);
         } else {
             $this->con = new AMQPStreamConnection($this->host, $this->port, $this->username, $this->password, $this->vhost, false, 'AMQPLAIN', null, 'en_US', 3, 21, null, false, 10);
 
         }
-        swoole_timer_tick(10000, function () {
+        swoole_timer_tick(30000, function () {
             try {
                 $this->con->checkHeartBeat();
             } catch (\Throwable $e) {
