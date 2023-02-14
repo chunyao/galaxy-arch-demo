@@ -141,12 +141,12 @@ EOL;
         printf("Health Listen    Addr:       http://%s:%d\n", "0.0.0.0", $managementServerPort);
         Log::info('Start http server');
         $this->server->set(array(
-            'reactor_num' => swoole_cpu_num(),
+            'reactor_num' => 1,
             'worker_num' => $this->config['worker.num'],
             'enable_coroutine' => true,
             'max_request' => $this->config['max.request'],
             'reload_async' => true,
-            'dispatch_mode' => 3,
+         //   'dispatch_mode' => 3,
             'enable_deadlock_check' => false,
             'max_wait_time' => 6
         ));
