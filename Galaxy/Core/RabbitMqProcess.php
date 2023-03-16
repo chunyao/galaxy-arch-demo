@@ -36,7 +36,7 @@ class RabbitMqProcess
                     $consumer = new ConsumerRabbit($this->config,$this->url);
                     $consumer->initQueues($ch, $queue);
                 } catch (\Throwable $e) {
-                    Log::error(sprintf('%s in %s on line %d', $e->getMessage(), $e->getFile(), $e->getLine()));
+                    Log::error(sprintf('%s in %s on line %d', $e->getMessage(), $e->getFile(), $e->getLine(),$e->get));
                 }
 
             }

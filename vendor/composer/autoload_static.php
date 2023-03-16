@@ -31,6 +31,7 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
             'Psr\\Log\\' => 8,
             'Psr\\Http\\Message\\' => 17,
             'Psr\\Http\\Client\\' => 16,
+            'Psr\\EventDispatcher\\' => 20,
             'Php\\' => 4,
             'PhpAmqpLib\\' => 11,
             'ParagonIE\\ConstantTime\\' => 23,
@@ -46,6 +47,7 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
             'Mix\\ObjectPool\\' => 15,
             'Mix\\Http\\Message\\' => 17,
             'Mix\\Grpc\\' => 9,
+            'Mix\\Event\\' => 10,
             'Mix\\Database\\' => 13,
         ),
         'L' => 
@@ -108,6 +110,10 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         array (
             0 => __DIR__ . '/..' . '/psr/http-client/src',
         ),
+        'Psr\\EventDispatcher\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/event-dispatcher/src',
+        ),
         'Php\\' => 
         array (
             0 => __DIR__ . '/../..' . '/archDemoSpi/Php',
@@ -155,6 +161,10 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         'Mix\\Grpc\\' => 
         array (
             0 => __DIR__ . '/..' . '/mix/grpc/src',
+        ),
+        'Mix\\Event\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/mix/event/src',
         ),
         'Mix\\Database\\' => 
         array (

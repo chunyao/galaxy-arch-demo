@@ -2,6 +2,7 @@
 
 namespace  Galaxy\Common\Mq;
 
+use Galaxy\Core\Log;
 use Mix\ObjectPool\ObjectTrait;
 
 /**
@@ -67,12 +68,14 @@ class Driver
     //$host, $port, $username, $password, $vhost, $channel
     public function __construct(array $host,array $port, string $username, string $password,string $vhost,int $channel)
     {
+
         $this->host = $host;
         $this->port = $port;
         $this->username = $username;
         $this->password = $password;
         $this->vhost = $vhost;
         $this->channel = $channel;
+        $this->connect();
     }
 
     /**
@@ -92,15 +95,11 @@ class Driver
     public function connect()
     {
         try {
-            $this->rabbitmq = new Rabbitmq(
-                $this->host, $this->port, $this->username, $this->password, $this->vhost, $this->channel
-            );
-            $this->rabbitmq->connect();
+            $this->rabbitmq = (new Rabbitmq($this->host, $this->port, $this->username, $this->password, $this->vhost, $this->channel))->connect();
+
         }catch (\Exception $exception){
-
+          Log::error(['ex'=>$exception]);
         }
-
-
     }
 
     /**

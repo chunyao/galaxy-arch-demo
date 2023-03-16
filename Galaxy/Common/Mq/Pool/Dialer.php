@@ -59,11 +59,13 @@ class Dialer implements DialerInterface
         $this->password = $password;
         $this->vhost = $vhost;
         $this->channel  = $channel;
+
     }
 
     /**
      * Dial
      * @return Driver
+     * @throws \Exception
      */
     public function dial(): object
     {
