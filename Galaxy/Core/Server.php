@@ -89,6 +89,7 @@ class Server
                 echo "注册中心进程ID:" . posix_getpid() . "\n";
                 log::info("注册中心进程ID:" . posix_getpid());
                 swoole_timer_tick(25000, function () use ($bootConfig, $register) {
+                    Cache::instance()->removeTimeOut();
                     exec('rm -f ' . $bootConfig['log.path'] . "/" . $this->config['app.name'] . "/*" . date("Ymd", strtotime("-1 day")) . ".log");
                     self::$localcache = array();
                     try {
