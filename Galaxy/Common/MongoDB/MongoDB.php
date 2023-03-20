@@ -61,7 +61,8 @@ class MongoDB
         } else {
             $this->uri = sprintf("mongodb://%s:%d", $this->config['mongo.host'], $this->config['mongo.port']);
         }
-        $this->manager = new \MongoDB\Driver\Manager($this->uri);
+        $uriOptions['socketTimeoutMS']=300000;
+        $this->manager = new \MongoDB\Driver\Manager($this->uri,$uriOptions);
 
 
     }
