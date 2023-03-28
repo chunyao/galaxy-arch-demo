@@ -186,7 +186,6 @@ class Rabbitmq
 
     protected function createPool()
     {
-        echo "createPool";
         if ($this->driver) {
             $this->driver->close();
             $this->driver = null;

@@ -3,8 +3,14 @@
 namespace Galaxy\Common\MongoDB;
 
 
+use Galaxy\Common\MongoDB\Pool\ConnectionPool;
+use Galaxy\Common\MongoDB\Pool\Dialer;
+use Galaxy\Common\Spl\Exception\Exception;
+use Mix\Redis\LoggerInterface;
+
 /**
  * Class Mongo
+ * @property ConnectionPool $pool
  * @package Mongo
  */
 class MongoDB
@@ -32,7 +38,14 @@ class MongoDB
     private $_skip = 0;
     private $_page = 1;
     private $_sort = [];
-
+    private $driver ;
+    private $pool;
+    private $logger;
+    private $maxOpen;
+    private $maxIdle;
+    private $maxLifetime;
+    private $waitTimeout;
+    public $ack;
 
     private function reset()
     {
@@ -49,22 +62,33 @@ class MongoDB
     public function __construct($config)
     {
         $this->config = array_merge($this->config, $config);
+    }
+
+    public function connect():MongoDB
+    {
         $uriOptions = array();
-        $driverOptions = array();
+
         if ($this->config['mongo.user']) {
             if ($this->config['mongo.replicaset']) {
                 $this->uri = sprintf("mongodb://%s:%s@%s/?replicaSet=%s&authSource=%s", $this->config['mongo.user'], $this->config['mongo.password'], $this->config['mongo.host'], $this->config['mongo.replicaset'], $this->config['mongo.database']);
 
             } else {
-                $this->uri = sprintf("mongodb://%s:%s@%s:%d/?authSource=%s", $this->config['mongo.user'], $this->config['mongo.password'], $this->config['mongo.host'], $this->config['mongo.port'],$this->config['mongo.database']);
+                $this->uri = sprintf("mongodb://%s:%s@%s:%d/?authSource=%s", $this->config['mongo.user'], $this->config['mongo.password'], $this->config['mongo.host'], $this->config['mongo.port'], $this->config['mongo.database']);
             }
         } else {
             $this->uri = sprintf("mongodb://%s:%d", $this->config['mongo.host'], $this->config['mongo.port']);
         }
-        $uriOptions['socketTimeoutMS']=300000;
-        $this->manager = new \MongoDB\Driver\Manager($this->uri,$uriOptions);
-
-
+        $uriOptions['socketTimeoutMS'] = 10000;
+        $driverOption['disableClientPersistence']=true;
+        $this->manager = new \MongoDB\Driver\Manager($this->uri, $uriOptions,$driverOption);
+        $cmd = ['ping' => 1];
+        try {
+           $this->execCommand("admin", $cmd);
+        }catch (Exception $e){
+            throw new \Exception($e->getMessage());
+        }
+        $this->_database = $this->config['mongo.database'];
+        return $this;
     }
 
     public function status()
@@ -80,6 +104,11 @@ class MongoDB
     {
     }
 
+    public function close()
+    {
+        unset($this->manager);
+        return true;
+    }
 
     /**
      * //设置数据库
@@ -155,19 +184,32 @@ class MongoDB
      */
     public function table($table)
     {
+        return $this->borrow()->table_pool($table);
+    }
+
+    /**
+     * //设置表
+     * @param $table
+     * @return $this
+     */
+    public function table_pool($table)
+    {
         $this->_database = $this->config['mongo.database'];
         $this->_table = $table;
         return $this;
     }
-
     public function tableSuffix(string $table, int $companyId, $subTable = 100)
+    {
+        return $this->borrow()->tableSuffix_pool($table,$companyId,$subTable);
+
+    }
+    public function tableSuffix_pool(string $table, int $companyId, $subTable = 100)
     {
         $this->_database = $this->config['mongo.database'];
         $suffix = is_numeric($companyId) ? (int)$companyId % $subTable : null;
         $this->_table = $table . $suffix;
         return $this;
     }
-
     /**
      * 获取数据库和表组合的命名空间
      * @return string
@@ -175,6 +217,7 @@ class MongoDB
      */
     private function getNameSpace()
     {
+
         if ($this->_database && $this->_table) {
             return sprintf("%s.%s", $this->_database, $this->_table);
         }
@@ -350,6 +393,7 @@ class MongoDB
         return $result;
     }
 
+
     /**
      * 查找一条记录
      * @param array $where = ['x' => ['$gt' => 1]]
@@ -453,5 +497,128 @@ class MongoDB
     {
         // TODO: Implement __destruct() method.
         unset($this->manager);
+    }
+
+    /**
+     * @throws \Exception
+     */
+    protected function createPool()
+    {
+        if ($this->driver) {
+            $this->driver->close();
+            $this->driver = null;
+        }
+
+        $this->pool = new ConnectionPool(
+            new Dialer(
+                $this->config
+            ),
+            $this->maxOpen,
+            $this->maxIdle,
+            $this->maxLifetime,
+            $this->waitTimeout
+        );
+
+    }
+
+    /**
+     * @param int $maxOpen
+     * @param int $maxIdle
+     * @param int $maxLifetime
+     * @param float $waitTimeout
+     * @throws \Exception
+     */
+    public function startPool(int $maxOpen, int $maxIdle, int $maxLifetime = 0, float $waitTimeout = 0.0)
+    {
+        $this->maxOpen = $maxOpen;
+        $this->maxIdle = $maxIdle;
+        $this->maxLifetime = $maxLifetime;
+        $this->waitTimeout = $waitTimeout;
+        $this->createPool();
+
+    }
+
+    /**
+     * @param int $maxOpen
+     */
+    public function setMaxOpenConns(int $maxOpen)
+    {
+        if ($this->maxOpen == $maxOpen) {
+            return;
+        }
+        $this->maxOpen = $maxOpen;
+        $this->createPool();
+    }
+
+    /**
+     * @param int $maxIdle
+     */
+    public function setMaxIdleConns(int $maxIdle)
+    {
+        if ($this->maxIdle == $maxIdle) {
+            return;
+        }
+        $this->maxIdle = $maxIdle;
+        $this->createPool();
+    }
+
+    /**
+     * @param int $maxLifetime
+     */
+    public function setConnMaxLifetime(int $maxLifetime)
+    {
+        if ($this->maxLifetime == $maxLifetime) {
+            return;
+        }
+        $this->maxLifetime = $maxLifetime;
+        $this->createPool();
+    }
+
+    /**
+     * @param float $waitTimeout
+     */
+    public function setPoolWaitTimeout(float $waitTimeout)
+    {
+        if ($this->waitTimeout == $waitTimeout) {
+            return;
+        }
+        $this->waitTimeout = $waitTimeout;
+        $this->createPool();
+    }
+
+    /**
+     * @return array
+     */
+    public function poolStats(): array
+    {
+        if (!$this->pool) {
+            return [];
+        }
+        return $this->pool->stats();
+    }
+
+    /**
+     * @param LoggerInterface $logger
+     */
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    /**
+     * Borrow connection
+     * @return Connection
+     * @throws WaitTimeoutException
+     */
+    protected function borrow(): Connection
+    {
+
+        if ($this->pool instanceof ConnectionPool) {
+            $driver = $this->pool->borrow();
+            $conn = new Connection($driver, $this->logger);
+        } else {
+            $conn = new Connection($this->driver, $this->logger);
+        }
+        return $conn;
     }
 }
