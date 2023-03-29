@@ -62,6 +62,9 @@ class MongoDB
     public function __construct($config)
     {
         $this->config = array_merge($this->config, $config);
+        $this->driver = new Driver(
+            $this->config
+        );
     }
 
     public function connect():MongoDB

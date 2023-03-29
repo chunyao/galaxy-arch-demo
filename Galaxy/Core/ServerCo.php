@@ -134,7 +134,6 @@ EOL;
         $scheduler->parallel(1,function () use ($serverPort) {
             echo "Http异步服务" . PHP_EOL;
             SnowFlake::init();
-            Upgrader::init();
             $configs = ConfigLoad::findFile();
             foreach ($configs as $key => $val) {
                 if ($val == "\\App\Config\\") continue;
@@ -157,7 +156,6 @@ EOL;
         $scheduler->add(function () use ($managementServerPort) {
             echo "管理服务" . PHP_EOL;
             SnowFlake::init();
-            Upgrader::init();
             $configs = ConfigLoad::findFile();
             foreach ($configs as $key => $val) {
                 if ($val == "\\App\Config\\") continue;
@@ -183,7 +181,6 @@ EOL;
             $scheduler->add(function () {
                 echo "xxl-job服务" . PHP_EOL;
                 SnowFlake::init();
-                Upgrader::init();
                 $configs = ConfigLoad::findFile();
 
                 foreach ($configs as $key => $val) {

@@ -35,10 +35,10 @@ class ConsumerRabbit
                         'login_response' => null,
                         'connection_timeout' => 5,
                         'locale' => 'en_US',
-                        'read_timeout' => 180,
+                        'read_timeout' => 1800,
                         'keepalive' => false,
-                        'write_timeout' => 180,
-                        'heartbeat' => 90
+                        'write_timeout' => 1800,
+                        'heartbeat' => 900
                     ]);
             } else {
                 $params = [
