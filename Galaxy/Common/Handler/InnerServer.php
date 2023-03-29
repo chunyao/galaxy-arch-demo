@@ -32,11 +32,7 @@ class InnerServer
 
     public function rabbitmq()
     {
-        $mq = new RobbitMqListener($this->data['message'], $this->data['queue'], self::$config);
-
-        $result = $mq->handler();
-        unset($mq);
-        return $result;
+        return (new RobbitMqListener($this->data['message'], $this->data['queue'], self::$config))->handler();
     }
 
     public function redis()

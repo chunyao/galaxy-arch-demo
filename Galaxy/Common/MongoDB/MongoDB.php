@@ -79,7 +79,7 @@ class MongoDB
             $this->uri = sprintf("mongodb://%s:%d", $this->config['mongo.host'], $this->config['mongo.port']);
         }
         $uriOptions['socketTimeoutMS'] = 10000;
-        $driverOption['disableClientPersistence']=true;
+        $driverOption['disableClientPersistence']=false;
         $this->manager = new \MongoDB\Driver\Manager($this->uri, $uriOptions,$driverOption);
         $cmd = ['ping' => 1];
         try {

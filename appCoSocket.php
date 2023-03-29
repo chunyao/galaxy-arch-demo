@@ -2,7 +2,7 @@
 require_once __DIR__ . '/Galaxy/load.php';
 require_once __DIR__ . '/service-main/src/App/load.php';
 require_once __DIR__ . '/vendor/autoload.php';
-use Galaxy\Core\ServerCo;
+use Galaxy\Core\SocketServerCo;
 date_default_timezone_set('Asia/Shanghai');
 define("ROOT_PATH", dirname(__FILE__));
 ini_set('display_errors', 'On');
@@ -16,7 +16,7 @@ if ($bootConfig['env'] == "local") {
 }
 
 
-class AppCo extends ServerCo
+class AppCoSocket extends SocketServerCo
 {
     public function __construct()
     {
@@ -25,7 +25,7 @@ class AppCo extends ServerCo
 }
 
 try {
-    $server = new AppCo();
+    $server = new AppCoSocket();
     $server->WebSocketStart($bootConfig);
 } catch (\Throwable $ex) {
     print_r(sprintf('%s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));

@@ -28,7 +28,7 @@ class RabbitMqProcess
     public function createProcess($ch, $queue)
     {
 
-        $process = new Swoole\Process(function ($worker) use ( $ch, $queue) {
+        $process = Swoole\Coroutine\go(function () use ( $ch, $queue) {
             while (1) {
                 sleep(5);
                 log::info("消息进程ID:" . posix_getpid() . "\n");
@@ -36,32 +36,32 @@ class RabbitMqProcess
                     $consumer = new ConsumerRabbit($this->config,$this->url);
                     $consumer->initQueues($ch, $queue);
                 } catch (\Throwable $e) {
-                    Log::error(sprintf('%s in %s on line %d', $e->getMessage(), $e->getFile(), $e->getLine(),$e->get));
+                    Log::error(sprintf('%s in %s on line %d', $e->getMessage(), $e->getFile(), $e->getLine()));
                 }
 
             }
-        }, false, 0, true);
+        });
 
-        $pid = $process->start();
-        $this->works[$pid] = $queue;
-        $this->processes[$pid] = $process;
-        echo "Mq Master: new worker, PID=" . $pid . "\n";
-        return $pid;
+
+        $this->works[$process] = $queue;
+        $this->processes[$process] = $process;
+        echo "Mq Master: new worker, PID=" . $process . "\n";
+        return $process;
     }
 
-    public function watchProcess()
-    {
-        while (1) {
-            if ($ret = Swoole\Process::wait(false)) {
-                $retPid = intval($ret["pid"] ?? 0);
-                if (isset($this->works[$retPid])) {
-                    $this->createProcess(rand(0,100),$this->works[$retPid]);
-                    unset($this->works[$retPid]);
-                    unset($this->processes[$retPid]);
-                }
-            }
-        }
-    }
+//    public function watchProcess()
+//    {
+//        while (1) {
+//            if ($ret = Swoole\Process::wait(false)) {
+//                $retPid = intval($ret["pid"] ?? 0);
+//                if (isset($this->works[$retPid])) {
+//                    $this->createProcess(rand(0,100),$this->works[$retPid]);
+//                    unset($this->works[$retPid]);
+//                    unset($this->processes[$retPid]);
+//                }
+//            }
+//        }
+//    }
 
     public function handler()
     {

@@ -51,7 +51,8 @@ class DelayListener
     /* handler 为固定函数，return true or false，ack 强依赖 */
     public function handler(): bool
     {
-
+       // echo json_encode($this->msg);
+        return true;
         /* 整理 接受msseage 消息*/
         /* 方案一 自己处理消息*/
 
@@ -59,7 +60,7 @@ class DelayListener
         //echo "消息重复消费 id:". $this->msg['id']."\n";
          //   log::info("消息重复消费 id:". $this->msg['id']);
           //  sleep(1);
-            return true;
+
        // }else{
        //     echo "start:" . self::getMillisecond()."\n";
          //   $result = $this->msgService->saveMsg($this->msg);

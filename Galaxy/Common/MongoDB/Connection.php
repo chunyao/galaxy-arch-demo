@@ -32,9 +32,6 @@ class Connection extends AbstractConnection
         if (!$this->driver || $this->driver instanceof EmptyDriver) {
             return;
         }
-        $this->driver->__discard();
-        $this->driver = new EmptyDriver();
-        return;
         /*  if ($this->inTransaction()) {
               $this->driver->__discard();
 
