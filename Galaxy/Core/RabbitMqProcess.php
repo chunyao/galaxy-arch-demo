@@ -78,7 +78,6 @@ class RabbitMqProcess
                         if (isset($this->config['rabbitmq.queue.num'][$i])) {
                             for ($k = 0; $k < $this->config['rabbitmq.queue.num'][$i]; $k++) {
                                 if ($val::getQueue() == $this->config['rabbitmq.queue'][$i]) $this->createProcess($this->channel_start + $channel_step, $i);
-                                sleep(0.2);
                             }
                         } else {
                             if ($val::getQueue() == $this->config['rabbitmq.queue'][$i]) $this->createProcess($this->channel_start + $channel_step, $i);
