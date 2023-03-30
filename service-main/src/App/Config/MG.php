@@ -35,6 +35,7 @@ class MG
 
     /**
      * @return MongoDB
+     * @throws \Exception
      */
     public static function instance(): MongoDB
     {
@@ -45,6 +46,7 @@ class MG
             static::$once->do(function () {
                 //如果没有,则创建当前类的实例
                 self::$instance = new MongoDB(self::$config);
+
             });
         }
         //如果已经有了当前类实例,就直接返回,不要重复创建类实例

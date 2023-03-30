@@ -73,11 +73,14 @@ class Helloword extends BaseController
         /*ES*/
 
         /*mongo*/
-        $data = MG::instance()->table('user')->find(['id' => 2]);
+        $n =[];
+
+        $data = MG::instance()->tableSuffix('user',100)->find(['id' => 2]);
+
         $ctx->JSON(200, [
             'code' => 200,
             'message' => 'success',
-            'data' => $data
+            'data' =>MG::instance()->poolStats()
         ]);
         /* $data = $this->product->insertData();
          $ctx->JSON(200, [

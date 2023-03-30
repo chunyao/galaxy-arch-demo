@@ -4,7 +4,6 @@ namespace Galaxy\Core;
 
 use Galaxy\Common\Configur\Cache;
 use Galaxy\Common\Configur\SnowFlake;
-use Galaxy\Common\Configur\Upgrader;
 use Galaxy\Common\XxlJob\XxlJobApi;
 use Galaxy\Common\XxlJob\XxlJobVega;
 use Logger;
@@ -173,15 +172,15 @@ EOL;
 
         $socket->on('Request', $coreVega->handler());
         $health->on('Request', $coreVega->handler());
-        $rabbitMq = new RabbitMqProcess($this->config, 1, $this->url, $this->tcpClient);
-        $rabbitMq->handler();
+
         $this->server->on('open', function ($server, $request) {
         });
         $this->server->on('Start', function ($server) {
 
         });
         $this->server->on("ManagerStart", function ($server) {
-
+            $rabbitMq = new RabbitMqProcess($this->config, 1, $this->url, $this->tcpClient);
+            $rabbitMq->handler();
         });
         $this->server->on('WorkerStart', array($this, 'onWorkerStart'));
         $this->server->on('WorkerStop', function ($server, $worker_id) {
@@ -237,7 +236,6 @@ EOL;
         echo "Worker 进程id:" . posix_getpid() . "\n";
         log::info("Worker 进程ID:" . posix_getpid());
         SnowFlake::init();
-        Upgrader::init();
         //      CoreDB::enableCoroutine();
         //     CoreRDS::init($this->coreConfig);
         //     CoreRDS::enableCoroutine();
