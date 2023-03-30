@@ -13,11 +13,18 @@ class WebScoketDemoHandler
 
     public function handler($req)
     {
-        if ($req == 1) {
-            $this->session->send("test");
-            return;
-        }
-      $this->session->send("sdf");
+
+        swoole_timer_tick(5000, function () use ($req) {
+            try {
+                if ($req === 1) {
+                    $this->session->send("test");
+
+                }
+                $this->session->send("heatbeat");
+            } catch (\Throwable $e) {
+                //var_dump($e);
+            }
+        });
     }
 
 }

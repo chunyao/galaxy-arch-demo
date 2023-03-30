@@ -7,6 +7,7 @@ namespace App\Http\Controller\Helloword;
 use App;
 use App\Common\Utils\Test;
 use App\Config\ES;
+use App\Config\MG;
 use App\Config\RDS;
 
 use App\Repository\Model\Mongo\Product;
@@ -67,15 +68,17 @@ class Helloword extends BaseController
     }
     public function helloword(Context $ctx)
     {
-        var_dump($ctx->getQuery('test'));
-        var_dump($ctx->getQuery('test2'));
+      //  var_dump($ctx->getQuery('test'));
+     //   var_dump($ctx->getQuery('test2'));
         /*ES*/
+
+        /*mongo*/
+        $data = MG::instance()->table('user')->find(['id' => 2]);
         $ctx->JSON(200, [
             'code' => 200,
             'message' => 'success',
-            'data' => Test::test()
+            'data' => $data
         ]);
-        /*mongo*/
         /* $data = $this->product->insertData();
          $ctx->JSON(200, [
              'code' => 10200,

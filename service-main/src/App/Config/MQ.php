@@ -57,7 +57,12 @@ class MQ
      */
     public static function enableCoroutine(): void
     {
-
+        $maxOpen = (int) self::$config['redis.maxOpen'];        // 最大开启连接数
+        $maxIdle = (int) self::$config['redis.maxIdle'];        // 最大闲置连接数
+        $maxLifetime = (int) self::$config['redis.maxLifetime'];  // 连接的最长生命周期
+        $waitTimeout = (float) self::$config['redis.waitTimeout'];;   // 从池获取连接等待的时间, 0为一直等待
+        self::instance()->startPool($maxOpen, $maxIdle, $maxLifetime, $waitTimeout);
+        \Swoole\Runtime::enableCoroutine(); // 必须放到最后，防止触发协程调度导致异常
     }
 
     public static function health(): string

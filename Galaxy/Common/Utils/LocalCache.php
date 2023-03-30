@@ -13,7 +13,7 @@ class LocalCache
         $this->table->column('id', Swoole\Table::TYPE_INT);
         $this->table->column('ttl', Swoole\Table::TYPE_INT);
         $this->table->column('ctime', Swoole\Table::TYPE_INT);
-        $this->table->column('data', Swoole\Table::TYPE_STRING,64);
+        $this->table->column('data', Swoole\Table::TYPE_STRING,128);
         $this->table->column('num', Swoole\Table::TYPE_INT);
         $this->table->create();
     }
@@ -71,18 +71,29 @@ class LocalCache
         return $this->table->incr($key,'num',$incrby);
     }
 
-    public function decr()
+    public function decr(string $key,$incrby = 1):int
     {
-
+        return $this->table->decr($key,'num',$incrby);
     }
 
-    public function exist()
+    public function exist($key):bool
     {
-
+        return $this->table->exist($key);
     }
 
     public function count()
     {
         return $this->table->count();
+    }
+    public function removeTimeOut()
+    {
+        foreach ($this->table as $key=>$val){
+            if (isset($val['ttl'])){
+                if (time() >= ($val['ctime'] + $val['ttl'])) {
+                    $this->table->del($key);
+                }
+            }
+        }
+        return true;
     }
 }

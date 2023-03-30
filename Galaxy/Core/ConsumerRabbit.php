@@ -14,7 +14,6 @@ class ConsumerRabbit
 
     public function __construct($config, $url)
     {
-
         $this->config = $config;
         $this->url = $url;
 
@@ -22,12 +21,10 @@ class ConsumerRabbit
 
     public function initQueues($ch, $i)
     {
-        $up = 2;
-        $baseMemory = memory_get_usage();
 
         try {
             if (isset($this->config['rabbitmq.host'][1])) {
-                $this->con = AMQPSocketConnection::create_connection([
+                $this->con = AMQPStreamConnection::create_connection([
                         ['host' => $this->config['rabbitmq.host'][0], 'port' => $this->config['rabbitmq.port'][0], 'user' => $this->config['rabbitmq.username'], 'password' => $this->config['rabbitmq.password'], 'vhost' => $this->config['rabbitmq.vhost'][0]],
                         ['host' => $this->config['rabbitmq.host'][1], 'port' => $this->config['rabbitmq.port'][1], 'user' => $this->config['rabbitmq.username'], 'password' => $this->config['rabbitmq.password'], 'vhost' => $this->config['rabbitmq.vhost'][0]],
                         ['host' => $this->config['rabbitmq.host'][2], 'port' => $this->config['rabbitmq.port'][2], 'user' => $this->config['rabbitmq.username'], 'password' => $this->config['rabbitmq.password'], 'vhost' => $this->config['rabbitmq.vhost'][0]],
@@ -38,10 +35,10 @@ class ConsumerRabbit
                         'login_response' => null,
                         'connection_timeout' => 5,
                         'locale' => 'en_US',
-                        'read_timeout' => 180,
-                        'keepalive' => true,
-                        'write_timeout' => 180,
-                        'heartbeat' => 90
+                        'read_timeout' => 1800,
+                        'keepalive' => false,
+                        'write_timeout' => 1800,
+                        'heartbeat' => 900
                     ]);
             } else {
                 $params = [
@@ -62,14 +59,14 @@ class ConsumerRabbit
             while ($obj->is_consuming()) {
                 //
                 $obj->wait(null, true);
-                usleep(500000);
+                usleep(300000);
                 //   var_dump(memory_get_usage());
             }
             $obj->close();
 
 
         } catch (\Throwable $ex) {
-            Log::error(sprintf('消息队列 %s error', $this->config['rabbitmq.queue'][$i]));
+            Log::error(sprintf('消息队列 %s error %s', $this->config['rabbitmq.queue'][$i],$ex->getMessage()));
             try {
                 $this->con->close();
             } catch (\Exception $e) {
