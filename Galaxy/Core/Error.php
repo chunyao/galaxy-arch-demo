@@ -60,8 +60,6 @@ class Error
         switch ($ex->getCode()) {
             case E_NOTICE:
             case E_USER_NOTICE:
-                Log::error($message);
-                break;
             case E_WARNING:
             case E_CORE_WARNING:
             case E_COMPILE_WARNING:

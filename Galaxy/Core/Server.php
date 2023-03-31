@@ -14,6 +14,7 @@ use \GuzzleHttp;
 use \Galaxy\Common\Handler\InnerServer;
 use \Galaxy\Common\Configur\CoreDB;
 use \Galaxy\Common\Configur\CoreRDS;
+use Swoole\Process;
 
 class Server
 {
@@ -49,6 +50,7 @@ class Server
     {
         self::$bootConfig = $bootConfig;
         Cache::init();
+        Error::register();
         echo "主进程ID:" . posix_getpid() . "\n";
         log::info("主进程ID:" . posix_getpid());
         self::$httpClient = new GuzzleHttp\Client();
@@ -181,6 +183,13 @@ EOL;
         $this->server->on("ManagerStart", function ($server) {
             $rabbitMq = new RabbitMqProcess($this->config, 1, $this->url, $this->tcpClient);
             $rabbitMq->handler();
+
+//            $addr = '127.0.0.1:6001';
+//            exec('go build -o ' . __DIR__ . '/app ' . __DIR__ . '/sidecar.go');
+//            $process = new Process(function (Process $process) use($addr) {
+//                $process->exec(__DIR__ . '/app', ['-address', $addr]);
+//            });
+//            $process->start();
         });
         $this->server->on('WorkerStart', array($this, 'onWorkerStart'));
         $this->server->on('WorkerStop', function ($server, $worker_id) {
@@ -234,6 +243,7 @@ EOL;
     public function onWorkerStart($server, $worker_id)
     {
         echo "Worker 进程id:" . posix_getpid() . "\n";
+
         log::info("Worker 进程ID:" . posix_getpid());
         SnowFlake::init();
         //      CoreDB::enableCoroutine();
