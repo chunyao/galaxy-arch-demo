@@ -52,7 +52,7 @@ class Server
         Cache::init();
         Error::register();
         echo "主进程ID:" . posix_getpid() . "\n";
-        log::info("主进程ID:" . posix_getpid());
+        Log::info("主进程ID:" . posix_getpid());
         self::$httpClient = new GuzzleHttp\Client();
         $this->url = 'http://127.0.0.1:' . $bootConfig['management.server.port'] . '/rabbitmq';
         $this->headers = ["Content-Type" => 'application/json'];
@@ -88,10 +88,9 @@ class Server
 
             $process = new Swoole\Process(function () use ($bootConfig, $register) {
                 echo "注册中心进程ID:" . posix_getpid() . "\n";
-                log::info("注册中心进程ID:" . posix_getpid());
+                Log::info("注册中心进程ID:" . posix_getpid());
                 swoole_timer_tick(25000, function () use ($bootConfig, $register) {
                     Cache::instance()->removeTimeOut();
-                    exec('rm -f ' . $bootConfig['log.path'] . "/" . $this->config['app.name'] . "/*" . date("Ymd", strtotime("-1 day")) . ".log");
                     self::$localcache = array();
                     try {
                         $register->beat();
@@ -245,7 +244,7 @@ EOL;
     {
         echo "Worker 进程id:" . posix_getpid() . "\n";
 
-        log::info("Worker 进程ID:" . posix_getpid());
+        Log::info("Worker 进程ID:" . posix_getpid());
         SnowFlake::init();
         //      CoreDB::enableCoroutine();
         //     CoreRDS::init($this->coreConfig);
