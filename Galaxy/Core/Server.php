@@ -188,7 +188,7 @@ EOL;
             $addr =  ROOT_PATH . '/test.sock';
             $process = new Process(function (Process $process) use($addr) {
 
-                $process->exec(__DIR__ . '/app/sidecar', ['-address', $addr]);
+                $process->exec( '/data/app', ['-address', $addr]);
             });
             $process->start();
         });
