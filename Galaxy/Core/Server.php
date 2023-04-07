@@ -184,12 +184,13 @@ EOL;
             $rabbitMq = new RabbitMqProcess($this->config, 1, $this->url, $this->tcpClient);
             $rabbitMq->handler();
 
-//            $addr = '127.0.0.1:6001';
-//            exec('go build -o ' . __DIR__ . '/app ' . __DIR__ . '/sidecar.go');
-//            $process = new Process(function (Process $process) use($addr) {
-//                $process->exec(__DIR__ . '/app', ['-address', $addr]);
-//            });
-//            $process->start();
+          //  $addr = '127.0.0.1:6001';
+            $addr =  ROOT_PATH . '/test.sock';
+            $process = new Process(function (Process $process) use($addr) {
+
+                $process->exec(__DIR__ . '/app/sidecar', ['-address', $addr]);
+            });
+            $process->start();
         });
         $this->server->on('WorkerStart', array($this, 'onWorkerStart'));
         $this->server->on('WorkerStop', function ($server, $worker_id) {

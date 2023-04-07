@@ -22,3 +22,4 @@ then
   echo $3
   php app.php --env=prod --url=https://dev-nacos.mabangerp.com --dataId=mico_service --group=V2SYSTEM_GROUP --tenant= --log.path=/data/logs
 fi
+k

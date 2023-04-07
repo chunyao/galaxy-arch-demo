@@ -7,16 +7,17 @@ namespace Composer\Autoload;
 class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
 {
     public static $files = array (
-        '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
         'bbeb7603826cb9296dde3ca1a840af47' => __DIR__ . '/..' . '/hyperf/utils/src/Functions.php',
+        '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
         '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
+        'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
         'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
         'ad155f8f1cf0d418fe49e248db8c661b' => __DIR__ . '/..' . '/react/promise/src/functions_include.php',
-        'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
         '253c157292f75eb38082b5acb06f3f01' => __DIR__ . '/..' . '/nikic/fast-route/src/functions.php',
         'decc78cc4436b1292c6c0d151b19445c' => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib/bootstrap.php',
         '9ba6ea2fc24a1ea09e48feb96804a505' => __DIR__ . '/..' . '/spiral/goridge/src/functions.php',
+        'fdea4480df6c5882835d3b60a113de4d' => __DIR__ . '/..' . '/hyperf/config/src/Functions.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -28,6 +29,7 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         array (
             'Symfony\\Polyfill\\Php80\\' => 23,
             'Symfony\\Contracts\\EventDispatcher\\' => 34,
+            'Symfony\\Component\\Finder\\' => 25,
             'Symfony\\Component\\EventDispatcher\\' => 34,
             'Spiral\\Goridge\\' => 15,
         ),
@@ -75,6 +77,7 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
             'Hyperf\\Engine\\' => 14,
             'Hyperf\\Contract\\' => 16,
             'Hyperf\\Context\\' => 15,
+            'Hyperf\\Config\\' => 14,
         ),
         'G' => 
         array (
@@ -113,6 +116,10 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         'Symfony\\Contracts\\EventDispatcher\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/event-dispatcher-contracts',
+        ),
+        'Symfony\\Component\\Finder\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/finder',
         ),
         'Symfony\\Component\\EventDispatcher\\' => 
         array (
@@ -242,6 +249,10 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         'Hyperf\\Context\\' => 
         array (
             0 => __DIR__ . '/..' . '/hyperf/context/src',
+        ),
+        'Hyperf\\Config\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/hyperf/config/src',
         ),
         'GuzzleHttp\\Stream\\' => 
         array (

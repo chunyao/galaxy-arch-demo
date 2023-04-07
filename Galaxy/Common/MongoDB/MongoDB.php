@@ -6,6 +6,7 @@ namespace Galaxy\Common\MongoDB;
 use Galaxy\Common\MongoDB\Pool\ConnectionPool;
 use Galaxy\Common\MongoDB\Pool\Dialer;
 use Galaxy\Common\Spl\Exception\Exception;
+use Hyperf\GoTask\IPC\SocketIPCSender;
 use Mix\Redis\LoggerInterface;
 
 /**
@@ -38,17 +39,20 @@ class MongoDB
     private $_skip = 0;
     private $_page = 1;
     private $_sort = [];
-    private $driver ;
+    private $driver;
     private $pool;
     private $logger;
     private $maxOpen;
     private $maxIdle;
     private $maxLifetime;
     private $waitTimeout;
+    private $client;
     public $ack;
+    private SocketIPCSender $task;
 
     private function reset()
     {
+
         $this->_table = "";
         $this->_database = "";
         $this->_fields = [];
@@ -57,6 +61,7 @@ class MongoDB
         $this->_skip = 0;
         $this->_page = 1;
         $this->_sort = [];
+
     }
 
     /**
@@ -65,11 +70,6 @@ class MongoDB
     public function __construct($config)
     {
         $this->config = array_merge($this->config, $config);
-    }
-
-    public function connect():MongoDB
-    {
-        $uriOptions = array();
 
         if ($this->config['mongo.user']) {
             if ($this->config['mongo.replicaset']) {
@@ -81,17 +81,9 @@ class MongoDB
         } else {
             $this->uri = sprintf("mongodb://%s:%d", $this->config['mongo.host'], $this->config['mongo.port']);
         }
-        $uriOptions['socketTimeoutMS'] = 10000;
-        $driverOption['disableClientPersistence']=false;
-        $this->manager = new \MongoDB\Driver\Manager($this->uri, $uriOptions,$driverOption);
-        $cmd = ['ping' => 1];
-        try {
-           $this->execCommand("admin", $cmd);
-        }catch (Exception $e){
-            throw new \Exception($e->getMessage());
-        }
-        $this->_database = $this->config['mongo.database'];
-        return $this;
+        $this->driver = new Driver(
+            $this->config
+        );
     }
 
     public function status()
@@ -120,7 +112,7 @@ class MongoDB
      */
     public function database($database)
     {
-        $this->_database = $database;
+        $this->borrow()->database($database);
         return $this;
     }
 
@@ -181,102 +173,24 @@ class MongoDB
     }
 
     /**
-     * //设置表
-     * @param $table
-     * @return $this
+     * 启动查询生成器
+     * @param string $table
+     * @return ConnectionInterface
      */
-    public function table($table)
-    {
-        return $this->borrow()->table_pool($table);
-    }
-
-    /**
-     * //设置表
-     * @param $table
-     * @return $this
-     */
-    public function table_pool($table)
-    {
-        $this->_database = $this->config['mongo.database'];
-        $this->_table = $table;
-        return $this;
-    }
-    public function tableSuffix(string $table, int $companyId, $subTable = 100)
-    {
-        return $this->borrow()->tableSuffix_pool($table,$companyId,$subTable);
-
-    }
-    public function tableSuffix_pool(string $table, int $companyId, $subTable = 100)
-    {
-        $this->_database = $this->config['mongo.database'];
-        $suffix = is_numeric($companyId) ? (int)$companyId % $subTable : null;
-        $this->_table = $table . $suffix;
-        return $this;
-    }
-    /**
-     * 获取数据库和表组合的命名空间
-     * @return string
-     * @throws Exception
-     */
-    private function getNameSpace()
+    public function table(string $table): ConnectionInterface
     {
 
-        if ($this->_database && $this->_table) {
-            return sprintf("%s.%s", $this->_database, $this->_table);
-        }
-        throw new \Exception("未设置数据库和表");
+        return  $this->borrow()->database($this->config['mongo.database'])->table($table);
+
     }
 
-    /**
-     * 设置返回字段
-     * @param array $fields = ["name","age","username"]
-     */
-    public function field(array $fields)
+    public function tableSuffix(string $table, int $companyId, $subTable=100): ConnectionInterface
     {
-        $this->_fields = $fields;
-        return $this;
+        return $this->borrow()->database($this->config['mongo.database'])->tableSuffix($table, $companyId, $subTable);
+
     }
 
-    /**
-     * 设置屏蔽字段
-     * @param array $fields = ["_id"]
-     */
-    public function unfield(array $fields)
-    {
-        $this->_unfields = $fields;
-        return $this;
-    }
 
-    public function limit($limit)
-    {
-        $this->_limit = $limit;
-        return $this;
-    }
-
-    public function offset($offset)
-    {
-        $this->_skip = $offset;
-        return $this;
-    }
-
-    public function page($page = 1)
-    {
-        if ($page < 1) {
-            $this->_page = 1;
-        } else {
-            $this->_page = $page;
-        }
-
-        $this->_skip = ($this->_page - 1) * $this->_limit;
-        return $this;
-    }
-
-    public function sort($field, $isAsc = true)
-    {
-        $s = $isAsc ? 1 : -1;
-        $this->_sort[$field] = $s;
-        return $this;
-    }
 
 
     /**
@@ -384,17 +298,7 @@ class MongoDB
     }
 
 
-    public function count($where = [])
-    {
-        $command = new \MongoDB\Driver\Command(
-            array(
-                "count" => $this->_table,
-                "query" => $where,
-            )
-        );
-        $result = $this->manager->executeCommand($this->_database, $command)->toArray()[0]->n;
-        return $result;
-    }
+
 
 
     /**
@@ -404,28 +308,12 @@ class MongoDB
      * @return array|mixed
      * @throws \MongoDB\Driver\Exception\Exception
      */
-    public function find($where = [], $isArray = true)
+    public function find($where = [], $isArray = true): ConnectionInterface
     {
+        return $this->borrow()->find($where, $isArray);
 
-        //指定返回字段
-        $fields = array_combine($this->_fields, array_pad([], count($this->_fields), 1));
-        $unfields = array_combine($this->_unfields, array_pad([], count($this->_unfields), 0));
-
-        $options = [
-            'projection' => array_merge($fields, $unfields),
-            'sort' => $this->_sort,
-            'limit' => 1, // 指定返回的条数
-            'skip' => $this->_skip, // 指定起始位置
-        ];
-        // 查询数据
-        $query = new \MongoDB\Driver\Query($where, $options);
-        $cursor = $this->manager->executeQuery($this->getNameSpace(), $query);
-        $this->reset();
-        foreach ($cursor as $document) {
-            return $this->object2array($document);
-        }
-        return false;
     }
+
 
     /**
      * @param array $where = ['user_id'=>5]
@@ -489,11 +377,7 @@ class MongoDB
         }
     }
 
-    //对象转数组
-    private function object2array($object)
-    {
-        return json_decode(json_encode($object), true);
-    }
+
 
     //销毁
     public function __destruct()

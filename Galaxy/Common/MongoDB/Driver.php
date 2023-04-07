@@ -3,6 +3,10 @@
 namespace Galaxy\Common\MongoDB;
 
 use Galaxy\Core\Log;
+use Hyperf\Config\Config;
+use Hyperf\GoTask\IPC\SocketIPCSender;
+use Hyperf\GoTask\MongoClient\MongoClient;
+use Hyperf\GoTask\MongoClient\MongoProxy;
 use Mix\ObjectPool\ObjectTrait;
 
 class Driver
@@ -16,12 +20,9 @@ class Driver
      */
     protected $options = [];
 
-    /**
-     * @var MongoDB
-     */
     protected $mongoDb;
     protected $config;
-
+    protected $task;
     /**
      * Driver constructor.
      * @param array $config
@@ -37,9 +38,9 @@ class Driver
 
     /**
      * Get instance
-     * @return MongoDB
+     * @return MongoClient
      */
-    public function instance(): MongoDB
+    public function instance():MongoClient
     {
         return $this->mongoDb;
     }
@@ -51,8 +52,11 @@ class Driver
      */
     public function connect()
     {
+        $addr = ROOT_PATH . '/test.sock';
+      //  $addr = '127.0.0.1:6001';
+        $this->task = new SocketIPCSender($addr);
         try {
-            $this->mongoDb = (new MongoDB($this->config))->connect();
+            $this->mongoDb = new MongoClient(new MongoProxy($this->task), new Config([]));
         } catch (\Exception $exception) {
             Log::error(['ex' => $exception]);
         }
@@ -64,7 +68,7 @@ class Driver
     public function close()
     {
         if ($this->mongoDb !== null) {
-            $this->mongoDb->close();
+            unset($this->mongoDb);
         }
 
     }
