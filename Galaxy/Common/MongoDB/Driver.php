@@ -40,7 +40,7 @@ class Driver
      * Get instance
      * @return MongoClient
      */
-    public function instance():MongoClient
+    public function instance(): MongoClient
     {
         return $this->mongoDb;
     }
@@ -52,8 +52,8 @@ class Driver
      */
     public function connect()
     {
-        $addr = ROOT_PATH . '/test.sock';
-      //  $addr = '127.0.0.1:6001';
+        $addr = ROOT_PATH . '/' . md5($this->config['mongo.host'] . $this->config['mongo.user'] . $this->config['mongo.database']) . '.sock';
+        //  $addr = '127.0.0.1:6001';
         $this->task = new SocketIPCSender($addr);
         try {
             $this->mongoDb = new MongoClient(new MongoProxy($this->task), new Config([]));

@@ -43,7 +43,15 @@ class MG
         if (!isset(self::$instance)) {
             static::$once->do(function () {
                 //如果没有,则创建当前类的实例
-                self::$instance = new MongoDB(self::$config);
+                $mongo = [
+                    'mongo.host' => self::$config['mongo.host'][0],
+                    'mongo.port' => self::$config['mongo.port'][0],
+                    'mongo.user' => self::$config['mongo.user'][0],
+                    'mongo.password' => self::$config['mongo.password'][0],
+                    'mongo.replicaset' => self::$config['mongo.replicaset'][0],
+                    'mongo.database' => self::$config['mongo.database'][0],
+                ];
+                self::$instance = new MongoDB($mongo);
 
             });
         }
@@ -57,10 +65,10 @@ class MG
      */
     public static function enableCoroutine(): void
     {
-        $maxOpen = (int) self::$config['mongo.maxOpen'];        // 最大开启连接数
-        $maxIdle = (int) self::$config['mongo.maxIdle'];        // 最大闲置连接数
-        $maxLifetime = (int) self::$config['mongo.maxLifetime'];  // 连接的最长生命周期
-        $waitTimeout = (float) self::$config['mongo.waitTimeout'];;   // 从池获取连接等待的时间, 0为一直等待
+        $maxOpen = (int) self::$config['mongo.maxOpen'][0];        // 最大开启连接数
+        $maxIdle = (int) self::$config['mongo.maxIdle'][0];        // 最大闲置连接数
+        $maxLifetime = (int) self::$config['mongo.maxLifetime'][0];  // 连接的最长生命周期
+        $waitTimeout = (float) self::$config['mongo.waitTimeout'][0];   // 从池获取连接等待的时间, 0为一直等待
         self::instance()->startPool($maxOpen, $maxIdle, $maxLifetime, $waitTimeout);
         \Swoole\Runtime::enableCoroutine(); // 必须放到最后，防止触发协程调度导致异常
     }

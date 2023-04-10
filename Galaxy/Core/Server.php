@@ -46,6 +46,8 @@ class Server
 
     private $wsVega;
 
+    private $mongoDrvier;
+
     public function __construct($bootConfig)
     {
         self::$bootConfig = $bootConfig;
@@ -68,7 +70,9 @@ class Server
         if ($bootConfig['env'] == "local") {
             $this->config = parse_ini_file(ROOT_PATH . '/local.ini');
             self::$innerConfig = $this->config;
+            $this->mongoDrvier =ROOT_PATH."/app";
         } else {
+            $this->mongoDrvier ="/data/app";
             $application = new Application(new Config([
                 'base_uri' => $bootConfig['url'],
                 'guzzle_config' => [
@@ -184,11 +188,47 @@ EOL;
             $rabbitMq->handler();
 
             //  $addr = '127.0.0.1:6001';
-            $addr =  ROOT_PATH . '/test.sock';
-            $process = new Process(function (Process $process) use($addr) {
+            if (count($this->config['mongo.host']) > 1) {
+                $process = new Process(function (Process $process) {
+                    for ($d = 0; $d < (count($this->config['mongo.host'])); $d++) {
+                        $addr = ROOT_PATH . '/' . md5($this->config['mongo.host'][$d] . $this->config['mongo.user'] [$d] . $this->config['mongo.database'][$d]) . '.sock';
+                        $process->exec($this->mongoDrvier, [
+                            '-address', $addr,
+                            '-mongodb-uri','mongodb://'. $this->config['mongo.host'][$d],
+                            '-mongodb-username', $this->config['mongo.user'][$d],
+                            '-mongodb-password', $this->config['mongo.password'][$d],
+                            '-mongodb-database', $this->config['mongo.database'][$d],
+                            '-mongodb-replicaset', $this->config['mongo.replicaset'][$d],
+                            '-mongodb-poolMax', $this->config['mongo.maxOpen'][$d] ?? 50,
+                            '-mongodb-poolMin', $this->config['mongo.maxIdle'][$d] ?? 50,
+                            '-mongodb-IdleTime',($this->config['mongo.maxLifetime'][$d] ?? 3600).'s',
+                            '-mongodb-connect-timeout', '5s',
+                            '-mongodb-read-write-timeout', '60s'
+                        ],
+                        );
+                    }
+                });
+            } elseif (isset($this->config['mongo.host'])&&count($this->config['mongo.host'])==1) {
 
-                $process->exec( '/data/app', ['-address', $addr]);
-            });
+                $process = new Process(function (Process $process) {
+                    $addr = ROOT_PATH . '/' . md5($this->config['mongo.host'] . $this->config['mongo.user'] . $this->config['mongo.database']) . '.sock';
+                    $process->exec($this->mongoDrvier, [
+                        '-address', $addr,
+                        '-mongodb-uri', 'mongodb://'.$this->config['mongo.host'],
+                        '-mongodb-username', $this->config['mongo.user'],
+                        '-mongodb-password', $this->config['mongo.password'],
+                        '-mongodb-database', $this->config['mongo.database'],
+                        '-mongodb-replicaset', $this->config['mongo.replicaset'],
+                        '-mongodb-poolMax', $this->config['mongo.maxOpen'] ?? 50,
+                        '-mongodb-poolMin', $this->config['mongo.maxIdle'] ?? 5,
+                        '-mongodb-IdleTime', $this->config['mongo.maxLifetime'] ?? 3600,
+                        '-mongodb-connect-timeout', 5,
+                        '-mongodb-read-write-timeout', 60
+                    ],
+                    );
+                });
+
+            }
             $process->start();
         });
         $this->server->on('WorkerStart', array($this, 'onWorkerStart'));
