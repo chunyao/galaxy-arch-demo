@@ -7,7 +7,9 @@ date_default_timezone_set('Asia/Shanghai');
 define("ROOT_PATH", dirname(__FILE__));
 ini_set('display_errors', 'On');
 gc_enable();
-
+ini_set('display_errors', 'on');
+ini_set('display_startup_errors', 'on');
+ini_set('error_reporting', E_ALL ^ E_NOTICE);
 use Galaxy\Core\Log;
 use Galaxy\Core\Server;
 

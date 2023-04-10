@@ -7,20 +7,31 @@ namespace Composer\Autoload;
 class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
 {
     public static $files = array (
+        'bbeb7603826cb9296dde3ca1a840af47' => __DIR__ . '/..' . '/hyperf/utils/src/Functions.php',
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
+        '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
+        'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
         'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
         'ad155f8f1cf0d418fe49e248db8c661b' => __DIR__ . '/..' . '/react/promise/src/functions_include.php',
-        '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
-        'bbeb7603826cb9296dde3ca1a840af47' => __DIR__ . '/..' . '/hyperf/utils/src/Functions.php',
         '253c157292f75eb38082b5acb06f3f01' => __DIR__ . '/..' . '/nikic/fast-route/src/functions.php',
         'decc78cc4436b1292c6c0d151b19445c' => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib/bootstrap.php',
+        '9ba6ea2fc24a1ea09e48feb96804a505' => __DIR__ . '/..' . '/spiral/goridge/src/functions.php',
+        'fdea4480df6c5882835d3b60a113de4d' => __DIR__ . '/..' . '/hyperf/config/src/Functions.php',
     );
 
     public static $prefixLengthsPsr4 = array (
         'p' => 
         array (
             'phpseclib3\\' => 11,
+        ),
+        'S' => 
+        array (
+            'Symfony\\Polyfill\\Php80\\' => 23,
+            'Symfony\\Contracts\\EventDispatcher\\' => 34,
+            'Symfony\\Component\\Finder\\' => 25,
+            'Symfony\\Component\\EventDispatcher\\' => 34,
+            'Spiral\\Goridge\\' => 15,
         ),
         'R' => 
         array (
@@ -32,6 +43,7 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
             'Psr\\Http\\Message\\' => 17,
             'Psr\\Http\\Client\\' => 16,
             'Psr\\EventDispatcher\\' => 20,
+            'Psr\\Container\\' => 14,
             'Php\\' => 4,
             'PhpAmqpLib\\' => 11,
             'ParagonIE\\ConstantTime\\' => 23,
@@ -57,11 +69,15 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         'H' => 
         array (
             'Hyperf\\Utils\\' => 13,
+            'Hyperf\\Process\\' => 15,
+            'Hyperf\\Pool\\' => 12,
             'Hyperf\\Nacos\\' => 13,
             'Hyperf\\Macroable\\' => 17,
+            'Hyperf\\GoTask\\' => 14,
             'Hyperf\\Engine\\' => 14,
             'Hyperf\\Contract\\' => 16,
             'Hyperf\\Context\\' => 15,
+            'Hyperf\\Config\\' => 14,
         ),
         'G' => 
         array (
@@ -93,6 +109,26 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         array (
             0 => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib',
         ),
+        'Symfony\\Polyfill\\Php80\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-php80',
+        ),
+        'Symfony\\Contracts\\EventDispatcher\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/event-dispatcher-contracts',
+        ),
+        'Symfony\\Component\\Finder\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/finder',
+        ),
+        'Symfony\\Component\\EventDispatcher\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/event-dispatcher',
+        ),
+        'Spiral\\Goridge\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/spiral/goridge/src',
+        ),
         'React\\Promise\\' => 
         array (
             0 => __DIR__ . '/..' . '/react/promise/src',
@@ -113,6 +149,10 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         'Psr\\EventDispatcher\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/event-dispatcher/src',
+        ),
+        'Psr\\Container\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/container/src',
         ),
         'Php\\' => 
         array (
@@ -178,6 +218,14 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         array (
             0 => __DIR__ . '/..' . '/hyperf/utils/src',
         ),
+        'Hyperf\\Process\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/hyperf/process/src',
+        ),
+        'Hyperf\\Pool\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/hyperf/pool/src',
+        ),
         'Hyperf\\Nacos\\' => 
         array (
             0 => __DIR__ . '/..' . '/hyperf/nacos/src',
@@ -185,6 +233,10 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         'Hyperf\\Macroable\\' => 
         array (
             0 => __DIR__ . '/..' . '/hyperf/macroable/src',
+        ),
+        'Hyperf\\GoTask\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/hyperf/gotask/src',
         ),
         'Hyperf\\Engine\\' => 
         array (
@@ -197,6 +249,10 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         'Hyperf\\Context\\' => 
         array (
             0 => __DIR__ . '/..' . '/hyperf/context/src',
+        ),
+        'Hyperf\\Config\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/hyperf/config/src',
         ),
         'GuzzleHttp\\Stream\\' => 
         array (
@@ -245,6 +301,7 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
     );
 
     public static $classMap = array (
+        'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'Logger' => __DIR__ . '/..' . '/apache/log4php/src/main/php/Logger.php',
         'LoggerAppender' => __DIR__ . '/..' . '/apache/log4php/src/main/php/LoggerAppender.php',
@@ -325,6 +382,10 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         'LoggerRoot' => __DIR__ . '/..' . '/apache/log4php/src/main/php/LoggerRoot.php',
         'LoggerThrowableInformation' => __DIR__ . '/..' . '/apache/log4php/src/main/php/LoggerThrowableInformation.php',
         'LoggerUtils' => __DIR__ . '/..' . '/apache/log4php/src/main/php/helpers/LoggerUtils.php',
+        'PhpToken' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/PhpToken.php',
+        'Stringable' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Stringable.php',
+        'UnhandledMatchError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/UnhandledMatchError.php',
+        'ValueError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/ValueError.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

@@ -62,10 +62,10 @@ class Rabbitmq
                     'login_response' => null,
                     'connection_timeout' => 10,
                     'locale' => 'en_US',
-                    'read_timeout' => 60,
+                    'read_timeout' => 600,
                     'keepalive' => false,
-                    'write_timeout' => 60,
-                    'heartbeat' => 30
+                    'write_timeout' => 600,
+                    'heartbeat' => 300
                 ]);
         } else {
             $this->con = new AMQPStreamConnection($this->host, $this->port, $this->username, $this->password, $this->vhost, false, 'AMQPLAIN', null, 'en_US', 10, 60, null, false, 30);

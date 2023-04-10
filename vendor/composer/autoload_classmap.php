@@ -6,6 +6,7 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Attribute' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
     'Logger' => $vendorDir . '/apache/log4php/src/main/php/Logger.php',
     'LoggerAppender' => $vendorDir . '/apache/log4php/src/main/php/LoggerAppender.php',
@@ -86,4 +87,8 @@ return array(
     'LoggerRoot' => $vendorDir . '/apache/log4php/src/main/php/LoggerRoot.php',
     'LoggerThrowableInformation' => $vendorDir . '/apache/log4php/src/main/php/LoggerThrowableInformation.php',
     'LoggerUtils' => $vendorDir . '/apache/log4php/src/main/php/helpers/LoggerUtils.php',
+    'PhpToken' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/PhpToken.php',
+    'Stringable' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/Stringable.php',
+    'UnhandledMatchError' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/UnhandledMatchError.php',
+    'ValueError' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/ValueError.php',
 );

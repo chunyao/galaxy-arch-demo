@@ -11,7 +11,9 @@
         "elasticsearch/elasticsearch": "7.0.0",
         "apache/log4php": "^2.3",
         "mix/websocket": "^3.0",
-        "mix/event": "^3.0"
+        "mix/event": "^3.0",
+        "hyperf/gotask": "^2.2",
+        "hyperf/config": "^2.2"
     },
 
     "autoload-dev": {

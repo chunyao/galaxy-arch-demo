@@ -128,7 +128,7 @@ EOL;
         Log::info('Start http server');
         $scheduler = new \Swoole\Coroutine\Scheduler;
         $scheduler->set([
-            'hook_flags' => SWOOLE_HOOK_ALL,
+            'hook_flags' => SWOOLE_HOOK_ALL ,SWOOLE_HOOK_NATIVE_CURL
         ]);
 
         $scheduler->parallel(1,function () use ($serverPort) {

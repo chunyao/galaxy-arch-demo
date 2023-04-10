@@ -28,10 +28,10 @@ class RabbitMqProcess
     public function createProcess($ch, $queue)
     {
 
-        $process = Swoole\Coroutine\go(function () use ( $ch, $queue) {
+        $process = new Swoole\Process(function ($worker) use ( $ch, $queue) {
             while (1) {
                 sleep(5);
-                log::info("消息进程ID:" . posix_getpid() . "\n");
+                Log::info("消息进程ID:" . posix_getpid() . "\n");
                 try {
                     $consumer = new ConsumerRabbit($this->config,$this->url);
                     $consumer->initQueues($ch, $queue);
@@ -40,13 +40,13 @@ class RabbitMqProcess
                 }
 
             }
-        });
+        }, false, 0, true);
 
-
-        $this->works[$process] = $queue;
-        $this->processes[$process] = $process;
-        echo "Mq Master: new worker, PID=" . $process . "\n";
-        return $process;
+        $pid = $process->start();
+        $this->works[$pid] = $queue;
+        $this->processes[$pid] = $process;
+        echo "Mq Master: new worker, PID=" . $pid . "\n";
+        return $pid;
     }
 
 //    public function watchProcess()

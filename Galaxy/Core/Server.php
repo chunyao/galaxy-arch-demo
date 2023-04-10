@@ -4,7 +4,6 @@ namespace Galaxy\Core;
 
 use Galaxy\Common\Configur\Cache;
 use Galaxy\Common\Configur\SnowFlake;
-use Galaxy\Common\Configur\Upgrader;
 use Galaxy\Common\XxlJob\XxlJobApi;
 use Galaxy\Common\XxlJob\XxlJobVega;
 use Logger;
@@ -15,6 +14,7 @@ use \GuzzleHttp;
 use \Galaxy\Common\Handler\InnerServer;
 use \Galaxy\Common\Configur\CoreDB;
 use \Galaxy\Common\Configur\CoreRDS;
+use Swoole\Process;
 
 class Server
 {
@@ -46,12 +46,15 @@ class Server
 
     private $wsVega;
 
+    private $mongoDrvier;
+
     public function __construct($bootConfig)
     {
         self::$bootConfig = $bootConfig;
         Cache::init();
+        Error::register();
         echo "主进程ID:" . posix_getpid() . "\n";
-        log::info("主进程ID:" . posix_getpid());
+        Log::info("主进程ID:" . posix_getpid());
         self::$httpClient = new GuzzleHttp\Client();
         $this->url = 'http://127.0.0.1:' . $bootConfig['management.server.port'] . '/rabbitmq';
         $this->headers = ["Content-Type" => 'application/json'];
@@ -67,7 +70,9 @@ class Server
         if ($bootConfig['env'] == "local") {
             $this->config = parse_ini_file(ROOT_PATH . '/local.ini');
             self::$innerConfig = $this->config;
+            $this->mongoDrvier =ROOT_PATH."/app";
         } else {
+            $this->mongoDrvier ="/data/app";
             $application = new Application(new Config([
                 'base_uri' => $bootConfig['url'],
                 'guzzle_config' => [
@@ -87,10 +92,9 @@ class Server
 
             $process = new Swoole\Process(function () use ($bootConfig, $register) {
                 echo "注册中心进程ID:" . posix_getpid() . "\n";
-                log::info("注册中心进程ID:" . posix_getpid());
+                Log::info("注册中心进程ID:" . posix_getpid());
                 swoole_timer_tick(25000, function () use ($bootConfig, $register) {
                     Cache::instance()->removeTimeOut();
-                    exec('rm -f ' . $bootConfig['log.path'] . "/" . $this->config['app.name'] . "/*" . date("Ymd", strtotime("-1 day")) . ".log");
                     self::$localcache = array();
                     try {
                         $register->beat();
@@ -173,15 +177,59 @@ EOL;
 
         $socket->on('Request', $coreVega->handler());
         $health->on('Request', $coreVega->handler());
-        $rabbitMq = new RabbitMqProcess($this->config, 1, $this->url, $this->tcpClient);
-        $rabbitMq->handler();
+
         $this->server->on('open', function ($server, $request) {
         });
         $this->server->on('Start', function ($server) {
 
         });
         $this->server->on("ManagerStart", function ($server) {
+            $rabbitMq = new RabbitMqProcess($this->config, 1, $this->url, $this->tcpClient);
+            $rabbitMq->handler();
 
+            //  $addr = '127.0.0.1:6001';
+            if (count($this->config['mongo.host']) > 1) {
+                $process = new Process(function (Process $process) {
+                    for ($d = 0; $d < (count($this->config['mongo.host'])); $d++) {
+                        $addr = ROOT_PATH . '/' . md5($this->config['mongo.host'][$d] . $this->config['mongo.user'] [$d] . $this->config['mongo.database'][$d]) . '.sock';
+                        $process->exec($this->mongoDrvier, [
+                            '-address', $addr,
+                            '-mongodb-uri','mongodb://'. $this->config['mongo.host'][$d],
+                            '-mongodb-username', $this->config['mongo.user'][$d],
+                            '-mongodb-password', $this->config['mongo.password'][$d],
+                            '-mongodb-database', $this->config['mongo.database'][$d],
+                            '-mongodb-replicaset', $this->config['mongo.replicaset'][$d],
+                            '-mongodb-poolMax', $this->config['mongo.maxOpen'][$d] ?? 50,
+                            '-mongodb-poolMin', $this->config['mongo.maxIdle'][$d] ?? 50,
+                            '-mongodb-IdleTime',($this->config['mongo.maxLifetime'][$d] ?? 3600).'s',
+                            '-mongodb-connect-timeout', '5s',
+                            '-mongodb-read-write-timeout', '60s'
+                        ],
+                        );
+                    }
+                });
+            } elseif (isset($this->config['mongo.host'])&&count($this->config['mongo.host'])==1) {
+
+                $process = new Process(function (Process $process) {
+                    $addr = ROOT_PATH . '/' . md5($this->config['mongo.host'] . $this->config['mongo.user'] . $this->config['mongo.database']) . '.sock';
+                    $process->exec($this->mongoDrvier, [
+                        '-address', $addr,
+                        '-mongodb-uri', 'mongodb://'.$this->config['mongo.host'],
+                        '-mongodb-username', $this->config['mongo.user'],
+                        '-mongodb-password', $this->config['mongo.password'],
+                        '-mongodb-database', $this->config['mongo.database'],
+                        '-mongodb-replicaset', $this->config['mongo.replicaset'],
+                        '-mongodb-poolMax', $this->config['mongo.maxOpen'] ?? 50,
+                        '-mongodb-poolMin', $this->config['mongo.maxIdle'] ?? 5,
+                        '-mongodb-IdleTime', $this->config['mongo.maxLifetime'] ?? 3600,
+                        '-mongodb-connect-timeout', 5,
+                        '-mongodb-read-write-timeout', 60
+                    ],
+                    );
+                });
+
+            }
+            $process->start();
         });
         $this->server->on('WorkerStart', array($this, 'onWorkerStart'));
         $this->server->on('WorkerStop', function ($server, $worker_id) {
@@ -235,9 +283,9 @@ EOL;
     public function onWorkerStart($server, $worker_id)
     {
         echo "Worker 进程id:" . posix_getpid() . "\n";
-        log::info("Worker 进程ID:" . posix_getpid());
+
+        Log::info("Worker 进程ID:" . posix_getpid());
         SnowFlake::init();
-        Upgrader::init();
         //      CoreDB::enableCoroutine();
         //     CoreRDS::init($this->coreConfig);
         //     CoreRDS::enableCoroutine();
