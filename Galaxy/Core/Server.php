@@ -56,7 +56,7 @@ class Server
         echo "主进程ID:" . posix_getpid() . "\n";
         Log::info("主进程ID:" . posix_getpid());
         self::$httpClient = new GuzzleHttp\Client();
-        $this->url = 'http://127.0.0.1:' . $bootConfig['management.server.port'] . '/rabbitmq';
+        $this->url = 'http://127.0.0.1:' . $bootConfig['management.server.port'] ;
         $this->headers = ["Content-Type" => 'application/json'];
         $application = new Application(new Config([
             'base_uri' => $bootConfig['url'],

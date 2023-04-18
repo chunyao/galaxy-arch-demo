@@ -3,7 +3,7 @@
 use Galaxy\Common\Configur\Cache;
 use Galaxy\Core\Log;
 
-return static function ($msg) use ($i, $msgBody,$req,$num) {
+return  function ($msg) use ($i, $msgBody,$req,$num) {
 
             /*if (isset($this->config['rabbitmq.qps'][$i])) {
                 $sleep = round(1000000 / ((int)$this->config['rabbitmq.qps'][$i]));

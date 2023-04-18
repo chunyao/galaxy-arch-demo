@@ -14,7 +14,8 @@
         "hyperf/gotask": "2.2.10",
         "hyperf/config": "^2.2",
         "mix/websocket": "^3.0",
-        "mix/event": "^3.0"
+        "mix/event": "^3.0",
+        "hyperf/amqp": "^2.2"
     },
 
     "autoload-dev": {
