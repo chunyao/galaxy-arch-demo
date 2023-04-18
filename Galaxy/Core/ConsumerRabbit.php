@@ -3,11 +3,13 @@
 namespace Galaxy\Core;
 
 
+
 use App\Config\MQ;
+use Galaxy\Common\Mq\ConnectionFactory;
 use Galaxy\Common\Mq\Consumer;
+use Hyperf\Amqp\AMQPConnection;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Utils\Coroutine\Concurrent;
-use PhpAmqpLib\Connection\AMQPConnectionConfig;
 use PhpAmqpLib\Connection\AMQPConnectionFactory;
 use PhpAmqpLib\Message\AMQPMessage;
 use PhpAmqpLib\Wire\AMQPTable;
@@ -15,7 +17,7 @@ use PhpAmqpLib\Wire\AMQPTable;
 
 class ConsumerRabbit
 {
-    private $con;
+    private AMQPConnection $con;
     private $config;
     protected $url;
 
@@ -28,49 +30,38 @@ class ConsumerRabbit
 
     private function connect(int $vhost)
     {
-        $config = new AMQPConnectionConfig();
         if (count($this->config['rabbitmq.host']) > 1) {
             $cur = rand(0, 2);
-            $config->setHost($this->config['rabbitmq.host'][$cur]);
-            $config->setPort($this->config['rabbitmq.port'][$cur]);
+
+            $config['host'] = $this->config['rabbitmq.host'][$cur];
+            $config['port'] = $this->config['rabbitmq.port'][$cur];
         } elseif (isset($this->config['rabbitmq.host']) && count($this->config['rabbitmq.host']) == 1) {
-            $config->setHost($this->config['rabbitmq.host']);
-            $config->setPort($this->config['rabbitmq.port']);
+
+            $config['host'] = $this->config['rabbitmq.host'];
+            $config['port'] = $this->config['rabbitmq.port'];
         }
-        $config->setUser($this->config['rabbitmq.username']);
-        $config->setPassword($this->config['rabbitmq.password']);
-        $config->setVhost($this->config['rabbitmq.vhost'][$vhost]);
-        $config->setInsist(false);
-        $config->setLoginMethod('AMQPLAIN');
-        $config->setConnectionTimeout(5);
-        $config->setLocale('en_US');
-        $config->setLoginResponse("");
-        $config->setReadTimeout(1800);
-        $config->setKeepalive(true);
-        $config->setWriteTimeout(1800);
-        $config->setHeartbeat(900);
-        return AMQPConnectionFactory::create($config);
+
+        $config['user'] =$this->config['rabbitmq.username'];
+        $config['password'] =$this->config['rabbitmq.password'];
+        $config['vhost'] =$this->config['rabbitmq.vhost'][$vhost];
+        $config['read_write_timeout'] = 600;
+        $config['heartbeat'] =300;
+        $config['keepalive'] =true;
+
+        return  (new ConnectionFactory($config))->getConnection('rabbit');
     }
 
     public function initQueues($ch, $i)
     {
 
         try {
-            //       $this->con = $this->connect($i);
-            $num = 10;
-
-            for ($child = 0; $child < $num; $child++) {
 
 
-                (new Consumer($this->config))->consumeMessage($i,$this->url);
-
-
-
-            }
-
+            (new Consumer($this->config))->consumeMessage($i, $this->url,$this->connect($i));
 
 
         } catch (\Throwable $ex) {
+            print_r(sprintf('%s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));
             Log::error(sprintf('消息队列 %s error %s', $this->config['rabbitmq.queue'][$i], $ex->getMessage()));
             try {
                 //  $this->con->close();
@@ -81,8 +72,6 @@ class ConsumerRabbit
         }
 
     }
-
-
 
 
 }

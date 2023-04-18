@@ -32,17 +32,8 @@ class RabbitMqProcess
     {
 
         $process = new Swoole\Process(function ($worker) use ( $ch, $queue) {
-            SnowFlake::init();
-
-            $configs = ConfigLoad::findFile();
-
-            foreach ($configs as $key => $val) {
-                if ($val == "\\App\Config\\") continue;
-                $val::init($this->config);
-                $val::enableCoroutine();
-            }
-            while (1) {
-                sleep(5);
+        //    while (1) {
+          //      sleep(5);
                 Log::info("消息进程ID:" . posix_getpid() . "\n");
                 try {
                     $consumer = new ConsumerRabbit($this->config,$this->url);
@@ -51,7 +42,7 @@ class RabbitMqProcess
                     Log::error(sprintf('%s in %s on line %d', $e->getMessage(), $e->getFile(), $e->getLine()));
                 }
 
-            }
+     //       }
         }, false, 0, true);
 
         $pid = $process->start();

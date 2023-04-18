@@ -1,8 +1,7 @@
 {
 
     "require": {
-        "hyperf/nacos": "^2.2",
-        "php-amqplib/php-amqplib": "3.5.3",
+        "hyperf/nacos": "2.2.33",
         "mix/database": "3.0.22",
         "mix/redis": "3.0.10",
         "mix/grpc": "^3.0",
@@ -15,6 +14,7 @@
         "hyperf/config": "^2.2",
         "mix/websocket": "^3.0",
         "mix/event": "^3.0",
+        "php-amqplib/php-amqplib": "3.5.4",
         "hyperf/amqp": "^2.2"
     },
 

@@ -184,7 +184,7 @@ EOL;
 
         });
         $this->server->on("ManagerStart", function ($server) {
-            $rabbitMq = new RabbitMqProcess($this->config, 1, $this->url, $this->tcpClient);
+            $rabbitMq = new RabbitMqProcess($this->config, 1, $this->url.'/rabbitmq', $this->tcpClient);
             $rabbitMq->handler();
 
             //  $addr = '127.0.0.1:6001';

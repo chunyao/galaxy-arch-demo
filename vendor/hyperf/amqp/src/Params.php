@@ -23,13 +23,13 @@ class Params
 
     protected $connectionTimeout = 3;
 
-    protected $readWriteTimeout = 3;
+    protected $readWriteTimeout = 30;
 
     protected $context;
 
     protected $keepalive = false;
 
-    protected $heartbeat = 0;
+    protected $heartbeat = 15;
 
     protected $closeOnDestruct = true;
 
