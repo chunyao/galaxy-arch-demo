@@ -25,28 +25,25 @@ class Log
     }
     public static function __callStatic($name, $args)
     {
-        $log = Logger::getLogger("Application");
-
-        switch ($name) {
-            case 'error':
-                $log->error('traceId: '.self::skywalking_trace_id()." ".json_encode($args,JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
-                break;
-            case 'info':
-                $log->info('traceId: '.self::skywalking_trace_id()." ".json_encode($args,JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
-                break;
-            case 'warn':
-                $log->warn('traceId: '.self::skywalking_trace_id()." ".json_encode($args,JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
-                break;
-            case 'debug':
-                $log->debug('traceId: '.self::skywalking_trace_id()." ".json_encode($args,JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
-                break;
-            case 'fatal':
-                $log->fatal('traceId: '.self::skywalking_trace_id()." ".json_encode($args,JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
-                break;
-            default:
-                break;
-        }
+            $log = Logger::getLogger("Application");
+            switch ($name) {
+                case 'error':
+                    $log->error('traceId: '.self::skywalking_trace_id()." ".json_encode($args,JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+                    break;
+                case 'info':
+                    $log->info('traceId: '.self::skywalking_trace_id()." ".json_encode($args,JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+                    break;
+                case 'warn':
+                    $log->warn('traceId: '.self::skywalking_trace_id()." ".json_encode($args,JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+                    break;
+                case 'debug':
+                    $log->debug('traceId: '.self::skywalking_trace_id()." ".json_encode($args,JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+                    break;
+                case 'fatal':
+                    $log->fatal('traceId: '.self::skywalking_trace_id()." ".json_encode($args,JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+                    break;
+                default:
+                    break;
+            }
     }
-
-
 }

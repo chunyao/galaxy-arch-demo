@@ -2,8 +2,11 @@
 
 namespace Galaxy\Core;
 
-use PhpAmqpLib\Connection\AMQPSocketConnection;
-use PhpAmqpLib\Connection\AMQPStreamConnection;
+
+use App\Config\MQ;
+use PhpAmqpLib\Connection\AMQPConnectionConfig;
+use PhpAmqpLib\Connection\AMQPConnectionFactory;
+use PhpAmqpLib\Wire\AMQPTable;
 
 
 class ConsumerRabbit
@@ -19,56 +22,59 @@ class ConsumerRabbit
 
     }
 
+    private function connect(int $vhost)
+    {
+        $config = new AMQPConnectionConfig();
+        if (count($this->config['rabbitmq.host']) > 1) {
+            $cur = rand(0, 2);
+            $config->setHost($this->config['rabbitmq.host'][$cur]);
+            $config->setPort($this->config['rabbitmq.port'][$cur]);
+        } elseif (isset($this->config['rabbitmq.host']) && count($this->config['rabbitmq.host']) == 1) {
+            $config->setHost($this->config['rabbitmq.host']);
+            $config->setPort($this->config['rabbitmq.port']);
+        }
+        $config->setUser($this->config['rabbitmq.username']);
+        $config->setPassword($this->config['rabbitmq.password']);
+        $config->setVhost($this->config['rabbitmq.vhost'][$vhost]);
+        $config->setInsist(false);
+        $config->setLoginMethod('AMQPLAIN');
+        $config->setConnectionTimeout(5);
+        $config->setLocale('en_US');
+        $config->setLoginResponse("");
+        $config->setReadTimeout(1800);
+        $config->setKeepalive(true);
+        $config->setWriteTimeout(1800);
+        $config->setHeartbeat(900);
+        return AMQPConnectionFactory::create($config);
+    }
+
     public function initQueues($ch, $i)
     {
 
         try {
-            if (isset($this->config['rabbitmq.host'][1])) {
-                $this->con = AMQPStreamConnection::create_connection([
-                        ['host' => $this->config['rabbitmq.host'][0], 'port' => $this->config['rabbitmq.port'][0], 'user' => $this->config['rabbitmq.username'], 'password' => $this->config['rabbitmq.password'], 'vhost' => $this->config['rabbitmq.vhost'][0]],
-                        ['host' => $this->config['rabbitmq.host'][1], 'port' => $this->config['rabbitmq.port'][1], 'user' => $this->config['rabbitmq.username'], 'password' => $this->config['rabbitmq.password'], 'vhost' => $this->config['rabbitmq.vhost'][0]],
-                        ['host' => $this->config['rabbitmq.host'][2], 'port' => $this->config['rabbitmq.port'][2], 'user' => $this->config['rabbitmq.username'], 'password' => $this->config['rabbitmq.password'], 'vhost' => $this->config['rabbitmq.vhost'][0]],
-                    ]
-                    , [
-                        'insist' => false,
-                        'login_method' => 'AMQPLAIN',
-                        'login_response' => null,
-                        'connection_timeout' => 5,
-                        'locale' => 'en_US',
-                        'read_timeout' => 1800,
-                        'keepalive' => false,
-                        'write_timeout' => 1800,
-                        'heartbeat' => 900
-                    ]);
-            } else {
-                $params = [
-                    $this->config['rabbitmq.host'],
-                    $this->config['rabbitmq.port'],
-                    $this->config['rabbitmq.username'],
-                    $this->config['rabbitmq.password'],
-                    $this->config['rabbitmq.vhost'][$i],
-                    false,
-                    "AMQPLAIN", null, 'en_US', 5, 60, null, true, 30
-                ];
+            //       $this->con = $this->connect($i);
+            $num = 10;
+            for ($child = 0; $child < $num; $child++) {
+                go(function () use($i){
+                    $obj = $this->consumeMessage(1, $i);
 
+                    while ($obj->is_consuming()) {
+                        //
+                        $obj->wait(null, true);
+                        usleep(300000);
+                        //   var_dump(memory_get_usage());
+                    }
+                    $obj->close();
+                });
 
-                // 建立连接
-                $this->con = new AMQPStreamConnection(...$params);
             }
-            $obj = $this->consumeMessage(0, $i);
-            while ($obj->is_consuming()) {
-                //
-                $obj->wait(null, true);
-                usleep(300000);
-                //   var_dump(memory_get_usage());
-            }
-            $obj->close();
+
 
 
         } catch (\Throwable $ex) {
-            Log::error(sprintf('消息队列 %s error %s', $this->config['rabbitmq.queue'][$i],$ex->getMessage()));
+            Log::error(sprintf('消息队列 %s error %s', $this->config['rabbitmq.queue'][$i], $ex->getMessage()));
             try {
-                $this->con->close();
+                //  $this->con->close();
             } catch (\Exception $e) {
                 Log::error(sprintf('%s in %s on line %d', $e->getMessage(), $e->getFile(), $e->getLine()));
             }
@@ -77,11 +83,11 @@ class ConsumerRabbit
 
     }
 
-    private function consumeMessage(int $num, int $i)
+    private function consumeMessage($num, int $i)
     {
-        $c = rand(0, 2000);
+
         // 创建通道
-        $channel[$num] = $this->con->channel($c);
+        $channel[$num] = MQ::instance()->obj();
         $channel[$num]->basic_qos(null, 20, false);
         /**
          * name:xxx             交换机名称
@@ -89,6 +95,17 @@ class ConsumerRabbit
          * passive:false        不存在自动创建，如果设置true的话，返回OK，否则失败
          * durable:false        是否持久化
          * auto_delete:false    自动删除，最后一个
+         *  exchange_declare(
+         * $exchange,
+         * $type,
+         * $passive = false,
+         * $durable = false,
+         * $auto_delete = true,
+         * $internal = false,
+         * $nowait = false,
+         * $arguments = array(),
+         * $ticket = null
+         * )
          */
         $exName = $this->config['rabbitmq.exchange'][$i];
         $channel[$num]->exchange_declare($exName, 'direct', false, true, false);
@@ -103,12 +120,32 @@ class ConsumerRabbit
          * durable:false        是否持久化
          * exclusive:false      是否排他，如果为true的话，只对当前连接有效，连接断开后自动删除
          * auto_delete:false    自动删除，最后一个
+         *
+         * $queue = '',
+         * $passive = false,
+         * $durable = false,
+         * $exclusive = false,
+         * $auto_delete = true,
+         * $nowait = false,
+         * $arguments = array(),
+         * $ticket = null
          */
-        $queueName = $this->config['rabbitmq.queue'][$i];
-        $channel[$num]->queue_declare($queueName, true, true, false, false);
+        $args = array();
         if (isset($this->config['rabbitmq.queue.dead'][$i])) {
-            $channel[$num]->queue_declare($this->config['rabbitmq.queue.dead'][$i], false, true, false, false);
+            $deadArgs = array();
+            $deadArgs = new AMQPTable([
+                'x-dead-letter-exchange' => $this->config['rabbitmq.dead.x-dead-letter-exchange'][$i],
+                'x-dead-letter-routing-key' => $this->config['rabbitmq.dead.x-dead-letter-routing-key'][$i],
+                'x-message-ttl' => (int)$this->config['rabbitmq.dead.x-message-ttl'][$i]
+            ]);
+            $channel[$num]->queue_declare($this->config['rabbitmq.queue.dead'][$i], false, true, false, false, false, $deadArgs);
+            $args = new AMQPTable([
+                'x-dead-letter-exchange' => $this->config['rabbitmq.exchange.dead'][$i],
+                'x-dead-letter-routing-key' => $this->config['rabbitmq.routekey.dead'][$i]
+            ]);
         }
+        $queueName = $this->config['rabbitmq.queue'][$i];
+        $channel[$num]->queue_declare($queueName, false, true, false, false, false, $args);
         // 绑定
         /**
          * $queue           队列名称
@@ -139,7 +176,6 @@ class ConsumerRabbit
         $channel[$num]->basic_consume($queueName, "", false, false, false, false, $callback[$num]);
         //消费
         return $channel[$num];
-
     }
 
 

@@ -2,6 +2,7 @@
 
 namespace Galaxy\Core;
 
+use Galaxy\Common\Configur\SnowFlake;
 use Swoole;
 
 class RabbitMqProcess
@@ -23,12 +24,23 @@ class RabbitMqProcess
         $this->config = $config;
         $this->workers = $workers;
         $this->url = $url;
+
+
     }
 
     public function createProcess($ch, $queue)
     {
 
         $process = new Swoole\Process(function ($worker) use ( $ch, $queue) {
+            SnowFlake::init();
+
+            $configs = ConfigLoad::findFile();
+
+            foreach ($configs as $key => $val) {
+                if ($val == "\\App\Config\\") continue;
+                $val::init($this->config);
+                $val::enableCoroutine();
+            }
             while (1) {
                 sleep(5);
                 Log::info("消息进程ID:" . posix_getpid() . "\n");

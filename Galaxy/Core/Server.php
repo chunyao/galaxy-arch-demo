@@ -52,7 +52,7 @@ class Server
     {
         self::$bootConfig = $bootConfig;
         Cache::init();
-        Error::register();
+     //   Error::register();
         echo "主进程ID:" . posix_getpid() . "\n";
         Log::info("主进程ID:" . posix_getpid());
         self::$httpClient = new GuzzleHttp\Client();

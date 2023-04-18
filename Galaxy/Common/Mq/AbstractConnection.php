@@ -2,11 +2,12 @@
 
 namespace Galaxy\Common\Mq;
 
-use Galaxy\Common\Configur\Cache;
+use Galaxy\Common\Mq\Channel\Channel;
 use Galaxy\Common\Spl\Exception\Exception;
 use Galaxy\Core\Log;
 
-use Mix\Redis\LoggerInterface;
+use Galaxy\Core\Once;
+
 
 
 /**
@@ -20,13 +21,15 @@ abstract class AbstractConnection implements ConnectionInterface
      * 驱动
      * @var Driver
      */
-    protected $driver;
+    public $driver;
 
+    protected static $channel;
+
+    private $ack = false;
     /**
      * @var LoggerInterface
      */
     protected $logger;
-
 
 
     /**
@@ -41,12 +44,17 @@ abstract class AbstractConnection implements ConnectionInterface
      * @param Driver $driver
      * @param LoggerInterface|null $logger
      */
-    public function __construct(Driver $driver, ?LoggerInterface $logger)
+    public function __construct(Driver $driver)
     {
-        $this->driver = $driver;
-        $this->logger = $logger;
+        if (!isset($this->driver)) {
+            $this->driver = $driver;
+        }
+
 
     }
+
+
+
     /**
      * 返回当前rabbitt连接是否在事务内（在事务内的连接回池会造成下次开启事务产生错误）
      * @return bool
@@ -54,14 +62,13 @@ abstract class AbstractConnection implements ConnectionInterface
     public function inTransaction(): bool
     {
         try {
-            $rabbit = $this->driver->instance();
-
-            return $rabbit->ack;
+            return $this->ack;
         } catch (\Throwable $e) {
             Log::error(sprintf('inTransaction %s in %s on line %d', $e->getMessage(), $e->getFile(), $e->getLine()));
             return false;
         }
     }
+
     /**
      * 连接
      * @throws \Exception
@@ -76,6 +83,7 @@ abstract class AbstractConnection implements ConnectionInterface
      */
     public function close(): void
     {
+
         $this->driver->close();
     }
 
@@ -97,7 +105,7 @@ abstract class AbstractConnection implements ConnectionInterface
     protected static function isDisconnectException(\Throwable $ex)
     {
         $disconnectMessages = [
-            'Call to undefined method','Missed server heartbeat'
+            'Call to undefined method', 'Missed server heartbeat', 'Undefined', 'PhpAmqpLib'
         ];
         $errorMessage = $ex->getMessage();
         foreach ($disconnectMessages as $message) {
@@ -109,19 +117,27 @@ abstract class AbstractConnection implements ConnectionInterface
     }
 
 
+    /**
+     * @param $messageBody  消息内容
+     * @param $exchange     交换机名
+     * @param $routeKey     路由键
+     * @param array $head
+     * @return bool
+     * @throws Exception
+     */
     public function publish($messageBody, $exchange, $routeKey, $head = [], $ack = 0, $retry = 0): int
     {
-
-        try {
-           $status = $this->driver->instance()->publish($messageBody, $exchange, $routeKey, $head , $ack, $retry);
-        }catch (\Throwable $ex){
-            throw new \RuntimeException($ex->getMessage());
+        $status = 0;
+        if ($ack == 0) {
+            go(function () use ($messageBody, $exchange, $routeKey, $head) {
+                $this->driver::instChannel()->obj()->publish($messageBody, $exchange, $routeKey, $head, 1, 0);
+            });
+            return 1;
         }
 
-        // 执行
-        return $status;
-    }
+        return $this->driver::instChannel()->obj()->publish($messageBody, $exchange, $routeKey, $head, 1, 0);
 
+    }
 
 
 }

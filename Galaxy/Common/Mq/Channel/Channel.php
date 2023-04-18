@@ -1,52 +1,47 @@
 <?php
 
-namespace Galaxy\Common\Mq;
+namespace Galaxy\Common\Mq\Channel;
 
-
-use Galaxy\Common\Mq\Pool\ConnectionPool;
-use Galaxy\Common\Mq\Pool\Dialer;
+use Galaxy\Common\Mq\Channel\Pool\ConnectionPool;
+use Galaxy\Common\Mq\Channel\Pool\Dialer;
 use Galaxy\Common\Spl\Exception\Exception;
-use Galaxy\Core\Once;
 use Mix\Redis\LoggerInterface;
+use PhpAmqpLib\Channel\AMQPChannel;
+use PhpAmqpLib\Connection\AbstractConnection;
 
 
-class Rabbitmq
+class Channel
 {
-    protected static $channel;
-    protected static $once;
+    protected $channel;
     protected $ch;
+    protected AbstractConnection $connect;
     protected $host;
     protected $port;
     protected $username;
     protected $password;
     protected $vhost;
-    private $i = 0;
-    public  $driver;
+    protected $driver;
 
     public $ack = false;
 
     /**
      * @throws \Exception
      */
-    public function __construct($host, $port, $username, $password, $vhost, $channel)
+    public function __construct($connect)
     {
-        $this->host = $host;
-        $this->username = $username;
-        $this->password = $password;
-        $this->port = $port;
-        $this->vhost = $vhost;
-        $this->ch = $channel;
 
+        $this->connect=$connect;
         $this->driver = new Driver(
-            $this->host,
-            $this->port,
-            $this->username,
-            $this->password,
-            $this->vhost,
-            $this->ch,
+            $connect
         );
     }
 
+
+    public function obj():AMQPChannel
+    {
+
+        return $this->borrow()->obj();
+    }
 
     /**
      * @throws Exception
@@ -55,33 +50,23 @@ class Rabbitmq
     {
         return $this->borrow()->publish($messageBody, $exchange, $routeKey, $head, $ack, $retry);
     }
-
-
     protected function createPool()
     {
         if ($this->driver) {
-            $this->driver->closeCon();
+            $this->driver->close();
             $this->driver = null;
         }
 
         $this->pool = new ConnectionPool(
             new Dialer(
-                $this->host,
-                $this->port,
-                $this->username,
-                $this->password,
-                $this->vhost,
-                $this->ch,
+                $this->connect
             ),
             $this->maxOpen,
             $this->maxIdle,
             $this->maxLifetime,
             $this->waitTimeout
         );
-
     }
-
-
 
     /**
      * @param int $maxOpen
@@ -170,7 +155,7 @@ class Rabbitmq
      * @return Connection
      * @throws WaitTimeoutException
      */
-    public function borrow(): Connection
+    protected function borrow(): Connection
     {
         if ($this->pool instanceof ConnectionPool) {
             $driver = $this->pool->borrow();
