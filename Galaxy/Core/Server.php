@@ -52,11 +52,11 @@ class Server
     {
         self::$bootConfig = $bootConfig;
         Cache::init();
-        Error::register();
+     //   Error::register();
         echo "主进程ID:" . posix_getpid() . "\n";
         Log::info("主进程ID:" . posix_getpid());
         self::$httpClient = new GuzzleHttp\Client();
-        $this->url = 'http://127.0.0.1:' . $bootConfig['management.server.port'] . '/rabbitmq';
+        $this->url = 'http://127.0.0.1:' . $bootConfig['management.server.port'] ;
         $this->headers = ["Content-Type" => 'application/json'];
         $application = new Application(new Config([
             'base_uri' => $bootConfig['url'],
@@ -184,7 +184,7 @@ EOL;
 
         });
         $this->server->on("ManagerStart", function ($server) {
-            $rabbitMq = new RabbitMqProcess($this->config, 1, $this->url, $this->tcpClient);
+            $rabbitMq = new RabbitMqProcess($this->config, 1, $this->url.'/rabbitmq', $this->tcpClient);
             $rabbitMq->handler();
 
             //  $addr = '127.0.0.1:6001';

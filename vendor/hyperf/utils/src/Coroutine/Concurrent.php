@@ -16,6 +16,7 @@ use Hyperf\Engine\Channel;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Coroutine;
+use Swoole\Runtime;
 
 /**
  * @method bool isFull()
@@ -74,7 +75,7 @@ class Concurrent
     public function create(callable $callable): void
     {
         $this->channel->push(true);
-
+       
         Coroutine::create(function () use ($callable) {
             try {
                 $callable();

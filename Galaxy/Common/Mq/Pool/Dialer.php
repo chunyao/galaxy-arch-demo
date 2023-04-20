@@ -69,6 +69,7 @@ class Dialer implements DialerInterface
      */
     public function dial(): object
     {
+
         return new Driver(
             $this->host, $this->port, $this->username, $this->password, $this->vhost, $this->channel
         );

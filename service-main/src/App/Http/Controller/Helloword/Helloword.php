@@ -11,6 +11,7 @@ use App\Config\MG;
 use App\Config\RDS;
 
 use App\Repository\Model\Mongo\Product;
+use App\Service\CoDemoService;
 use App\Service\SayService;
 use App\Service\WishbrandService;
 use Galaxy\Common\Configur\Cache;
@@ -30,8 +31,12 @@ class Helloword extends BaseController
     private Product $product;
     private WishbrandService $wishbrandService;
 
+    private CoDemoService   $coDemoServicel;
+
     public function __construct()
     {
+        $this->coDemoServicel = new CoDemoService();
+
         //    $this->product = new Product();
         //   $this->msgSevice = new MsgService();
         //   $this->wishbrandService = new WishbrandService();
@@ -66,6 +71,22 @@ class Helloword extends BaseController
             'data' => 1
         ]);
     }
+    public function co(Context $ctx)
+    {
+        $data = $ctx->getJSON();
+        /*构造demo*/
+        $data = [];
+        for ($i=0;$i<10;$i++){
+            $data[$i]['reqData']='reqData_'.$i;
+            $data[$i]['result']='result_'.$i;
+        }
+       $result=  $this->coDemoServicel->iniProcess($data);
+        $ctx->JSON(200, [
+            'code' => 200,
+            'message' => 'success',
+            'data' => $result
+        ]);
+    }
     public function helloword(Context $ctx)
     {
       //  var_dump($ctx->getQuery('test'));
@@ -90,7 +111,7 @@ class Helloword extends BaseController
         $ctx->JSON(200, [
             'code' => 200,
             'message' => 'success',
-            'data' =>$data
+            'data' => MG::instance()->poolStats()
         ]);
         /* $data = $this->product->insertData();
          $ctx->JSON(200, [

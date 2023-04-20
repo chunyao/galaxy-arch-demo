@@ -2,11 +2,13 @@
 
 namespace Galaxy\Common\Mq;
 
-use Galaxy\Common\Configur\Cache;
+use Galaxy\Common\Mq\Channel\Channel;
 use Galaxy\Common\Spl\Exception\Exception;
 use Galaxy\Core\Log;
 
-use Mix\Redis\LoggerInterface;
+use Galaxy\Core\Once;
+use PhpAmqpLib\Channel\AMQPChannel;
+use PhpAmqpLib\Message\AMQPMessage;
 
 
 /**
@@ -20,13 +22,15 @@ abstract class AbstractConnection implements ConnectionInterface
      * 驱动
      * @var Driver
      */
-    protected $driver;
+    public $driver;
 
+    protected static $channel;
+
+    private $ack = false;
     /**
      * @var LoggerInterface
      */
     protected $logger;
-
 
 
     /**
@@ -41,12 +45,21 @@ abstract class AbstractConnection implements ConnectionInterface
      * @param Driver $driver
      * @param LoggerInterface|null $logger
      */
-    public function __construct(Driver $driver, ?LoggerInterface $logger)
+    public function __construct(Driver $driver)
     {
-        $this->driver = $driver;
-        $this->logger = $logger;
+        if (!isset($this->driver)) {
+            $this->driver = $driver;
+        }
+
 
     }
+    public function instance(): AMQPConnection
+    {
+        return $this->driver->con;
+    }
+
+
+
     /**
      * 返回当前rabbitt连接是否在事务内（在事务内的连接回池会造成下次开启事务产生错误）
      * @return bool
@@ -54,14 +67,13 @@ abstract class AbstractConnection implements ConnectionInterface
     public function inTransaction(): bool
     {
         try {
-            $rabbit = $this->driver->instance();
-
-            return $rabbit->ack;
+            return $this->ack;
         } catch (\Throwable $e) {
             Log::error(sprintf('inTransaction %s in %s on line %d', $e->getMessage(), $e->getFile(), $e->getLine()));
             return false;
         }
     }
+
     /**
      * 连接
      * @throws \Exception
@@ -76,6 +88,7 @@ abstract class AbstractConnection implements ConnectionInterface
      */
     public function close(): void
     {
+
         $this->driver->close();
     }
 
@@ -97,7 +110,7 @@ abstract class AbstractConnection implements ConnectionInterface
     protected static function isDisconnectException(\Throwable $ex)
     {
         $disconnectMessages = [
-            'Call to undefined method','Missed server heartbeat'
+            'Call to undefined method', 'Missed server heartbeat', 'Undefined', 'PhpAmqpLib'
         ];
         $errorMessage = $ex->getMessage();
         foreach ($disconnectMessages as $message) {
@@ -109,19 +122,55 @@ abstract class AbstractConnection implements ConnectionInterface
     }
 
 
+    /**
+     * @param $messageBody  消息内容
+     * @param $exchange     交换机名
+     * @param $routeKey     路由键
+     * @param array $head
+     * @return bool
+     * @throws Exception
+     */
     public function publish($messageBody, $exchange, $routeKey, $head = [], $ack = 0, $retry = 0): int
     {
 
+        $status = 0;
         try {
-           $status = $this->driver->instance()->publish($messageBody, $exchange, $routeKey, $head , $ack, $retry);
-        }catch (\Throwable $ex){
-            throw new \RuntimeException($ex->getMessage());
+            $head = array_merge(array('content_type' => 'text/json', 'delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT), $head);
+            $message = new AMQPMessage($messageBody, $head);
+            //推送成功
+            $channel =  $this->driver->con->getChannel();
+
+            if ($ack === 1) {
+                $this->ack = true;
+                $channel->set_ack_handler(
+                    function (AMQPMessage $message) use (&$status) {
+                        $status = 1;
+                        //    echo "发送成功: " . $message->body . PHP_EOL;
+                    }
+                );
+
+                $channel->confirm_select();
+            }
+            $channel->basic_publish($message, $exchange, $routeKey,true);
+
+            if ($ack === 1) {
+                $channel->wait_for_pending_acks_returns();
+               // $this->driver->con->releaseChannel($channel,true);
+                //  $this->driver->close();
+             //   $this->driver->reconnect();
+            }
+            $this->ack = false;
+            //    unset($message);
+        } catch (\Throwable $ex) {
+            Log::error(sprintf('message publish: %s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));
+            throw new Exception($ex);
         }
-
-        // 执行
+        // 响应ack
+        //  unset($messageBody);
+        //
         return $status;
-    }
 
+    }
 
 
 }

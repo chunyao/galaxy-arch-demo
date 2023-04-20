@@ -2,6 +2,7 @@
 
 namespace Galaxy\Core;
 
+use Galaxy\Common\Configur\SnowFlake;
 use Swoole;
 
 class RabbitMqProcess
@@ -23,14 +24,16 @@ class RabbitMqProcess
         $this->config = $config;
         $this->workers = $workers;
         $this->url = $url;
+
+
     }
 
     public function createProcess($ch, $queue)
     {
 
         $process = new Swoole\Process(function ($worker) use ( $ch, $queue) {
-            while (1) {
-                sleep(5);
+        //    while (1) {
+          //      sleep(5);
                 Log::info("消息进程ID:" . posix_getpid() . "\n");
                 try {
                     $consumer = new ConsumerRabbit($this->config,$this->url);
@@ -39,7 +42,7 @@ class RabbitMqProcess
                     Log::error(sprintf('%s in %s on line %d', $e->getMessage(), $e->getFile(), $e->getLine()));
                 }
 
-            }
+     //       }
         }, false, 0, true);
 
         $pid = $process->start();

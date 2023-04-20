@@ -17,6 +17,7 @@ use Hyperf\Engine\Exception\CoroutineDestroyedException;
 use Hyperf\Engine\Exception\RunningInNonCoroutineException;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Psr\Log\LoggerInterface;
+use Swoole\Runtime;
 use Throwable;
 
 class Coroutine
@@ -56,7 +57,7 @@ class Coroutine
      *             Returns -1 when coroutine create failed.
      */
     public static function create(callable $callable): int
-    {
+    {   
         $coroutine = Co::create(function () use ($callable) {
             try {
                 call($callable);

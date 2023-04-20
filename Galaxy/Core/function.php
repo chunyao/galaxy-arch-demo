@@ -130,6 +130,7 @@ function dintval($int, $allowarray = false)
 
     return $ret;
 }
+
 if (! function_exists('parallel')) {
     /**
      * @param callable[] $callables

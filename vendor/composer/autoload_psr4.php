@@ -43,6 +43,7 @@ return array(
     'Hyperf\\Contract\\' => array($vendorDir . '/hyperf/contract/src'),
     'Hyperf\\Context\\' => array($vendorDir . '/hyperf/context/src'),
     'Hyperf\\Config\\' => array($vendorDir . '/hyperf/config/src'),
+    'Hyperf\\Amqp\\' => array($vendorDir . '/hyperf/amqp/src'),
     'GuzzleHttp\\Stream\\' => array($vendorDir . '/guzzlehttp/streams/src'),
     'GuzzleHttp\\Ring\\' => array($vendorDir . '/guzzlehttp/ringphp/src'),
     'GuzzleHttp\\Psr7\\' => array($vendorDir . '/guzzlehttp/psr7/src'),
@@ -53,5 +54,6 @@ return array(
     'GPBMetadata\\' => array($baseDir . '/archDemoSpi/GPBMetadata'),
     'FastRoute\\' => array($vendorDir . '/nikic/fast-route/src'),
     'Elasticsearch\\' => array($vendorDir . '/elasticsearch/elasticsearch/src/Elasticsearch'),
+    'Doctrine\\Instantiator\\' => array($vendorDir . '/doctrine/instantiator/src/Doctrine/Instantiator'),
     'Doctrine\\Inflector\\' => array($vendorDir . '/doctrine/inflector/lib/Doctrine/Inflector'),
 );

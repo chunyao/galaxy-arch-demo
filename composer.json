@@ -1,19 +1,21 @@
 {
+
     "require": {
-        "hyperf/nacos": "^2.2",
-        "php-amqplib/php-amqplib": "^3.2",
-        "mix/database": "^3.0",
-        "mix/redis": "^3.0",
+        "hyperf/nacos": "2.2.33",
+        "mix/database": "3.0.22",
+        "mix/redis": "3.0.10",
         "mix/grpc": "^3.0",
         "mix/validator": "^3.0",
         "mix/redis-subscriber": "^3.0",
-        "mix/vega": "^3.0",
+        "mix/vega": "3.0.28",
         "elasticsearch/elasticsearch": "7.0.0",
-        "apache/log4php": "^2.3",
+        "apache/log4php": "2.3",
+        "hyperf/gotask": "2.2.10",
+        "hyperf/config": "^2.2",
         "mix/websocket": "^3.0",
         "mix/event": "^3.0",
-        "hyperf/gotask": "^2.2",
-        "hyperf/config": "^2.2"
+        "php-amqplib/php-amqplib": "3.5.4",
+        "hyperf/amqp": "^2.2"
     },
 
     "autoload-dev": {
