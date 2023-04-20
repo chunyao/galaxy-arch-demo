@@ -10,6 +10,7 @@ use Hyperf\Engine\Http\Client;
 use Hyperf\Utils\Coroutine\Concurrent;
 use PhpAmqpLib\Message\AMQPMessage;
 use PhpAmqpLib\Wire\AMQPTable;
+use Swoole\Runtime;
 
 class Consumer
 {
@@ -28,7 +29,7 @@ class Consumer
         try {
             // 创建通道
             $channel = $connect->getChannel();
-            $channel->basic_qos(null, 20, false);
+            $channel->basic_qos(null, 1, false);
 
             /**
              * name:xxx             交换机名称
@@ -112,38 +113,43 @@ class Consumer
 
             echo $this->config['rabbitmq.queue'][$i] . " 开始消费" . "Worker 进程ID:" . posix_getpid() . PHP_EOL;
             Log::info($this->config['rabbitmq.queue'][$i] . " 开始消费" . "Worker 进程ID:" . posix_getpid());
-            $concurrent = $this->getConcurrent(2);
-
-            $channel->basic_consume($queueName, "", false, false, false, false,
+            $concurrent = $this->getConcurrent(100);
+            Runtime::enableCoroutine(SWOOLE_HOOK_NATIVE_CURL);
+            $channel->basic_consume($queueName, "",
+                false,
+                false,
+                false,
+                false,
                 function (AMQPMessage $msg) use ($concurrent, $i, $url) {
                     $callback = $this->getCallback($i, $url, $msg);
+
                     if (!$concurrent instanceof Concurrent) {
                         return parallel([$callback]);
                     }
                     $concurrent->create($callback);
                 }
             );
-            $maxConsumption = 200;
+            $maxConsumption = 100;
             $currentConsumption = 0;
             //消费
             while ($channel->is_consuming()) {
                 //
-                $channel->wait(null, true,0);
-//            if ($maxConsumption > 0 && ++$currentConsumption >= $maxConsumption) {
-//              break;
-//            }
-                //usleep(300000);
+                $channel->wait(null, true, 0);
+         //       if ($maxConsumption > 0 && ++$currentConsumption >= $maxConsumption) {
+        //      break;
+      //      }
+     //           usleep(30000);
                 //   var_dump(memory_get_usage());
             }
 
         } catch (\Throwable $ex) {
-          //  isset($channel) && $channel->close();
+              isset($channel) && $channel->close();
             print_r(sprintf('%s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));
             throw $ex;
         }
-    //    $this->waitConcurrentHandled($concurrent);
+            $this->waitConcurrentHandled($concurrent);
 
-    //    $connect->releaseChannel($channel, true);
+        //    $connect->releaseChannel($channel, true);
     }
 
     /**
@@ -186,6 +192,8 @@ class Consumer
 
             $channel = $msg->getChannel();
             $deliveryTag = $msg->getDeliveryTag();
+            $client = new Client('127.0.0.1',8081);
+            $client->set([ 'timeout' => 1200,'keeplive' => true]);
 
             $tmp = json_decode($msg->body, true);
             $tmp['queue'] = App::$innerConfig['rabbitmq.queue'][$i];
@@ -196,8 +204,8 @@ class Consumer
 
             if (empty($tmp['messageId'])) {
                 Log::error("messageId 为空");
-                $channel->basic_ack($deliveryTag);
-                return;
+
+                return  $channel->basic_ack($deliveryTag);
             }
             $msgBody['message'] = $tmp;
             $msgBody['messageId'] = $tmp['messageId'];
@@ -214,7 +222,9 @@ class Consumer
                     return $channel->basic_reject($deliveryTag, false);
                 }
                 try {
-                    $data = (string)(new \GuzzleHttp\Client())->request('POST',$req, ['timeout' => 120,'json' => $msgBody])->getBody();
+                    //    $data =  $client->request('POST','/rabbitmq',[],json_encode($msgBody));
+                    $data = (string)(new \GuzzleHttp\Client())->request('POST', $req, ['timeout' => 120, 'json' => $msgBody])->getBody();
+                    // $resp = json_decode($data->body);
                     $resp = json_decode($data);
                     if ($resp->code === 10200) {
 
@@ -232,7 +242,9 @@ class Consumer
 
             } else {
                 try {
-                    $data = (string)(new \GuzzleHttp\Client())->request('POST',$req, ['timeout' => 120,'json' => $msgBody])->getBody();
+                //    $data =  $client->request('POST','/rabbitmq',[],json_encode($msgBody));
+                    $data = (string)(new \GuzzleHttp\Client())->request('POST', $req, ['timeout' => 120, 'json' => $msgBody])->getBody();
+                   // $resp = json_decode($data->body);
                     $resp = json_decode($data);
                     if ($resp->code === 10200) {
 

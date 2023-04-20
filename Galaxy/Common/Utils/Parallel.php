@@ -2,6 +2,7 @@
 
 namespace Galaxy\Common\Utils;
 
+use Hyperf\Engine\Channel;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Exception\ParallelExecutionException;
 use Hyperf\Utils\WaitGroup;

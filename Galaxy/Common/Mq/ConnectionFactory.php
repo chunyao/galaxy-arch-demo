@@ -35,7 +35,7 @@ class ConnectionFactory
     public function refresh(string $pool)
     {
 
-        $count = 100;
+        $count = 2;
 
         if (Locker::lock(static::class)) {
             try {

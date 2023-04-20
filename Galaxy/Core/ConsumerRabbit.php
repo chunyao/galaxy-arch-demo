@@ -53,12 +53,14 @@ class ConsumerRabbit
 
     public function initQueues($ch, $i)
     {
-
         try {
-
-
-            (new Consumer($this->config))->consumeMessage($i, $this->url,$this->connect($i));
-
+            $con = $this->connect($i);
+            $concurrent = new Concurrent(10);
+            for($num=0;$num<10;$num++){
+                $concurrent->create(function( ) use($i,$con){
+                    (new Consumer($this->config))->consumeMessage($i, $this->url,$con);
+                });
+            }
 
         } catch (\Throwable $ex) {
             print_r(sprintf('%s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));

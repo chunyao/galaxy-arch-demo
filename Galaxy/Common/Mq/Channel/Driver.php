@@ -1,7 +1,8 @@
 <?php
 
-namespace  Galaxy\Common\Mq\Channel;
+namespace Galaxy\Common\Mq\Channel;
 
+use Galaxy\Common\Mq\AMQPConnection;
 use Galaxy\Core\Log;
 use Mix\ObjectPool\ObjectTrait;
 use PhpAmqpLib\Channel\AMQPChannel;
@@ -16,14 +17,14 @@ class Driver
      */
     protected $channel;
 
-    protected $connect;
+    protected AMQPConnection $connect;
 
     public $size;
 
     public function __construct($connect)
     {
         $this->connect = $connect;
-        $this->channel =$this->connect->channel();
+        $this->channel = $this->connect->getConfirmChannel();
         $this->connect();
     }
 
@@ -44,14 +45,15 @@ class Driver
     {
 
         try {
-            $this->channel = $this->connect->channel();
+            $this->channel = $this->connect->getConfirmChannel();
         } catch (\Exception $exception) {
             $this->reconnect();
-            $this->channel = $this->connect->channel();
-            $this->size=0;
+            $this->channel = $this->connect->getConfirmChannel();
+            $this->size = 0;
             Log::error(['channel reconnect' => $exception->getMessage()]);
         }
     }
+
     /**
      * Connect
      * @throws \Exception
@@ -60,14 +62,15 @@ class Driver
     {
 
         try {
-            $this->channel->close();
-            $this->channel = $this->connect->channel();
+            $this->connect->releaseChannel($this->channel, true);
+            $this->channel = $this->connect->getConfirmChannel();
         } catch (\Exception $exception) {
             $this->connect();
-            $this->channel = $this->connect->channel();
+            $this->channel = $this->connect->getConfirmChannel();
             Log::error(['reconnect' => $exception->getMessage()]);
         }
     }
+
     /**
      * Close
      */

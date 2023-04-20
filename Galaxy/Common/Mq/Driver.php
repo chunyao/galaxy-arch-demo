@@ -67,7 +67,6 @@ class Driver
      * @param string $username
      * @param string $password
      * @param string $vhost
-
      * @throws \Exception
      */
     //$host, $port, $username, $password, $vhost, $channel
@@ -81,37 +80,34 @@ class Driver
         $this->password = $password;
         $this->vhost = $vhost;
 
-        $config = new AMQPConnectionConfig();
         if (count($this->host) > 1) {
             $cur = rand(0, 2);
-            $config->setHost($this->host[$cur]);
-            $config->setPort($this->port[$cur]);
+
+            $config['host'] = $this->host[$cur];
+            $config['port'] = $this->port[$cur];
         } elseif (count($this->host) == 1) {
-            $config->setHost($this->host);
-            $config->setPort($this->port);
+
+            $config['host'] = $this->host;
+            $config['port'] = $this->port;
         }
-        $config->setUser($this->username);
-        $config->setPassword($this->password);
-        $config->setVhost($this->vhost);
-        $config->setInsist(false);
-        $config->setLoginMethod('AMQPLAIN');
-        $config->setConnectionTimeout(10);
-        $config->setLocale('en_US');
-        $config->setLoginResponse("");
-        $config->setReadTimeout(1800);
-        $config->setKeepalive(false);
-        $config->setWriteTimeout(1800);
-        $config->setHeartbeat(900);
-        $config->setIoType(AMQPConnectionConfig::IO_TYPE_STREAM);
+
+        $config['user'] = $this->username;
+        $config['password'] = $this->password;
+        $config['vhost'] = $this->vhost;
+        $config['read_write_timeout'] = 600;
+        $config['heartbeat'] = 300;
+        $config['keepalive'] = true;
         $this->config = $config;
-        $this->con = AMQPConnectionFactory::create($this->config);
-        $this->connect();
+        $this->con = (new ConnectionFactory($this->config))->getConnection('rabbitProduce');
+       // $this->connect();
     }
 
     public function reconnect()
     {
-        $this->con = AMQPConnectionFactory::create($this->config);
-        $this->connect();
+
+        $this->con = (new ConnectionFactory($this->config))->getConnection('rabbitProduce');
+
+      //  $this->connect();
     }
 
 
@@ -119,22 +115,6 @@ class Driver
     {
         return $this->rabbitmq;
     }
-
-//    public static function instChannel(): Channel
-//    {
-//        if (!isset(self::$channel)) {
-//            static::$once->do(
-//            /**
-//             * @throws \Exception
-//             */
-//                function () {
-//                    self::$channel = new Channel();
-//                });
-//
-//        }
-//
-//        return self::$channel;
-//    }
 
     /**
      * Connect

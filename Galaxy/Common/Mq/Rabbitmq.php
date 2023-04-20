@@ -6,8 +6,10 @@ namespace Galaxy\Common\Mq;
 use Galaxy\Common\Mq\Pool\ConnectionPool;
 use Galaxy\Common\Mq\Pool\Dialer;
 use Galaxy\Common\Spl\Exception\Exception;
+use Galaxy\Core\Log;
 use Galaxy\Core\Once;
 use Mix\Redis\LoggerInterface;
+use PhpAmqpLib\Message\AMQPMessage;
 
 
 class Rabbitmq
@@ -53,7 +55,41 @@ class Rabbitmq
      */
     public function publish($messageBody, $exchange, $routeKey, $head = [], $ack = 0, $retry = 0)
     {
-        return $this->borrow()->publish($messageBody, $exchange, $routeKey, $head, $ack, $retry);
+        $status = 0;
+        try {
+            $head = array_merge(array('content_type' => 'text/json', 'delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT), $head);
+            $message = new AMQPMessage($messageBody, $head);
+            //推送成功
+            $channel =  $this->driver->con->getChannel();
+            if ($ack === 1) {
+                $this->ack = true;
+                $channel->set_ack_handler(
+                    function (AMQPMessage $message) use (&$status) {
+                        $status = 1;
+                        //    echo "发送成功: " . $message->body . PHP_EOL;
+                    }
+                );
+
+                $channel->confirm_select();
+            }
+            $channel->basic_publish($message, $exchange, $routeKey,true);
+
+            if ($ack === 1) {
+                $channel->wait_for_pending_acks_returns();
+                $this->driver->con->releaseChannel($channel,true);
+                //  $this->driver->close();
+                //   $this->driver->reconnect();
+            }
+            $this->ack = false;
+            //    unset($message);
+        } catch (\Throwable $ex) {
+            Log::error(sprintf('message publish: %s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));
+            throw new Exception($ex);
+        }
+        // 响应ack
+        //  unset($messageBody);
+        //
+        return $status;
     }
 
 

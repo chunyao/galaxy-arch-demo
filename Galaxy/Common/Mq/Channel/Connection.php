@@ -25,8 +25,8 @@ class Connection extends AbstractConnection
 
         try {
             // 执行父类方法
-            $re = call_user_func_array("parent::{$name}", $arguments);
-            return $re;
+
+            return call_user_func_array("parent::{$name}", $arguments);
         } catch (\Throwable $ex) {
             Log::error(['channel reconnect' => $ex->getMessage()]);
             if (static::isDisconnectException($ex)) {
@@ -44,17 +44,17 @@ class Connection extends AbstractConnection
 
     public function __destruct()
     {
-        if (!$this->driver || $this->driver instanceof EmptyDriver) {
-
-            return;
-        }
-        if ($this->inTransaction()) {
-            $this->driver->__discard();
-            $this->driver = new EmptyDriver();
-            return;
-        }
-        $this->driver->__return();
-        $this->driver = new EmptyDriver();
+//        if (!$this->driver || $this->driver instanceof EmptyDriver) {
+//
+//            return;
+//        }
+//        if ($this->inTransaction()) {
+//            $this->driver->__discard();
+//            $this->driver = new EmptyDriver();
+//            return;
+//        }
+//        $this->driver->__return();
+//        $this->driver = new EmptyDriver();
     }
 
 }
