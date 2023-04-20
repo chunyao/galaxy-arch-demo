@@ -111,7 +111,7 @@ class Helloword extends BaseController
         $ctx->JSON(200, [
             'code' => 200,
             'message' => 'success',
-            'data' => MG::instance()->poolStats()
+            'data' =>$data
         ]);
         /* $data = $this->product->insertData();
          $ctx->JSON(200, [
