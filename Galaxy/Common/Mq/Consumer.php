@@ -29,7 +29,7 @@ class Consumer
         try {
             // 创建通道
             $channel = $connect->getChannel();
-            $channel->basic_qos(null, 1, false);
+            $channel->basic_qos(null, 20, false);
 
             /**
              * name:xxx             交换机名称
@@ -114,7 +114,6 @@ class Consumer
             echo $this->config['rabbitmq.queue'][$i] . " 开始消费" . "Worker 进程ID:" . posix_getpid() . PHP_EOL;
             Log::info($this->config['rabbitmq.queue'][$i] . " 开始消费" . "Worker 进程ID:" . posix_getpid());
             $concurrent = $this->getConcurrent(100);
-            Runtime::enableCoroutine(SWOOLE_HOOK_NATIVE_CURL);
             $channel->basic_consume($queueName, "",
                 false,
                 false,
@@ -122,24 +121,16 @@ class Consumer
                 false,
                 function (AMQPMessage $msg) use ($concurrent, $i, $url) {
                     $callback = $this->getCallback($i, $url, $msg);
-
                     if (!$concurrent instanceof Concurrent) {
                         return parallel([$callback]);
                     }
+                    Runtime::enableCoroutine(SWOOLE_HOOK_NATIVE_CURL);
                     $concurrent->create($callback);
                 }
             );
-            $maxConsumption = 100;
-            $currentConsumption = 0;
             //消费
             while ($channel->is_consuming()) {
-                //
                 $channel->wait(null, true, 0);
-         //       if ($maxConsumption > 0 && ++$currentConsumption >= $maxConsumption) {
-        //      break;
-      //      }
-     //           usleep(30000);
-                //   var_dump(memory_get_usage());
             }
 
         } catch (\Throwable $ex) {
@@ -149,7 +140,7 @@ class Consumer
         }
             $this->waitConcurrentHandled($concurrent);
 
-        //    $connect->releaseChannel($channel, true);
+            $connect->releaseChannel($channel, true);
     }
 
     /**
