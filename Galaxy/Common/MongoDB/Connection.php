@@ -3,7 +3,6 @@
 namespace Galaxy\Common\MongoDB;
 
 
-use Galaxy\Common\MongoDB\EmptyDriver;
 use Galaxy\Core\Log;
 use Hyperf\GoTask\MongoClient\Type\DeleteResult;
 use Hyperf\GoTask\MongoClient\Type\UpdateResult;
@@ -18,7 +17,7 @@ class Connection extends AbstractConnection
 
     public function insert(array $data, $keepIdColumn = false, &$insertId)
     {
-        return $this->call(__FUNCTION__, func_get_args());
+        return parent::insert( $data, $keepIdColumn, $insertId);
     }
 
     public function deleteMany($filter = [], array $opts = []): DeleteResult

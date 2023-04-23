@@ -188,33 +188,39 @@ EOL;
             $rabbitMq->handler();
 
             //  $addr = '127.0.0.1:6001';
-            if (count($this->config['mongo.host']) > 1) {
-                $process = new Process(function (Process $process) {
-                    for ($d = 0; $d < (count($this->config['mongo.host'])); $d++) {
-                        $addr = ROOT_PATH . '/' . md5($this->config['mongo.host'][$d] . $this->config['mongo.user'] [$d] . $this->config['mongo.database'][$d]) . '.sock';
+            if (count($this->config['mongo.host']) > 1 || is_array($this->config['mongo.host'])) {
+                for ($d = 0; $d < (count($this->config['mongo.host'])); $d++) {
+                    $process = new Process(function (Process $process) use ($d) {
+
+                        //  $addr = ROOT_PATH . '/' . md5($this->config['mongo.host'][$d] . $this->config['mongo.user'] [$d] . $this->config['mongo.database'][$d]) . '.sock';
+                        $addr = '127.0.0.1:' . $this->config['mongo.pool.port'][$d];
+                        echo 'MongoDB: '.$addr.PHP_EOL;
                         $process->exec($this->mongoDrvier, [
                             '-address', $addr,
-                            '-mongodb-uri','mongodb://'. $this->config['mongo.host'][$d],
+                            '-mongodb-uri', 'mongodb://' . $this->config['mongo.host'][$d],
                             '-mongodb-username', $this->config['mongo.user'][$d],
                             '-mongodb-password', $this->config['mongo.password'][$d],
                             '-mongodb-database', $this->config['mongo.database'][$d],
                             '-mongodb-replicaset', $this->config['mongo.replicaset'][$d],
                             '-mongodb-poolMax', $this->config['mongo.maxOpen'][$d] ?? 50,
                             '-mongodb-poolMin', $this->config['mongo.maxIdle'][$d] ?? 50,
-                            '-mongodb-IdleTime',($this->config['mongo.maxLifetime'][$d] ?? 3600).'s',
+                            '-mongodb-IdleTime', ($this->config['mongo.maxLifetime'][$d] ?? 3600) . 's',
                             '-mongodb-connect-timeout', '5s',
                             '-mongodb-read-write-timeout', '60s'
                         ],
                         );
-                    }
-                });
-            } elseif (isset($this->config['mongo.host'])&&count($this->config['mongo.host'])==1) {
+
+                    });
+                    $process->start();
+                }
+            } elseif (isset($this->config['mongo.host']) && count($this->config['mongo.host']) == 1) {
 
                 $process = new Process(function (Process $process) {
-                    $addr = ROOT_PATH . '/' . md5($this->config['mongo.host'] . $this->config['mongo.user'] . $this->config['mongo.database']) . '.sock';
+                    //  $addr = ROOT_PATH . '/' . md5($this->config['mongo.host'] . $this->config['mongo.user'] . $this->config['mongo.database']) . '.sock';
+                    $addr = '127.0.0.1:' . $this->config['mongo.pool.port'];
                     $process->exec($this->mongoDrvier, [
                         '-address', $addr,
-                        '-mongodb-uri', 'mongodb://'.$this->config['mongo.host'],
+                        '-mongodb-uri', 'mongodb://' . $this->config['mongo.host'],
                         '-mongodb-username', $this->config['mongo.user'],
                         '-mongodb-password', $this->config['mongo.password'],
                         '-mongodb-database', $this->config['mongo.database'],
@@ -222,14 +228,14 @@ EOL;
                         '-mongodb-poolMax', $this->config['mongo.maxOpen'] ?? 50,
                         '-mongodb-poolMin', $this->config['mongo.maxIdle'] ?? 5,
                         '-mongodb-IdleTime', $this->config['mongo.maxLifetime'] ?? 3600,
-                        '-mongodb-connect-timeout', 5,
-                        '-mongodb-read-write-timeout', 60
+                        '-mongodb-connect-timeout', '5s',
+                        '-mongodb-read-write-timeout', '60s'
                     ],
                     );
                 });
-
+                $process->start();
             }
-            $process->start();
+
         });
         $this->server->on('WorkerStart', array($this, 'onWorkerStart'));
         $this->server->on('WorkerStop', function ($server, $worker_id) {
