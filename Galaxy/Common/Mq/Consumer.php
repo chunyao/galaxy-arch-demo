@@ -131,6 +131,7 @@ class Consumer
             //消费
             while ($channel->is_consuming()) {
                 $channel->wait(null, true, 0);
+                usleep( 50000);
             }
 
         } catch (\Throwable $ex) {
