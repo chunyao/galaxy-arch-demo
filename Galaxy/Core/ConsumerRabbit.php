@@ -55,8 +55,8 @@ class ConsumerRabbit
     {
         try {
             $con = $this->connect($i);
-            $concurrent = new Concurrent(10);
-            for($num=0;$num<10;$num++){
+            $concurrent = new Concurrent(100);
+            for($num=0;$num<100;$num++){
                 $concurrent->create(function( ) use($i,$con){
                     (new Consumer($this->config))->consumeMessage($i, $this->url,$con);
                 });
@@ -66,7 +66,7 @@ class ConsumerRabbit
             print_r(sprintf('%s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));
             Log::error(sprintf('消息队列 %s error %s', $this->config['rabbitmq.queue'][$i], $ex->getMessage()));
             try {
-                //  $this->con->close();
+                  $this->con->close();
             } catch (\Exception $e) {
                 Log::error(sprintf('%s in %s on line %d', $e->getMessage(), $e->getFile(), $e->getLine()));
             }

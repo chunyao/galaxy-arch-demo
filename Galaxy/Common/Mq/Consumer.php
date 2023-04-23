@@ -129,17 +129,9 @@ class Consumer
                     $concurrent->create($callback);
                 }
             );
-            $maxConsumption = 100;
-            $currentConsumption = 0;
             //消费
             while ($channel->is_consuming()) {
-                //
                 $channel->wait(null, true, 0);
-         //       if ($maxConsumption > 0 && ++$currentConsumption >= $maxConsumption) {
-        //      break;
-      //      }
-     //           usleep(30000);
-                //   var_dump(memory_get_usage());
             }
 
         } catch (\Throwable $ex) {
@@ -149,7 +141,7 @@ class Consumer
         }
             $this->waitConcurrentHandled($concurrent);
 
-        //    $connect->releaseChannel($channel, true);
+            $connect->releaseChannel($channel, true);
     }
 
     /**
