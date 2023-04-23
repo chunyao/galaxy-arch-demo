@@ -131,6 +131,7 @@ class Consumer
             //消费
             while ($channel->is_consuming()) {
                 $channel->wait(null, true, 0);
+                usleep( 50000);
             }
 
         } catch (\Throwable $ex) {
@@ -173,6 +174,10 @@ class Consumer
     protected function getCallback($i, $req, AMQPMessage $msg)
     {
         return function () use ($i, $req, $msg) {
+
+            if ($msg->get_properties()['content_type']=="application/gzip"){
+                $msg->body =gzuncompress( $msg->body);
+            }
 
             /*if (isset($this->config['rabbitmq.qps'][$i])) {
                 $sleep = round(1000000 / ((int)$this->config['rabbitmq.qps'][$i]));
