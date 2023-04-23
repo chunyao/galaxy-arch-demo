@@ -53,12 +53,16 @@ class Rabbitmq
     /**
      * @throws Exception
      */
-    public function publish($messageBody, $exchange, $routeKey, $head = [], $ack = 0, $retry = 0)
+    public function publish($messageBody, $exchange, $routeKey, $head = [], $ack = 0, $gzip = 0)
     {
         $status = 0;
         try {
-            $head = array_merge(array('content_type' => 'text/json', 'delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT), $head);
-            $message = new AMQPMessage($messageBody, $head);
+            $header= array_merge(array('content_type' => 'application/json', 'delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT), $head);
+            if ($gzip){
+                $messageBody=gzcompress($messageBody,9);
+                $header = array_merge(array('content_type' => 'application/gzip', 'delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT), $head);
+            }
+            $message = new AMQPMessage($messageBody, $header);
             //推送成功
             $channel =  $this->driver->con->getChannel();
             if ($ack === 1) {

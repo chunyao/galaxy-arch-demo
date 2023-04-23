@@ -175,6 +175,10 @@ class Consumer
     {
         return function () use ($i, $req, $msg) {
 
+            if ($msg->get_properties()['content_type']=="application/gzip"){
+                $msg->body =gzuncompress( $msg->body);
+            }
+
             /*if (isset($this->config['rabbitmq.qps'][$i])) {
                 $sleep = round(1000000 / ((int)$this->config['rabbitmq.qps'][$i]));
                 usleep($sleep);
