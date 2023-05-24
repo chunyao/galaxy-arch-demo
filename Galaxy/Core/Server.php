@@ -227,7 +227,7 @@ EOL;
                         '-mongodb-replicaset', $this->config['mongo.replicaset'],
                         '-mongodb-poolMax', $this->config['mongo.maxOpen'] ?? 50,
                         '-mongodb-poolMin', $this->config['mongo.maxIdle'] ?? 5,
-                        '-mongodb-IdleTime', $this->config['mongo.maxLifetime'] ?? 3600,
+                        '-mongodb-IdleTime', $this->config['mongo.maxLifetime'] ?? 3600 . 's',
                         '-mongodb-connect-timeout', '5s',
                         '-mongodb-read-write-timeout', '60s'
                     ],

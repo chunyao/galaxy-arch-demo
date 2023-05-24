@@ -2,6 +2,8 @@
 
 namespace Galaxy\Common\Utils;
 
+use Hyperf\Utils\Collection;
+
 class Arr
 {
 
