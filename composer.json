@@ -15,7 +15,8 @@
         "mix/websocket": "^3.0",
         "mix/event": "^3.0",
         "php-amqplib/php-amqplib": "3.5.4",
-        "hyperf/amqp": "^2.2"
+        "hyperf/amqp": "^2.2",
+        "doctrine/annotations":"^1.6"
     },
 
     "autoload-dev": {
