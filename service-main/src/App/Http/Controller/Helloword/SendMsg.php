@@ -5,8 +5,8 @@ namespace App\Http\Controller\Helloword;
 use App;
 use App\Config\MQ;
 use co;
-use Galaxy\Common\Configur\SnowFlake;
-use Galaxy\Common\Utils\SnowFlakeUtils;
+use Mabang\Galaxy\Common\Configur\SnowFlake;
+use Mabang\Galaxy\Common\Utils\SnowFlakeUtils;
 use Mix\Vega\Context;
 
 

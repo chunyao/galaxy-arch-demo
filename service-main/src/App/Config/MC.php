@@ -2,9 +2,9 @@
 
 namespace App\Config;
 
-use Galaxy\Common\Memcache\Config;
-use Galaxy\Common\Memcache\Memcache;
-use Galaxy\Core\Once;
+use Mabang\Galaxy\Common\Memcache\Config;
+use Mabang\Galaxy\Common\Memcache\Memcache;
+use Mabang\Galaxy\Core\Once;
 
 
 class MC

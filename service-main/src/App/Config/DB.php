@@ -1,9 +1,9 @@
 <?php
 
 namespace App\Config;
-use Galaxy\Common\Mysql\DBLogger;
-use Galaxy\Core\Once;
-use Galaxy\Core\Database;
+use Mabang\Galaxy\Common\Mysql\DBLogger;
+use Mabang\Galaxy\Core\Once;
+use Mabang\Galaxy\Core\Database;
 
 class DB
 {

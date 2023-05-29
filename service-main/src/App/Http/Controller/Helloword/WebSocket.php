@@ -3,8 +3,8 @@
 namespace App\Http\Controller\Helloword;
 
 
-use Galaxy\Common\Configur\Upgrader;
-use Galaxy\Core\Session;
+use Mabang\Galaxy\Common\Configur\Upgrader;
+use Mabang\Galaxy\Core\Session;
 use Mix\Vega\Context;
 
 

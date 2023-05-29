@@ -3,7 +3,7 @@
 namespace App\Service;
 
 use App\Repository\Model\ImproveSqlModel;
-use Galaxy\Service\BaseService;
+use Mabang\Galaxy\Service\BaseService;
 
 class ImproveSqlService extends BaseService
 {

@@ -3,8 +3,8 @@
 namespace App\Spi\MabangArchDemo\Service;
 
 use App;
-use Galaxy\Common\Utils\Arr;
-use Galaxy\Core\Log;
+use Mabang\Galaxy\Common\Utils\Arr;
+use Mabang\Galaxy\Core\Log;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;

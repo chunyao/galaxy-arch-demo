@@ -8,8 +8,8 @@ use App\Repository\Model\BaseModel;
 use App\Repository\Model\MdcassociateshopModel;
 use App\Repository\Model\MiddleCallbackDataLogModel;
 use App\Repository\Model\ShopModel;
-use Galaxy\Core\Log;
-use Galaxy\Service\BaseService;
+use Mabang\Galaxy\Core\Log;
+use Mabang\Galaxy\Service\BaseService;
 
 
 class MofangService extends BaseService

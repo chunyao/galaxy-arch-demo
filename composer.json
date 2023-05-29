@@ -1,22 +1,23 @@
 {
 
     "require": {
-        "hyperf/nacos": "2.2.33",
-        "mix/database": "3.0.22",
-        "mix/redis": "3.0.10",
-        "mix/grpc": "^3.0",
-        "mix/validator": "^3.0",
-        "mix/redis-subscriber": "^3.0",
-        "mix/vega": "3.0.28",
-        "elasticsearch/elasticsearch": "7.0.0",
-        "apache/log4php": "2.3",
-        "hyperf/gotask": "2.2.10",
-        "hyperf/config": "^2.2",
+        "hyperf/nacos": "v2.2.33",
+        "mix/database": "v3.0.22",
+        "mix/redis": "v3.0.10",
+        "mix/grpc": "v3.0.28",
+        "mix/validator": "v3.0.3",
+        "mix/redis-subscriber": "v3.0.4",
+        "mix/vega": "v3.0.28",
+        "elasticsearch/elasticsearch": "v7.0.0",
+        "apache/log4php": "2.3.0",
+        "hyperf/gotask": "v2.2.10",
+        "hyperf/config": "v2.2.33",
         "mix/websocket": "^3.0",
-        "mix/event": "^3.0",
-        "php-amqplib/php-amqplib": "3.5.4",
-        "hyperf/amqp": "^2.2",
-        "doctrine/annotations":"^1.6"
+        "mix/event": "v3.0.1",
+        "php-amqplib/php-amqplib": "v3.5.3",
+        "hyperf/amqp": "v2.2.33",
+        "doctrine/annotations":"1.14.3",
+       "mabang/galaxy":"v1.0.3"
     },
 
     "autoload-dev": {

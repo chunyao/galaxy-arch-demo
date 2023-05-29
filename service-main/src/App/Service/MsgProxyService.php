@@ -2,7 +2,7 @@
 
 namespace App\Service;
 
-use Galaxy\Service\QueueService;
+use Mabang\Galaxy\Service\QueueService;
 
 class MsgProxyService
 {
