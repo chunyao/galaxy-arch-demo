@@ -3,7 +3,7 @@
 namespace App\XxlJob;
 
 use App\Service\ArchDemoDelayService;
-use Galaxy\Common\XxlJob\Handler\BaseHandler;
+use Mabang\Galaxy\Common\XxlJob\Handler\BaseHandler;
 use Swoole\Coroutine as co;
 
 class ArchDemoDelayHandler extends BaseHandler

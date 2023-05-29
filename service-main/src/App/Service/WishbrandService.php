@@ -5,7 +5,7 @@ namespace App\Service;
 
 use App\Config\Suffix;
 use App\Repository\Model\WishbrandModel;
-use  Galaxy\Common\Utils\SnowFlakeUtils;
+use  Mabang\Galaxy\Common\Utils\SnowFlakeUtils;
 use App\Repository\Model\ES\Test;
 class WishbrandService
 {

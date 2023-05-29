@@ -5,8 +5,8 @@ namespace App\Http\Controller\Msg;
 use App;
 use App\Config\RDS;
 
-use Galaxy\Core\BaseController;
-use Galaxy\Core\Log;
+use Mabang\Galaxy\Core\BaseController;
+use Mabang\Galaxy\Core\Log;
 use App\Service\MsgService;
 use Mix\Vega\Context;
 

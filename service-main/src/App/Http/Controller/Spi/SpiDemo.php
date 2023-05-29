@@ -3,8 +3,8 @@ namespace App\Http\Controller\Spi;
 
 use App\Spi\MabangArchDemo\Bo\HelloBo;
 use App\Spi\MabangArchDemo\Service\ArchService;
-use Galaxy\Common\Spl\Exception\Exception;
-use Galaxy\Core\BaseController;
+
+use Mabang\Galaxy\Core\BaseController;
 use Mix\Vega\Context;
 
 

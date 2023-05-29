@@ -2,8 +2,8 @@
 
 namespace App\Config;
 
-use Galaxy\Core\Once;
-use Galaxy\Common\ES\LibES;
+use Mabang\Galaxy\Core\Once;
+use Mabang\Galaxy\Common\ES\LibES;
 
 class ES
 {

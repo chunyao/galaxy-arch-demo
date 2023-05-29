@@ -18,6 +18,7 @@ return array(
     'Psr\\Http\\Client\\' => array($vendorDir . '/psr/http-client/src'),
     'Psr\\EventDispatcher\\' => array($vendorDir . '/psr/event-dispatcher/src'),
     'Psr\\Container\\' => array($vendorDir . '/psr/container/src'),
+    'Psr\\Cache\\' => array($vendorDir . '/psr/cache/src'),
     'Php\\' => array($baseDir . '/archDemoSpi/Php'),
     'PhpAmqpLib\\' => array($vendorDir . '/php-amqplib/php-amqplib/PhpAmqpLib'),
     'ParagonIE\\ConstantTime\\' => array($vendorDir . '/paragonie/constant_time_encoding/src'),
@@ -32,6 +33,7 @@ return array(
     'Mix\\Grpc\\' => array($vendorDir . '/mix/grpc/src'),
     'Mix\\Event\\' => array($vendorDir . '/mix/event/src'),
     'Mix\\Database\\' => array($vendorDir . '/mix/database/src'),
+    'Mabang\\Galaxy\\' => array($vendorDir . '/mabang/galaxy/src'),
     'Lukasoppermann\\Httpstatus\\' => array($vendorDir . '/lukasoppermann/http-status/src'),
     'Hyperf\\Utils\\' => array($vendorDir . '/hyperf/utils/src'),
     'Hyperf\\Process\\' => array($vendorDir . '/hyperf/process/src'),
@@ -56,4 +58,7 @@ return array(
     'Elasticsearch\\' => array($vendorDir . '/elasticsearch/elasticsearch/src/Elasticsearch'),
     'Doctrine\\Instantiator\\' => array($vendorDir . '/doctrine/instantiator/src/Doctrine/Instantiator'),
     'Doctrine\\Inflector\\' => array($vendorDir . '/doctrine/inflector/lib/Doctrine/Inflector'),
+    'Doctrine\\Deprecations\\' => array($vendorDir . '/doctrine/deprecations/lib/Doctrine/Deprecations'),
+    'Doctrine\\Common\\Lexer\\' => array($vendorDir . '/doctrine/lexer/src'),
+    'Doctrine\\Common\\Annotations\\' => array($vendorDir . '/doctrine/annotations/lib/Doctrine/Common/Annotations'),
 );

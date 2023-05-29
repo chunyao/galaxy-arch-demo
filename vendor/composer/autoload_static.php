@@ -11,13 +11,13 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
         '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
-        'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
         'decc78cc4436b1292c6c0d151b19445c' => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib/bootstrap.php',
         'ad155f8f1cf0d418fe49e248db8c661b' => __DIR__ . '/..' . '/react/promise/src/functions_include.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
         '253c157292f75eb38082b5acb06f3f01' => __DIR__ . '/..' . '/nikic/fast-route/src/functions.php',
         '9ba6ea2fc24a1ea09e48feb96804a505' => __DIR__ . '/..' . '/spiral/goridge/src/functions.php',
         'fdea4480df6c5882835d3b60a113de4d' => __DIR__ . '/..' . '/hyperf/config/src/Functions.php',
+        '32aa72aa0c67442f2236085f30e26ec3' => __DIR__ . '/..' . '/mabang/galaxy/src/Core/function.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -44,6 +44,7 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
             'Psr\\Http\\Client\\' => 16,
             'Psr\\EventDispatcher\\' => 20,
             'Psr\\Container\\' => 14,
+            'Psr\\Cache\\' => 10,
             'Php\\' => 4,
             'PhpAmqpLib\\' => 11,
             'ParagonIE\\ConstantTime\\' => 23,
@@ -61,6 +62,7 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
             'Mix\\Grpc\\' => 9,
             'Mix\\Event\\' => 10,
             'Mix\\Database\\' => 13,
+            'Mabang\\Galaxy\\' => 14,
         ),
         'L' => 
         array (
@@ -103,6 +105,9 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         array (
             'Doctrine\\Instantiator\\' => 22,
             'Doctrine\\Inflector\\' => 19,
+            'Doctrine\\Deprecations\\' => 22,
+            'Doctrine\\Common\\Lexer\\' => 22,
+            'Doctrine\\Common\\Annotations\\' => 28,
         ),
     );
 
@@ -155,6 +160,10 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         'Psr\\Container\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/container/src',
+        ),
+        'Psr\\Cache\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/cache/src',
         ),
         'Php\\' => 
         array (
@@ -211,6 +220,10 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         'Mix\\Database\\' => 
         array (
             0 => __DIR__ . '/..' . '/mix/database/src',
+        ),
+        'Mabang\\Galaxy\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/mabang/galaxy/src',
         ),
         'Lukasoppermann\\Httpstatus\\' => 
         array (
@@ -307,6 +320,18 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         'Doctrine\\Inflector\\' => 
         array (
             0 => __DIR__ . '/..' . '/doctrine/inflector/lib/Doctrine/Inflector',
+        ),
+        'Doctrine\\Deprecations\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/doctrine/deprecations/lib/Doctrine/Deprecations',
+        ),
+        'Doctrine\\Common\\Lexer\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/doctrine/lexer/src',
+        ),
+        'Doctrine\\Common\\Annotations\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations',
         ),
     );
 

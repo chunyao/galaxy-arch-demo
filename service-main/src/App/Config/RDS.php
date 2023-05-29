@@ -2,8 +2,8 @@
 declare(strict_types=1);//开启严格模式
 
 namespace App\Config;
-use Galaxy\Common\Redis\RDSLogger;
-use Galaxy\Core\Once;
+use Mabang\Galaxy\Common\Redis\RDSLogger;
+use Mabang\Galaxy\Core\Once;
 use Mix\Redis\Redis;
 
 class RDS

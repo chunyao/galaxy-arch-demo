@@ -1,5 +1,8 @@
 <?php
-require_once __DIR__ . '/Galaxy/load.php';
+
+
+use Mabang\Galaxy\Core\Server;
+
 require_once __DIR__ . '/service-main/src/App/load.php';
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -10,7 +13,7 @@ gc_enable();
 ini_set('display_errors', 'on');
 ini_set('display_startup_errors', 'on');
 ini_set('error_reporting', E_ALL ^ E_NOTICE);
-use Galaxy\Core\Server;
+
 
 $opts = array('env:', 'user:', 'password:', 'dataId:', 'group:', 'url:', 'server.port:', 'management.server.port:', 'log.path:', 'tenant:', 'node.ip:', 'node.port:');
 $bootConfig = getopt('', $opts);

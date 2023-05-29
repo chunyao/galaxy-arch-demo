@@ -2,7 +2,7 @@
 
 namespace App\Http\Controller\LocalCache;
 
-use Galaxy\Common\Configur\Cache;
+use Mabang\Galaxy\Common\Configur\Cache;
 use Mix\Vega\Context;
 
 class LocalCacheController

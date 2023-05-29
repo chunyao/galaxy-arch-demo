@@ -3,7 +3,7 @@ require_once __DIR__ . '/Galaxy/load.php';
 require_once __DIR__ . '/service-main/src/App/load.php';
 require_once __DIR__ . '/vendor/autoload.php';
 
-use Galaxy\Core\ServerCo;
+use Mabang\Galaxy\Core\ServerCo;
 
 date_default_timezone_set('Asia/Shanghai');
 define("ROOT_PATH", dirname(__FILE__));

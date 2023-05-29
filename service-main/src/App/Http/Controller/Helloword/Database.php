@@ -5,7 +5,7 @@ namespace App\Http\Controller\Helloword;
 use App\Config\DB;
 use App\Config\MG;
 use App\Config\RDS;
-use Galaxy\Core\Log;
+use Mabang\Galaxy\Core\Log;
 use Mix\Vega\Context;
 
 

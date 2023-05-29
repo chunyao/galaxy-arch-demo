@@ -6,8 +6,8 @@ namespace App\Listener;
 use App\Config\RDS;
 use App\Service\MsgProxyService;
 use Swoole;
-use Galaxy\Core\Log;
-use Galaxy\Service\QueueService;
+use Mabang\Galaxy\Core\Log;
+use Mabang\Galaxy\Service\QueueService;
 use App\Service\MsgService;
 
 use App;

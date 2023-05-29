@@ -2,8 +2,8 @@
 
 namespace App\Config;
 
-use Galaxy\Common\MongoDB\MongoDB;
-use Galaxy\Core\Once;
+use Mabang\Galaxy\Common\MongoDB\MongoDB;
+use Mabang\Galaxy\Core\Once;
 
 
 class MG2

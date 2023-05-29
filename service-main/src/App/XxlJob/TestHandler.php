@@ -2,7 +2,7 @@
 
 namespace App\XxlJob;
 
-use Galaxy\Common\XxlJob\Handler\BaseHandler;
+use Mabang\Galaxy\Common\XxlJob\Handler\BaseHandler;
 
 class TestHandler extends BaseHandler
 {

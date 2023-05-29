@@ -3,8 +3,8 @@
 namespace App\Service;
 
 use App\Config\MQ;
-use Galaxy\Common\Configur\SnowFlake;
-use Galaxy\Service\BaseService;
+use Mabang\Galaxy\Common\Configur\SnowFlake;
+use Mabang\Galaxy\Service\BaseService;
 
 class ArchDemoDelayService extends BaseService
 {

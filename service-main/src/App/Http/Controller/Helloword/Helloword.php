@@ -4,30 +4,24 @@ declare(strict_types=1);
 namespace App\Http\Controller\Helloword;
 
 
-use App;
-use App\Common\Utils\Test;
-use App\Config\ES;
 use App\Config\MG;
 use App\Config\RDS;
 
 use App\Repository\Model\Mongo\Product;
 use App\Service\CoDemoService;
-use App\Service\SayService;
 use App\Service\WishbrandService;
-use Galaxy\Common\Configur\Cache;
-use Galaxy\Common\Configur\SnowFlake;
-use Galaxy\Common\Utils\SnowFlakeUtils;
-use Galaxy\Core\BaseController;
-use Galaxy\Core\Log;
+
+
 use App\Service\MsgService;
+use Mabang\Galaxy\Core\BaseController;
 use Mix\Vega\Context;
+
 use Swoole\Coroutine as co;
 use Swoole;
 
 class Helloword extends BaseController
 {
     private MsgService $msgSevice;
-    private SayService $sayService;
     private Product $product;
     private WishbrandService $wishbrandService;
 

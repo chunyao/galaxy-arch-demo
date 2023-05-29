@@ -4,8 +4,8 @@ namespace App\Repository\Model;
 
 use App\Config\ES;
 use App\Config\SQL;
-use Galaxy\Core\Log;
-use Galaxy\Repository\Model\BaseModel;
+use Mabang\Galaxy\Core\Log;
+use Mabang\Galaxy\Repository\Model\BaseModel;
 
 class ImproveSqlModel extends BaseModel
 {

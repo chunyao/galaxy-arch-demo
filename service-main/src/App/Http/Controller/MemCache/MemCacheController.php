@@ -3,10 +3,10 @@
 namespace App\Http\Controller\MemCache;
 
 use App\Config\MC;
-use Galaxy\Common\Configur\Cache;
+use Mabang\Galaxy\Common\Configur\Cache;
 use Mix\Vega\Context;
-use Galaxy\Common\Memcache\Memcache;
-use Galaxy\Common\Memcache\Config;
+use Mabang\Galaxy\Common\Memcache\Memcache;
+use Mabang\Galaxy\Common\Memcache\Config;
 
 class MemCacheController
 {

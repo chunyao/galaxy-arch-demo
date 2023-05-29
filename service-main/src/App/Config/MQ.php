@@ -2,9 +2,9 @@
 
 namespace App\Config;
 
-use Galaxy\Common\Mq\Channel\Channel;
-use Galaxy\Common\Mq\Rabbitmq;
-use Galaxy\Core\Once;
+use Mabang\Galaxy\Common\Mq\Channel\Channel;
+use Mabang\Galaxy\Common\Mq\Rabbitmq;
+use Mabang\Galaxy\Core\Once;
 
 
 class MQ
