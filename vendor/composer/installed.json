@@ -985,18 +985,12 @@
         },
         {
             "name": "hyperf/amqp",
-            "version": "v2.2.33",
-            "version_normalized": "2.2.33.0",
+            "version": "v1.0.1",
+            "version_normalized": "1.0.1.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/hyperf/amqp.git",
-                "reference": "a379fcca73be52cc9e2e8ebfcfd641ee831c7f3e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/hyperf/amqp/zipball/a379fcca73be52cc9e2e8ebfcfd641ee831c7f3e",
-                "reference": "a379fcca73be52cc9e2e8ebfcfd641ee831c7f3e",
-                "shasum": ""
+                "url": "https://e.coding.net/mabangerp/public/hyper-amqp.git",
+                "reference": "a3965bb0197ec330ae66c19e5112ddc392e3b1a4"
             },
             "require": {
                 "doctrine/instantiator": "^1.2.0",
@@ -1024,7 +1018,7 @@
                     "config": "Hyperf\\Amqp\\ConfigProvider"
                 }
             },
-            "installation-source": "dist",
+            "installation-source": "source",
             "autoload": {
                 "psr-4": {
                     "Hyperf\\Amqp\\": "src/"
@@ -1693,12 +1687,12 @@
         },
         {
             "name": "mabang/galaxy",
-            "version": "v1.0.3",
-            "version_normalized": "1.0.3.0",
+            "version": "v1.0.5",
+            "version_normalized": "1.0.5.0",
             "source": {
                 "type": "git",
                 "url": "https://e.coding.net/mabangerp/public/Galaxy.git",
-                "reference": "5e3f8cdf2c9a82641cc2714e9d38ece167df446d"
+                "reference": "e702cf915f1d4ca795976805e336f8d4d9b66b39"
             },
             "require": {
                 "php": ">=7.0.0"
@@ -1707,6 +1701,9 @@
             "type": "library",
             "installation-source": "source",
             "autoload": {
+                "files": [
+                    "src/Core/function.php"
+                ],
                 "psr-4": {
                     "Mabang\\Galaxy\\": "src/"
                 }
@@ -1731,18 +1728,12 @@
         },
         {
             "name": "mix/database",
-            "version": "v3.0.22",
-            "version_normalized": "3.0.22.0",
+            "version": "v1.0.1",
+            "version_normalized": "1.0.1.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/mix-php/database.git",
-                "reference": "77cde5776d01b9715a4901c0c5ffd9fd783e3520"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/mix-php/database/zipball/77cde5776d01b9715a4901c0c5ffd9fd783e3520",
-                "reference": "77cde5776d01b9715a4901c0c5ffd9fd783e3520",
-                "shasum": ""
+                "url": "https://e.coding.net/mabangerp/public/database.git",
+                "reference": "e5a1cac4aa73087ef4cb1cb1c41536878d4fcb6b"
             },
             "require": {
                 "ext-pdo": "*",
@@ -1754,7 +1745,7 @@
             },
             "time": "2021-12-02T07:01:22+00:00",
             "type": "library",
-            "installation-source": "dist",
+            "installation-source": "source",
             "autoload": {
                 "psr-4": {
                     "Mix\\Database\\": "src/"

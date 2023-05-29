@@ -17,6 +17,7 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         '253c157292f75eb38082b5acb06f3f01' => __DIR__ . '/..' . '/nikic/fast-route/src/functions.php',
         '9ba6ea2fc24a1ea09e48feb96804a505' => __DIR__ . '/..' . '/spiral/goridge/src/functions.php',
         'fdea4480df6c5882835d3b60a113de4d' => __DIR__ . '/..' . '/hyperf/config/src/Functions.php',
+        '32aa72aa0c67442f2236085f30e26ec3' => __DIR__ . '/..' . '/mabang/galaxy/src/Core/function.php',
     );
 
     public static $prefixLengthsPsr4 = array (

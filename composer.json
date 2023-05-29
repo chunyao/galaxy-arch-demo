@@ -2,7 +2,7 @@
 
     "require": {
         "hyperf/nacos": "v2.2.33",
-        "mix/database": "v3.0.22",
+        "mix/database": "v1.0.1",
         "mix/redis": "v3.0.10",
         "mix/grpc": "v3.0.28",
         "mix/validator": "v3.0.3",
@@ -15,9 +15,9 @@
         "mix/websocket": "^3.0",
         "mix/event": "v3.0.1",
         "php-amqplib/php-amqplib": "v3.5.3",
-        "hyperf/amqp": "v2.2.33",
+        "hyperf/amqp": "v1.0.1",
         "doctrine/annotations":"1.14.3",
-       "mabang/galaxy":"v1.0.3"
+       "mabang/galaxy":"v1.0.5"
     },
 
     "autoload-dev": {
