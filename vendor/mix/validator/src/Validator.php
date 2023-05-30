@@ -127,11 +127,11 @@ abstract class Validator implements \JsonSerializable
         $rules = $this->rules();
         $messages = $this->messages();
         // 判断是否定义了规则
-        foreach ($scenarioAttributes as $attribute) {
-            if (!isset($rules[$attribute])) {
-                throw new InvalidArgumentException("属性 {$attribute} 未定义规则");
-            }
-        }
+//        foreach ($scenarioAttributes as $attribute) {
+//            if (!isset($rules[$attribute])) {
+//                throw new InvalidArgumentException("属性 {$attribute} 未定义规则");
+//            }
+//        }
         // 验证器验证
         foreach ($rules as $attribute => $rule) {
             if (!in_array($attribute, $scenarioAttributes)) {

@@ -1687,12 +1687,12 @@
         },
         {
             "name": "mabang/galaxy",
-            "version": "v1.0.7",
-            "version_normalized": "1.0.7.0",
+            "version": "v1.0.8",
+            "version_normalized": "1.0.8.0",
             "source": {
                 "type": "git",
                 "url": "https://e.coding.net/mabangerp/public/Galaxy.git",
-                "reference": "f41d16585a3041105196571979bb052f6a2f0d38"
+                "reference": "97d549dd75f911bb60b58a22c823e914cca60047"
             },
             "require": {
                 "php": ">=7.0.0"
@@ -1778,18 +1778,12 @@
         },
         {
             "name": "mix/event",
-            "version": "v3.0.1",
-            "version_normalized": "3.0.1.0",
+            "version": "v1.0.1",
+            "version_normalized": "1.0.1.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/mix-php/event.git",
-                "reference": "214c7bdb56e35a17cf764b05f4402c5e5b02fcf6"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/mix-php/event/zipball/214c7bdb56e35a17cf764b05f4402c5e5b02fcf6",
-                "reference": "214c7bdb56e35a17cf764b05f4402c5e5b02fcf6",
-                "shasum": ""
+                "url": "https://e.coding.net/mabangerp/public/event.git",
+                "reference": "64cc066ed6ed7f4a6d8269c31b85af01440e8d70"
             },
             "require": {
                 "php": ">=7.2.0",
@@ -1797,7 +1791,7 @@
             },
             "time": "2021-07-21T07:35:18+00:00",
             "type": "library",
-            "installation-source": "dist",
+            "installation-source": "source",
             "autoload": {
                 "psr-4": {
                     "Mix\\Event\\": "src/"
@@ -1829,18 +1823,12 @@
         },
         {
             "name": "mix/grpc",
-            "version": "v3.0.28",
-            "version_normalized": "3.0.28.0",
+            "version": "v1.0.1",
+            "version_normalized": "1.0.1.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/mix-php/grpc.git",
-                "reference": "4f495f241226f4a7050a485de739e7d02c4ddfee"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/mix-php/grpc/zipball/4f495f241226f4a7050a485de739e7d02c4ddfee",
-                "reference": "4f495f241226f4a7050a485de739e7d02c4ddfee",
-                "shasum": ""
+                "url": "https://e.coding.net/mabangerp/public/grpc.git",
+                "reference": "218fe18812b21b5dfa53f01b78e06f9c7d7eb8c2"
             },
             "require": {
                 "ext-swoole": ">=4.4.4",
@@ -1852,7 +1840,7 @@
             },
             "time": "2022-08-24T03:35:27+00:00",
             "type": "library",
-            "installation-source": "dist",
+            "installation-source": "source",
             "autoload": {
                 "psr-4": {
                     "Mix\\Grpc\\": "src/"
@@ -1992,18 +1980,12 @@
         },
         {
             "name": "mix/redis",
-            "version": "v3.0.10",
-            "version_normalized": "3.0.10.0",
+            "version": "v1.0.1",
+            "version_normalized": "1.0.1.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/mix-php/redis.git",
-                "reference": "3421f95fbe762bf5ddacb9dc67f5b93ad7f16e3f"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/mix-php/redis/zipball/3421f95fbe762bf5ddacb9dc67f5b93ad7f16e3f",
-                "reference": "3421f95fbe762bf5ddacb9dc67f5b93ad7f16e3f",
-                "shasum": ""
+                "url": "https://e.coding.net/mabangerp/public/redis.git",
+                "reference": "b8e7acb1ee50421b1170c0673e240cf4a2628952"
             },
             "require": {
                 "ext-redis": "*",
@@ -2015,7 +1997,7 @@
             },
             "time": "2021-12-15T08:02:11+00:00",
             "type": "library",
-            "installation-source": "dist",
+            "installation-source": "source",
             "autoload": {
                 "psr-4": {
                     "Mix\\Redis\\": "src/"
@@ -2103,18 +2085,12 @@
         },
         {
             "name": "mix/validator",
-            "version": "v3.0.3",
-            "version_normalized": "3.0.3.0",
+            "version": "v1.0.2",
+            "version_normalized": "1.0.2.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/mix-php/validator.git",
-                "reference": "1531a2a25b8359fcafbb84692b842843a987e974"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/mix-php/validator/zipball/1531a2a25b8359fcafbb84692b842843a987e974",
-                "reference": "1531a2a25b8359fcafbb84692b842843a987e974",
-                "shasum": ""
+                "url": "https://e.coding.net/mabangerp/public/validator.git",
+                "reference": "586bb96fecbd49f6d630152c069ec6a4cf05c72b"
             },
             "require": {
                 "ext-mbstring": "*",
@@ -2126,7 +2102,7 @@
             },
             "time": "2021-08-04T07:42:32+00:00",
             "type": "library",
-            "installation-source": "dist",
+            "installation-source": "source",
             "autoload": {
                 "psr-4": {
                     "Mix\\Validator\\": "src/"
