@@ -2,7 +2,7 @@
 
 namespace App\Config;
 
-use Mabang\Galaxy\Common\Mq\Channel\Channel;
+
 use Mabang\Galaxy\Common\Mq\Rabbitmq;
 use Mabang\Galaxy\Core\Once;
 
