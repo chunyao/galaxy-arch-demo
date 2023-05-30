@@ -1687,12 +1687,12 @@
         },
         {
             "name": "mabang/galaxy",
-            "version": "v1.0.6",
-            "version_normalized": "1.0.6.0",
+            "version": "v1.0.7",
+            "version_normalized": "1.0.7.0",
             "source": {
                 "type": "git",
                 "url": "https://e.coding.net/mabangerp/public/Galaxy.git",
-                "reference": "45b7b2f71f18906655991eefdacb18233452c29e"
+                "reference": "f41d16585a3041105196571979bb052f6a2f0d38"
             },
             "require": {
                 "php": ">=7.0.0"
