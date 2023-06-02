@@ -37,11 +37,13 @@ class Route
      * @param string $path
      * @param array $handlers
      */
-    public function __construct($router, string $path, array $handlers)
+    public function __construct($router, string $path, $contextType=null, $param=null, array $handlers)
     {
         $this->router = $router;
         $this->path = $path;
         $this->handlers = $handlers;
+        $this->contextType = $contextType;
+        $this->param = $param;
     }
 
     /**
@@ -51,7 +53,7 @@ class Route
     {
         return function (RouteCollector $r) {
             $r->addRoute($this->methods, $this->path, function (Context $ctx) {
-                $this->router->runHandlers($this->handlers, $ctx);
+                $this->router->runHandlers($this->handlers, $ctx, $this->contextType, $this->param);
             });
         };
     }

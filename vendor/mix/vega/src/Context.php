@@ -31,6 +31,8 @@ class Context
      */
     public $request;
 
+    public $reqVo;
+
     /**
      * @var Renderer
      */
@@ -154,7 +156,8 @@ class Context
             throw new RuntimeException('There is no handler that can be executed');
         }
         $handler = array_shift($this->handlers);
-        $handler($this);
+
+        $handler($this, $this->reqVo);
     }
 
     /**
@@ -163,6 +166,11 @@ class Context
     public function withHandlers(array $handlers)
     {
         $this->handlers = $handlers;
+    }
+
+    public function withVo($reqVo)
+    {
+        $this->reqVo = $reqVo;
     }
 
 }

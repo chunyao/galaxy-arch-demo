@@ -71,7 +71,14 @@ class Driver
      */
     public function instance(): \PDO
     {
-        return $this->pdo;
+        if ($this->pdo instanceof \PDO) {
+            return $this->pdo;
+        } else {
+            $this->close();
+            $this->connect();
+            return $this->pdo;
+        }
+
     }
 
     /**
@@ -96,7 +103,7 @@ class Driver
                 $this->password,
                 $this->options()
             );
-        }catch (\PDOException $exception){
+        } catch (\PDOException $exception) {
 
         }
 

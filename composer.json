@@ -2,12 +2,12 @@
 
     "require": {
         "hyperf/nacos": "v2.2.33",
-        "mix/database": "v1.0.1",
+        "mix/database": "v1.0.2",
         "mix/redis": "v1.0.1",
         "mix/grpc": "v1.0.1",
         "mix/validator": "v1.0.2",
         "mix/redis-subscriber": "v3.0.4",
-        "mix/vega": "v3.0.28",
+        "mix/vega": "v1.0.3",
         "elasticsearch/elasticsearch": "v7.0.0",
         "apache/log4php": "2.3.0",
         "hyperf/gotask": "v2.2.10",
@@ -17,7 +17,9 @@
         "php-amqplib/php-amqplib": "v3.5.3",
         "hyperf/amqp": "v1.0.1",
         "doctrine/annotations":"1.14.3",
-        "mabang/galaxy":"v1.0.8"
+        "mabang/galaxy":"v1.1.2",
+        "swoft/bean": "v2.0.11",
+        "illuminate/support": "*"
     },
 
     "autoload-dev": {

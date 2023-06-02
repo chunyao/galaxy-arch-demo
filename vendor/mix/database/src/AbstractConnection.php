@@ -2,8 +2,8 @@
 
 namespace Mix\Database;
 
-use Galaxy\Common\Configur\Cache;
-use Galaxy\Core\Log;
+use Mabang\Galaxy\Common\Configur\Cache;
+use Mabang\Galaxy\Core\Log;
 
 /**
  * Class AbstractConnection
