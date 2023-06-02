@@ -2,7 +2,7 @@
 
     "require": {
         "hyperf/nacos": "v2.2.33",
-        "mix/database": "v1.0.2",
+        "mix/database": "v1.0.3",
         "mix/redis": "v1.0.1",
         "mix/grpc": "v1.0.1",
         "mix/validator": "v1.0.2",
