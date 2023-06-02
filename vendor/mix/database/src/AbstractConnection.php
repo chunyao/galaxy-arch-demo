@@ -197,8 +197,9 @@ abstract class AbstractConnection implements ConnectionInterface
             $success = $this->statement->execute();
             if (!$success) {
                 list($flag, $code, $message) = $this->statement->errorInfo();
+                Log::error(sprintf('SQL %s %d %s %s', $flag, $code, $message,$this->sql));
                 throw new \PDOException(sprintf('%s %d %s', $flag, $code, $message), $code);
-                Log::error(sprintf('SQL %s %d %s', $flag, $code, $message));
+
             }
         } catch (\Throwable $ex) {
             throw $ex;
