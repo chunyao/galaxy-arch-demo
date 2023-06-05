@@ -1,5 +1,4 @@
 .idea
 .idea/*
 logs
-composer.lock
 .DS_Store
