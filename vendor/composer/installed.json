@@ -1956,12 +1956,12 @@
         },
         {
             "name": "mix/database",
-            "version": "v1.0.2",
-            "version_normalized": "1.0.2.0",
+            "version": "v1.0.4",
+            "version_normalized": "1.0.4.0",
             "source": {
                 "type": "git",
                 "url": "https://e.coding.net/mabangerp/public/database.git",
-                "reference": "6763f5277c23b981496715bb3a20a58350f93654"
+                "reference": "0cbbcaff90ed8a35442af8ad7c1ee95f9d18f17c"
             },
             "require": {
                 "ext-pdo": "*",

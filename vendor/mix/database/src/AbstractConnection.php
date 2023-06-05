@@ -134,6 +134,7 @@ abstract class AbstractConnection implements ConnectionInterface
     protected static function isDisconnectException(\Throwable $ex)
     {
         $disconnectMessages = [
+            'be an instance of PDO',
             'server has gone away',
             'no connection to the server',
             'Lost connection',
@@ -202,6 +203,7 @@ abstract class AbstractConnection implements ConnectionInterface
 
             }
         } catch (\Throwable $ex) {
+            Log::error(['sql'=>$this->sql,'data'=>$this->sqlData]);
             throw $ex;
         } finally {
             // 只可执行一次
@@ -603,9 +605,9 @@ abstract class AbstractConnection implements ConnectionInterface
             $pdo = $this->driver->instance();
             return (bool)($pdo ? $pdo->inTransaction() : false);
         } catch (\Throwable $e) {
-            Cache::instance()->incr("mysql-error",1);
+            // Cache::instance()->incr("mysql-error",1);
             Log::error(sprintf('inTransaction %s in %s on line %d', $e->getMessage(), $e->getFile(), $e->getLine()));
-           return false;
+            return false;
         }
     }
 
