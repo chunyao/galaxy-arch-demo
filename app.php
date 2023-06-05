@@ -1,6 +1,7 @@
 <?php
 
 
+use Mabang\Galaxy\Core\Log;
 use Mabang\Galaxy\Core\Server;
 
 require_once __DIR__ . '/service-main/src/App/load.php';

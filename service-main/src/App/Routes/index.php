@@ -13,8 +13,13 @@ use App\Http\Controller\Es\Index;
 
 
 return function (Mix\Vega\Engine $vega,$appName) {
-    $sub = $vega->pathPrefix("/".$appName);
 
+    $sub = $vega->pathPrefix("/" . $appName);
+    //全局切面， 类似lavarel 中间件
+    $sub->use(function (Mix\Vega\Context $ctx) {
+
+        $ctx->next();
+    });
     $sub->handle('/helloword/helloword', [new Helloword(), 'helloword'])->methods('GET');
     $sub->handle('/helloword/co', [new Helloword(), 'co'])->methods('GET');
     $sub->handle('/ht', [new Helloword(), 'ht'])->methods('GET');

@@ -20,6 +20,15 @@ class SubRouter
     protected $engine;
 
     /**
+     * @var \Closure[]
+     */
+    protected $handlers = [];
+
+    protected $contextType;
+
+    protected $param;
+
+    /**
      * Subrouter constructor.
      * @param string $prefix
      * @param Engine $engine
@@ -28,6 +37,7 @@ class SubRouter
     {
         $this->prefix = $prefix;
         $this->engine = $engine;
+
     }
 
     /**
@@ -35,9 +45,28 @@ class SubRouter
      * @param callable ...$handlers
      * @return Route
      */
-    public function handle(string $path, callable ...$handlers): Route
+    public function handle(string $path, string $contextType, string $param, callable ...$handlers): Route
     {
-        return $this->engine->handle($this->prefix . $path, ...$handlers);
+        return $this->engine->handle($this->prefix . $path, $contextType, $param, ...array_merge($this->handlers, $handlers));
+    }
+
+    /**
+     * @param string $prefix
+     * @return RouterPrefix
+     */
+    public function pathPrefix(string $prefix): SubRouter
+    {
+        return new SubRouter($this->prefix . $prefix, $this->engine);
+    }
+
+    /**
+     * @param \Closure ...$handlers
+     * @return Engine
+     */
+    public function use(\Closure ...$handlers): SubRouter
+    {
+        $this->handlers = array_merge($this->handlers, $handlers);
+        return $this;
     }
 
     /**
@@ -47,7 +76,7 @@ class SubRouter
      */
     public function handleFunc(string $path, \Closure ...$handlers): Route
     {
-        return $this->engine->handleFunc($this->prefix . $path, ...$handlers);
+        return $this->engine->handleFunc($this->prefix . $path, ...array_merge($this->handlers, $handlers));
     }
 
     /**
@@ -58,7 +87,7 @@ class SubRouter
      */
     public function handleCall(string $path, callable ...$handlers): Route
     {
-        return $this->handle($path, ...$handlers);
+        return $this->handle($this->prefix . $path, ...array_merge($this->handlers, $handlers));
     }
 
 }

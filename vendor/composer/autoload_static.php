@@ -8,19 +8,29 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
 {
     public static $files = array (
         'bbeb7603826cb9296dde3ca1a840af47' => __DIR__ . '/..' . '/hyperf/utils/src/Functions.php',
-        '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
         '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
+        '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
+        'ba66f41e40a9697abbd6ad188c225b53' => __DIR__ . '/..' . '/swoft/stdlib/src/Helper/Functions.php',
+        '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         'decc78cc4436b1292c6c0d151b19445c' => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib/bootstrap.php',
         'ad155f8f1cf0d418fe49e248db8c661b' => __DIR__ . '/..' . '/react/promise/src/functions_include.php',
+        'a1105708a18b76903365ca1c4aa61b02' => __DIR__ . '/..' . '/symfony/translation/Resources/functions.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
+        '60799491728b879e74601d83e38b2cad' => __DIR__ . '/..' . '/illuminate/collections/helpers.php',
         '253c157292f75eb38082b5acb06f3f01' => __DIR__ . '/..' . '/nikic/fast-route/src/functions.php',
         '9ba6ea2fc24a1ea09e48feb96804a505' => __DIR__ . '/..' . '/spiral/goridge/src/functions.php',
         'fdea4480df6c5882835d3b60a113de4d' => __DIR__ . '/..' . '/hyperf/config/src/Functions.php',
+        '72579e7bd17821bb1321b87411366eae' => __DIR__ . '/..' . '/illuminate/support/helpers.php',
         '32aa72aa0c67442f2236085f30e26ec3' => __DIR__ . '/..' . '/mabang/galaxy/src/Core/function.php',
+        '9ae26d4cc56bd1c2226b67ffc59eacc2' => __DIR__ . '/..' . '/swoft/bean/src/Helper/Functions.php',
     );
 
     public static $prefixLengthsPsr4 = array (
+        'v' => 
+        array (
+            'voku\\' => 5,
+        ),
         'p' => 
         array (
             'phpseclib3\\' => 11,
@@ -28,9 +38,16 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         'S' => 
         array (
             'Symfony\\Polyfill\\Php80\\' => 23,
+            'Symfony\\Polyfill\\Mbstring\\' => 26,
+            'Symfony\\Contracts\\Translation\\' => 30,
             'Symfony\\Contracts\\EventDispatcher\\' => 34,
+            'Symfony\\Component\\Translation\\' => 30,
             'Symfony\\Component\\Finder\\' => 25,
             'Symfony\\Component\\EventDispatcher\\' => 34,
+            'Swoft\\Stdlib\\' => 13,
+            'Swoft\\Event\\' => 12,
+            'Swoft\\Bean\\' => 11,
+            'Swoft\\Annotation\\' => 17,
             'Spiral\\Goridge\\' => 15,
         ),
         'R' => 
@@ -39,6 +56,7 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         ),
         'P' => 
         array (
+            'Psr\\SimpleCache\\' => 16,
             'Psr\\Log\\' => 8,
             'Psr\\Http\\Message\\' => 17,
             'Psr\\Http\\Client\\' => 16,
@@ -46,6 +64,7 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
             'Psr\\Container\\' => 14,
             'Psr\\Cache\\' => 10,
             'Php\\' => 4,
+            'PhpDocReader\\' => 13,
             'PhpAmqpLib\\' => 11,
             'ParagonIE\\ConstantTime\\' => 23,
         ),
@@ -67,6 +86,11 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         'L' => 
         array (
             'Lukasoppermann\\Httpstatus\\' => 26,
+        ),
+        'I' => 
+        array (
+            'Illuminate\\Support\\' => 19,
+            'Illuminate\\Contracts\\' => 21,
         ),
         'H' => 
         array (
@@ -109,9 +133,17 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
             'Doctrine\\Common\\Lexer\\' => 22,
             'Doctrine\\Common\\Annotations\\' => 28,
         ),
+        'C' => 
+        array (
+            'Carbon\\' => 7,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
+        'voku\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/voku/portable-ascii/src/voku',
+        ),
         'phpseclib3\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib',
@@ -120,9 +152,21 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-php80',
         ),
+        'Symfony\\Polyfill\\Mbstring\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
+        ),
+        'Symfony\\Contracts\\Translation\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/translation-contracts',
+        ),
         'Symfony\\Contracts\\EventDispatcher\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/event-dispatcher-contracts',
+        ),
+        'Symfony\\Component\\Translation\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/translation',
         ),
         'Symfony\\Component\\Finder\\' => 
         array (
@@ -132,6 +176,22 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         array (
             0 => __DIR__ . '/..' . '/symfony/event-dispatcher',
         ),
+        'Swoft\\Stdlib\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/swoft/stdlib/src',
+        ),
+        'Swoft\\Event\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/swoft/event/src',
+        ),
+        'Swoft\\Bean\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/swoft/bean/src',
+        ),
+        'Swoft\\Annotation\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/swoft/annotation/src',
+        ),
         'Spiral\\Goridge\\' => 
         array (
             0 => __DIR__ . '/..' . '/spiral/goridge/src',
@@ -139,6 +199,10 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         'React\\Promise\\' => 
         array (
             0 => __DIR__ . '/..' . '/react/promise/src',
+        ),
+        'Psr\\SimpleCache\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/simple-cache/src',
         ),
         'Psr\\Log\\' => 
         array (
@@ -168,6 +232,10 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         'Php\\' => 
         array (
             0 => __DIR__ . '/../..' . '/archDemoSpi/Php',
+        ),
+        'PhpDocReader\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/php-di/phpdoc-reader/src/PhpDocReader',
         ),
         'PhpAmqpLib\\' => 
         array (
@@ -228,6 +296,16 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         'Lukasoppermann\\Httpstatus\\' => 
         array (
             0 => __DIR__ . '/..' . '/lukasoppermann/http-status/src',
+        ),
+        'Illuminate\\Support\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/illuminate/collections',
+            1 => __DIR__ . '/..' . '/illuminate/macroable',
+            2 => __DIR__ . '/..' . '/illuminate/support',
+        ),
+        'Illuminate\\Contracts\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/illuminate/contracts',
         ),
         'Hyperf\\Utils\\' => 
         array (
@@ -332,6 +410,10 @@ class ComposerStaticInit630bffd2db6c139d56e79c9abc7e1a03
         'Doctrine\\Common\\Annotations\\' => 
         array (
             0 => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations',
+        ),
+        'Carbon\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon',
         ),
     );
 

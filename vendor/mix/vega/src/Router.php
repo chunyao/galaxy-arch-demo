@@ -45,9 +45,9 @@ trait Router
      * @param callable ...$handlers
      * @return Route
      */
-    public function handle(string $path, callable ...$handlers): Route
+    public function handle(string $path, string $contextType = null, string $param = null, callable ...$handlers): Route
     {
-        $route = new Route($this, $path, array_merge($this->handlers, $handlers));
+        $route = new Route($this, $path, $contextType, $param, array_merge($this->handlers, $handlers));
         $this->routes[] = $route;
         return $route;
     }
@@ -137,18 +137,42 @@ trait Router
      * @param array $handlers
      * @param Context $ctx
      */
-    public function runHandlers(array $handlers, Context $ctx): void
+    public function runHandlers(array $handlers, Context $ctx, $contextType = null, $param = null): void
     {
         if (empty($handlers)) {
             return;
         }
-
+        $reqVo = null;
         $this->unshift404Handler($handlers);
         $this->unshiftAbortHandler($handlers);
 
         $handler = array_shift($handlers);
         $ctx->withHandlers($handlers);
-        $handler($ctx);
+
+        if (isset($param) && $contextType == 'JSON') {
+            $ctx->withVo(new $param(json_decode($ctx->rawData(), 1)));
+        } elseif (isset($param) && ($contextType == 'QUERY' || $contextType == 'REGEX'|| $contextType == 'FORM')) {
+            $tmp = [];
+            $reflectionClass = new \ReflectionClass($param);
+            $properties = $reflectionClass->getProperties();
+            foreach ($properties as $property) {
+                if (preg_match('/(App)/', $property->class)) {
+                    if ( $contextType !== 'FORM'){
+                        $tmp[$property->name] = $ctx->defaultQuery($property->name, '');
+                    }else{
+                        $tmp[$property->name] = $ctx->defaultPostForm($property->name, '');
+                    }
+
+                }
+
+            }
+            $ctx->withVo(new $param($tmp));
+            unset($tmp);
+        }elseif  (isset($param) && (  $contextType == 'FORM')){
+
+        }
+
+        $handler($ctx, $reqVo);
     }
 
     /**

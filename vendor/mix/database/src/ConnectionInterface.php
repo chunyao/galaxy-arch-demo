@@ -67,6 +67,8 @@ interface ConnectionInterface
 
     public function updates(array $data): ConnectionInterface;
 
+
+
     public function update(string $field, $value): ConnectionInterface;
 
     public function delete(): ConnectionInterface;

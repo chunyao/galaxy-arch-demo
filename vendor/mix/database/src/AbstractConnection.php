@@ -2,8 +2,8 @@
 
 namespace Mix\Database;
 
-use Galaxy\Common\Configur\Cache;
-use Galaxy\Core\Log;
+use Mabang\Galaxy\Common\Configur\Cache;
+use Mabang\Galaxy\Core\Log;
 
 /**
  * Class AbstractConnection
@@ -134,6 +134,7 @@ abstract class AbstractConnection implements ConnectionInterface
     protected static function isDisconnectException(\Throwable $ex)
     {
         $disconnectMessages = [
+            'be an instance of PDO',
             'server has gone away',
             'no connection to the server',
             'Lost connection',
@@ -197,10 +198,12 @@ abstract class AbstractConnection implements ConnectionInterface
             $success = $this->statement->execute();
             if (!$success) {
                 list($flag, $code, $message) = $this->statement->errorInfo();
+                Log::error(sprintf('SQL %s %d %s %s', $flag, $code, $message,$this->sql));
                 throw new \PDOException(sprintf('%s %d %s', $flag, $code, $message), $code);
-                Log::error(sprintf('SQL %s %d %s', $flag, $code, $message));
+
             }
         } catch (\Throwable $ex) {
+            Log::error(['sql'=>$this->sql,'data'=>$this->sqlData]);
             throw $ex;
         } finally {
             // 只可执行一次
@@ -602,9 +605,9 @@ abstract class AbstractConnection implements ConnectionInterface
             $pdo = $this->driver->instance();
             return (bool)($pdo ? $pdo->inTransaction() : false);
         } catch (\Throwable $e) {
-            Cache::instance()->incr("mysql-error",1);
+            // Cache::instance()->incr("mysql-error",1);
             Log::error(sprintf('inTransaction %s in %s on line %d', $e->getMessage(), $e->getFile(), $e->getLine()));
-           return false;
+            return false;
         }
     }
 
