@@ -1,0 +1,1 @@
+{"version":1,"defects":{"SwoftTest\\Bean\\Unit\\BeanTest::testType":4,"SwoftTest\\Bean\\Unit\\BeanTest::testCreate":4,"SwoftTest\\Bean\\Unit\\DefinitionTest::testSingle":4},"times":{"SwoftTest\\Bean\\Unit\\BeanTest::testType":0.005,"SwoftTest\\Bean\\Unit\\BeanTest::testCreate":0.001,"SwoftTest\\Bean\\Unit\\DefinitionTest::testSingle":0.005}}

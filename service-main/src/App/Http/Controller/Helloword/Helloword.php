@@ -7,15 +7,19 @@ namespace App\Http\Controller\Helloword;
 use App\Config\MG;
 use App\Config\RDS;
 
+use App\Http\Vo\LocalCache\ReqVo;
 use App\Repository\Model\Mongo\Product;
 use App\Service\CoDemoService;
 use App\Service\WishbrandService;
 
 
 use App\Service\MsgService;
+use Mabang\Galaxy\Common\Annotation\Autowired;
+use Mabang\Galaxy\Common\Annotation\Route;
 use Mabang\Galaxy\Core\BaseController;
 use Mix\Vega\Context;
 
+use setasign\Fpdi\Fpdi;
 use Swoole\Coroutine as co;
 use Swoole;
 
@@ -25,21 +29,28 @@ class Helloword extends BaseController
     private Product $product;
     private WishbrandService $wishbrandService;
 
-    private CoDemoService   $coDemoServicel;
+   // private CoDemoService $coDemoServicel;
 
+    /**
+     * @Autowired()
+     * @var CoDemoService
+     */
+    private CoDemoService $coDemoService;
     public function __construct()
     {
-        $this->coDemoServicel = new CoDemoService();
+       // $this->coDemoServicel = new CoDemoService();
 
         //    $this->product = new Product();
         //   $this->msgSevice = new MsgService();
         //   $this->wishbrandService = new WishbrandService();
     }
-    public function ht(Context $ctx){
+
+    public function ht(Context $ctx)
+    {
         $body = $ctx->getQuery("get");
         co::set(['hook_flags' => SWOOLE_HOOK_CURL]);
-        co::create(function() use($body) {
-          var_dump($body);
+        co::create(function () use ($body) {
+            var_dump($body);
         });
 
         $ctx->JSON(200, [
@@ -53,10 +64,10 @@ class Helloword extends BaseController
     {
         $content = rest_curl("https://www.aliexpress.com/item/1005004776275393.html?spm=a2g0o.store_pc_allProduct.8148356.70.71af1012crtwjQ&pdp_npi=2%40dis%21USD%21US%20%2442.28%21US%20%2417.33%21US%20%2417.33%21%21%21%21%400bb47a1916652226221503654e5492%2112000030439459006%21sh", "GET");
 
-        $preg='/window\._dida_config_\._init_data_= (.*?)<\/script>/';
-        preg_match_all($preg,$content,$array);
+        $preg = '/window\._dida_config_\._init_data_= (.*?)<\/script>/';
+        preg_match_all($preg, $content, $array);
 
-        $str=preg_replace('/data/','"data"',$array[1][0],1);
+        $str = preg_replace('/data/', '"data"', $array[1][0], 1);
 
         echo $str;
         $ctx->JSON(200, [
@@ -65,33 +76,58 @@ class Helloword extends BaseController
             'data' => 1
         ]);
     }
-    public function co(Context $ctx)
+    /**
+     * @Route(route="/test/co",method="GET",contextType="QUERY",param="\App\Http\Vo\LocalCache\ReqVo")
+     */
+    public function co(Context $ctx, ReqVo $reqVo)
     {
         $data = $ctx->getJSON();
         /*构造demo*/
         $data = [];
-        for ($i=0;$i<10;$i++){
-            $data[$i]['reqData']='reqData_'.$i;
-            $data[$i]['result']='result_'.$i;
+        for ($i = 0; $i < 10; $i++) {
+            $data[$i]['reqData'] = 'reqData_' . $i;
+            $data[$i]['result'] = 'result_' . $i;
         }
-       $result=  $this->coDemoServicel->iniProcess($data);
+        $result = $this->coDemoService->iniProcess($data);
         $ctx->JSON(200, [
             'code' => 200,
             'message' => 'success',
             'data' => $result
         ]);
     }
-    public function helloword(Context $ctx)
+
+    /**
+     * @Route(route="/pdf/get",method="GET",contextType="QUERY",param="\App\Http\Vo\LocalCache\ReqVo")
+     */
+    public function helloword(Context $ctx, ReqVo $reqVo)
     {
-      //  var_dump($ctx->getQuery('test'));
-     //   var_dump($ctx->getQuery('test2'));
+        $file = ROOT_PATH.'/data/pdf/3018011676000312.3811.pdf';
+        $saveFile = ROOT_PATH.'/data/pdf/new.pdf';
+        $pdf = new Fpdi('P', 'mm', array(279.4, 215.86));
+#设置模版对象
+        $pdf->AddPage();
+        $pdf->setSourceFile($file);
+        $tplIdx = $pdf->importPage(1);
+        $pdf->useTemplate($tplIdx, 0, 0, null, null,1);
+#设置字体以及大小
+        $pdf->SetFont('Helvetica', '', 20);
+#设置字体颜色
+        $pdf->SetTextColor(0, 0, 0);
+#填充指定区域
+        $pdf->SetXY(13.5, 103);
+#填充指定内容
+        $pdf->Write(0, 'Made In China');
+#保存指定路径【F：保存成PDF，I：浏览器展示PDF，D：下载PDF】
+        $pdf->Output('F', $saveFile);
+        //  var_dump($ctx->getQuery('test'));
+        //   var_dump($ctx->getQuery('test2'));
         /*ES*/
 
         /*mongo*/
-        $n =[];
-       $data = MG::instance()->tableSuffix('user',100)->unfield(['name'])->limit(2)->select();
-     //   $id=0;
-       //
+        $n = [];
+   //     $data = MG::instance()->tableSuffix('user', 100)->unfield(['name'])->limit(2)->select();
+        //   $id=0;
+        //
 //        $data=[];
 //        for ($i=1;$i<10;$i++){
 //            $row['id'] = $i;
@@ -105,7 +141,7 @@ class Helloword extends BaseController
         $ctx->JSON(200, [
             'code' => 200,
             'message' => 'success',
-            'data' =>$data
+            'data' => 1
         ]);
         /* $data = $this->product->insertData();
          $ctx->JSON(200, [
@@ -128,24 +164,24 @@ class Helloword extends BaseController
         //  $indexData = ES::instance()->getDocumentById("57ce61f064e915204367f296");
 
 
-       // if (!RDS::instance()->set(App::$innerConfig['rabbitmq.queue'][0] . ":" . $this->msg['messageId'], 1, array('nx', 'ex' => 30000))) {
+        // if (!RDS::instance()->set(App::$innerConfig['rabbitmq.queue'][0] . ":" . $this->msg['messageId'], 1, array('nx', 'ex' => 30000))) {
 
-            $ctx->JSON(200, [
-                'code' => 200,
-                'message' => 'success',
-                'data' => RDS::instance()->set("qweqwe", 1, array('nx', 'ex' => 30000))
-            ]);
+        $ctx->JSON(200, [
+            'code' => 200,
+            'message' => 'success',
+            'data' => RDS::instance()->set("qweqwe", 1, array('nx', 'ex' => 30000))
+        ]);
 
-          //  echo "消息重复消费 id:" . $this->msg['id'] . "\n";
-            //   log::info("消息重复消费 id:". $this->msg['id']);
-       //     return true;
-      /*  } else {
-            $ctx->JSON(200, [
-                'code' => 200,
-                'message' => 'success',
-                'data' => RDS::instance()->set("qweqwe", 1, array('nx', 'ex' => 30000))
-            ]);
-        }*/
+        //  echo "消息重复消费 id:" . $this->msg['id'] . "\n";
+        //   log::info("消息重复消费 id:". $this->msg['id']);
+        //     return true;
+        /*  } else {
+              $ctx->JSON(200, [
+                  'code' => 200,
+                  'message' => 'success',
+                  'data' => RDS::instance()->set("qweqwe", 1, array('nx', 'ex' => 30000))
+              ]);
+          }*/
 
         /*
           $id = rand(1, 239368);
@@ -172,7 +208,7 @@ class Helloword extends BaseController
 
     public function snow(Context $ctx)
     {
-        $n =0;
+        $n = 0;
         $chan1 = new Swoole\Coroutine\Channel(1);
         co::create(function () use ($chan1) {
             $snowId = SnowFlake::instance()->generateID();
@@ -181,16 +217,16 @@ class Helloword extends BaseController
             sleep(5);
         });
 
-       /* if ( Cache::instance()->get((string)$snowId)){
-            echo "重复";
-        }
-        Cache::instance()->set((string)$snowId,"1",30000);
-*/
+        /* if ( Cache::instance()->get((string)$snowId)){
+             echo "重复";
+         }
+         Cache::instance()->set((string)$snowId,"1",30000);
+ */
 
         $ctx->JSON(200, [
             'code' => 10200,
             'message' => 'success',
-            'data' =>  $chan1->pop()
+            'data' => $chan1->pop()
         ]);
 
     }

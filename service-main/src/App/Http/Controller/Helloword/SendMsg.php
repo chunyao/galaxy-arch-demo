@@ -4,9 +4,10 @@ namespace App\Http\Controller\Helloword;
 
 use App;
 use App\Config\MQ;
+use App\Http\Vo\LocalCache\ReqVo;
 use co;
+use Mabang\Galaxy\Common\Annotation\Route;
 use Mabang\Galaxy\Common\Configur\SnowFlake;
-use Mabang\Galaxy\Common\Utils\SnowFlakeUtils;
 use Mix\Vega\Context;
 
 
@@ -17,10 +18,6 @@ class SendMsg
     private $routekey = "Qwer1234";
     private $snowFlak;
 
-    public function __construct()
-    {
-
-    }
 
     public function send(Context $ctx)
     {
@@ -33,10 +30,12 @@ class SendMsg
             'data' => $body
         ]);
     }
-
-    public function handler(Context $ctx)
+    /**
+     * @Route(route="/msg/send",method="GET",contextType="QUERY",param="\App\Http\Vo\LocalCache\ReqVo")
+     */
+    public function handler(Context $ctx,ReqVo $reqVo)
     {
-        go(function () {
+      //  go(function () {
             for ($i = 0; $i < 1000; $i++) {
 
                 $id = SnowFlake::instance()->generateID();
@@ -47,7 +46,7 @@ class SendMsg
 
             }
 
-        });
+    //    });
 
 
         $ctx->JSON(200, [

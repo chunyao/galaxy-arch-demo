@@ -54,7 +54,7 @@
 
 	public function activateOptions() {
 		$this->fp = fopen($this->target, 'w');
-		if(is_resource($this->fp) && $this->layout !== null) {
+		if(is_resource($this->fp) && $this->layout->getHeader() !== null) {
 			fwrite($this->fp, $this->layout->getHeader());
 		}
 		$this->closed = (bool)is_resource($this->fp) === false;
@@ -63,7 +63,7 @@
 	
 	public function close() {
 		if($this->closed != true) {
-			if (is_resource($this->fp) && $this->layout !== null) {
+			if (is_resource($this->fp) && $this->layout->getFooter() !== null) {
 				fwrite($this->fp, $this->layout->getFooter());
 				fclose($this->fp);
 			}
