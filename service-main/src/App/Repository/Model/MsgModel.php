@@ -24,7 +24,8 @@ class MsgModel
 
     public function insertMsg(array $msg):int
     {
-        $id = DB::instance()->insert($this->table,$msg)->lastInsertId();
+
+        $id = DB::instance()->batchInsert( DB::instance()->getTableSuffix( $this->table,100,10),$msg)->lastInsertId();
         return $id;
     }
 

@@ -17,7 +17,7 @@
         "php-amqplib/php-amqplib": "v3.5.3",
         "hyperf/amqp": "v1.0.1",
         "doctrine/annotations":"1.14.3",
-        "mabang/galaxy":"v1.1.4",
+        "mabang/galaxy":"v1.1.7",
         "illuminate/support": "*",
         "setasign/fpdi": "^2.3",
         "fpdf/fpdf": "^1.85",
