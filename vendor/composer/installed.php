@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => '__root__',
-        'pretty_version' => 'dev-develop',
-        'version' => 'dev-develop',
-        'reference' => '845a5703d18e2bb6410044909db2a2e4e6eebe73',
+        'pretty_version' => 'dev-master',
+        'version' => 'dev-master',
+        'reference' => '71d4895e66904253b6bc725122c98a1c6c162af3',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -11,9 +11,9 @@
     ),
     'versions' => array(
         '__root__' => array(
-            'pretty_version' => 'dev-develop',
-            'version' => 'dev-develop',
-            'reference' => '845a5703d18e2bb6410044909db2a2e4e6eebe73',
+            'pretty_version' => 'dev-master',
+            'version' => 'dev-master',
+            'reference' => '71d4895e66904253b6bc725122c98a1c6c162af3',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -281,9 +281,9 @@
             'dev_requirement' => false,
         ),
         'mabang/galaxy' => array(
-            'pretty_version' => 'v1.1.9',
-            'version' => '1.1.9.0',
-            'reference' => 'b28e22010fa120eb549b5fa6e3c05a24a31b9bca',
+            'pretty_version' => 'v1.1.12',
+            'version' => '1.1.12.0',
+            'reference' => 'c0a8592c1a67d74f2aad3ae8adf184a40d9a9afd',
             'type' => 'library',
             'install_path' => __DIR__ . '/../mabang/galaxy',
             'aliases' => array(),
