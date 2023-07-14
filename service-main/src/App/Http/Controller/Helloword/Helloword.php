@@ -125,7 +125,7 @@ class Helloword extends BaseController
 
         /*mongo*/
         $n = [];
-   //     $data = MG::instance()->tableSuffix('user', 100)->unfield(['name'])->limit(2)->select();
+        $data = MG::instance()->tableSuffix('user', 100)->unfield(['name'])->limit(2)->select();
         //   $id=0;
         //
 //        $data=[];
