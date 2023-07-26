@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e78478b04013dde926ff76af3777857f",
+    "content-hash": "1e46e895486c50922e6f246125cb8624",
     "packages": [
         {
             "name": "apache/log4php",
@@ -1834,11 +1834,11 @@
         },
         {
             "name": "mabang/galaxy",
-            "version": "v1.1.11",
+            "version": "v1.1.12",
             "source": {
                 "type": "git",
                 "url": "https://e.coding.net/mabangerp/public/Galaxy.git",
-                "reference": "f535f0c3d9a986f202973d740bd0ca8b94d7e37c"
+                "reference": "c0a8592c1a67d74f2aad3ae8adf184a40d9a9afd"
             },
             "require": {
                 "php": ">=7.0.0"
