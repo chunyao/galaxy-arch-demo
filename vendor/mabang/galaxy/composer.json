@@ -1,0 +1,32 @@
+{
+  "name": "mabang/galaxy",
+  "description": "Mabang mirco service framework",
+  "type": "library",
+  "keywords": [
+    "mabang",
+    "framework"
+  ],
+  "homepage": "https://www.mabangerp.com",
+  "license": "Apache-2.0",
+  "authors": [
+    {
+      "name": "yao.chun",
+      "email": "chunyao@mabangerp.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.4.0",
+    "ext-pdo": "*",
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^7.0.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "files": [
+        "src/Core/function.php"
+      ],
+      "Mabang\\Galaxy\\": "src/"
+    }
+  }
+}
