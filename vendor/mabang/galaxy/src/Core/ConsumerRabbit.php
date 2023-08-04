@@ -41,9 +41,11 @@ class ConsumerRabbit
         $config['user'] =$this->config['rabbitmq.username'];
         $config['password'] =$this->config['rabbitmq.password'];
         $config['vhost'] =$this->config['rabbitmq.vhost'][$vhost];
-        $config['read_write_timeout'] = 600;
-        $config['heartbeat'] =300;
-        $config['keepalive'] =true;
+        $config['params']['read_write_timeout'] = 600;
+        $config['params']['channel_rpc_timeout'] = 600;
+        $config['params']['heartbeat'] =20;
+        $config['params']['keepalive'] =true;
+        $config['params']['maxIdleChannels'] =10;
 
         return  (new ConnectionFactory($config))->getConnection('rabbit');
     }
