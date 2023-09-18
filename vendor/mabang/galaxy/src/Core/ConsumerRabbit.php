@@ -11,7 +11,6 @@ use PhpAmqpLib\Connection\AMQPSocketConnection;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 
 
-
 class ConsumerRabbit
 {
     private AMQPConnection $con;
@@ -38,16 +37,15 @@ class ConsumerRabbit
             $config['port'] = $this->config['rabbitmq.port'];
         }
 
-        $config['user'] =$this->config['rabbitmq.username'];
-        $config['password'] =$this->config['rabbitmq.password'];
-        $config['vhost'] =$this->config['rabbitmq.vhost'][$vhost];
+        $config['user'] = $this->config['rabbitmq.username'];
+        $config['password'] = $this->config['rabbitmq.password'];
+        $config['vhost'] = $this->config['rabbitmq.vhost'][$vhost];
         $config['params']['read_write_timeout'] = 600;
         $config['params']['channel_rpc_timeout'] = 600;
-        $config['params']['heartbeat'] =20;
-        $config['params']['keepalive'] =true;
-        $config['params']['maxIdleChannels'] =10;
-
-        return  (new ConnectionFactory($config))->getConnection('rabbit');
+        $config['params']['heartbeat'] = 300;
+        $config['params']['keepalive'] = true;
+        $config['params']['connection_timeout'] = 10;
+        return (new ConnectionFactory($config))->getConnection('rabbit');
     }
 
     public function initQueues($ch, $i)
@@ -57,13 +55,14 @@ class ConsumerRabbit
             $concurrent = new Concurrent($this->config['rabbitmq.queue.num'][$i]);
             if (isset($this->config['rabbitmq.queue.num'][$i])) {
                 for ($k = 0; $k < $this->config['rabbitmq.queue.num'][$i]; $k++) {
-                    $concurrent->create(function( ) use($i,$con){
-                        (new Consumer($this->config))->consumeMessage($i, $this->url,$con);
+                    sleep(3);
+                    $concurrent->create(function () use ($i, $con) {
+                        (new Consumer($this->config))->consumeMessage($i, $this->url, $con);
                     });
                 }
             } else {
-                $concurrent->create(function( ) use($i,$con){
-                    (new Consumer($this->config))->consumeMessage($i, $this->url,$con);
+                $concurrent->create(function () use ($i, $con) {
+                    (new Consumer($this->config))->consumeMessage($i, $this->url, $con);
                 });
             }
         } catch (\Throwable $ex) {
@@ -76,6 +75,7 @@ class ConsumerRabbit
             }
 
         }
+        return $concurrent;
 
     }
 

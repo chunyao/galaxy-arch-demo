@@ -42,21 +42,28 @@ class LocalCacheController
 
         $time = time();
         $url  = "http://127.0.0.1:8081/healthz/readiness";
+      //  $url  = "https://www.baidu.com";
         $client = new Client();
         $fn=[];
-        for ($i=0;$i<=1;$i++){
+        for ($i=0;$i<=10000;$i++){
+         HttpClient::instance()->request('GET',$url,[
+                 'options'=>['headers' => ['Connection' => 'keep-alive','Keep-Alive'=>300]],
+             ]);
           //
-        //  $result = $client->request('GET',$url,['headers' => ['Connection' => 'keep-alive','Keep-Alive'=>300]])->getBody()->getContents();
+    //       $client->request('GET',$url,['headers' => ['Connection' => 'keep-alive','Keep-Alive'=>300]])->getBody()->getContents() ;
             $fn[] = function ()use ($url){
-            //    print_r(HttpClient::instance()->poolStats());
-             return HttpClient::instance()->request('GET',$url,['headers' => ['Connection' => 'keep-alive','Keep-Alive'=>300]])->getBody()->getContents();
+             print_r(HttpClient::instance()->poolStats());
+             return HttpClient::instance()->request('GET',$url,[
+                 'options'=>['headers' => ['Connection' => 'keep-alive','Keep-Alive'=>300]],
+             ]);
             };
 
         }
-        $response = parallel($fn,1000);
+      $response = parallel($fn,10000);
+
         $time1 = time()-$time;
 
-        //var_dump($result);
+    //    var_dump($response);
         $cache = Cache::instance()->get($reqVo->key);
         Result::ok($ctx, $time1);
 

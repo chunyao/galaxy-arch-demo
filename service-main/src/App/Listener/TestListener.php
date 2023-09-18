@@ -3,25 +3,14 @@
 namespace App\Listener;
 
 
-use App\Config\RDS;
-use App\Service\MsgProxyService;
-use Swoole;
 use Mabang\Galaxy\Core\Log;
-use Mabang\Galaxy\Service\QueueService;
-use App\Service\MsgService;
+
 
 use App;
 
 class TestListener
 {
 
-    private QueueService $queueService;
-
-    public array $msg;
-
-    private MsgService $msgService;
-
-    private MsgProxyService $msgProxy;
 
     /*该函数固定且必须*/
     /* 公有曰 1 对应 aaaa
@@ -33,24 +22,11 @@ class TestListener
         return App::$innerConfig['rabbitmq.queue'][0];
     }
 
-    public function __construct($msg)
-    {
-        /**
-         * 公有云 1 对应 aaaa
-         * 私有云 1 对应 qqqq
-         **/
-        //    $this->queueService = new QueueService();
-        $this->msgService = new MsgService();
-        //       $this->msgProxy = new MsgProxyService();
-        $this->msg = $msg;
-
-    }
-
     /* handler 为固定函数，return true or false，ack 强依赖 */
-    public function handler(): bool
+    public function handler($msg): bool
     {
-
-        Log::info("消息消费 id:" . $this->msg['messageId']);
+        sleep(1);
+        Log::info("消息消费 id:" . $msg['messageId']);
 
         return true;
         /* 整理 接受msseage 消息*/
@@ -81,9 +57,7 @@ class TestListener
 
     public function __destruct()
     {
-        unset($this->msgService);
-        //  unset($this->QueueService);
-        //  unset($this->msgProxy);
+
 
     }
 

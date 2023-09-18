@@ -23,7 +23,7 @@ class Rabbitmq
     protected $password;
     protected $vhost;
     private $i = 0;
-    public  $driver;
+    public $driver;
 
     public $ack = false;
 
@@ -53,18 +53,18 @@ class Rabbitmq
     /**
      * @throws Exception
      */
-    public function publish($messageBody, $exchange, $routeKey, $head = [], $ack = 0, $gzip = 0)
+    public function publish($messageBody, $exchange, $routeKey, $head = [], $ack = 0, $gzip = 0, $retry = 1)
     {
         $status = 0;
         try {
-            $header= array_merge(array('content_type' => 'application/json', 'delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT), $head);
-            if ($gzip){
-                $messageBody=gzcompress($messageBody,9);
+            $header = array_merge(array('content_type' => 'application/json', 'delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT), $head);
+            if ($gzip) {
+                $messageBody = gzcompress($messageBody, 9);
                 $header = array_merge(array('content_type' => 'application/gzip', 'delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT), $head);
             }
             $message = new AMQPMessage($messageBody, $header);
             //推送成功
-            $channel =  $this->driver->con->getChannel();
+            $channel = $this->driver->con->getChannel();
             if ($ack === 1) {
                 $this->ack = true;
                 $channel->set_ack_handler(
@@ -76,19 +76,28 @@ class Rabbitmq
 
                 $channel->confirm_select();
             }
-            $channel->basic_publish($message, $exchange, $routeKey,true);
+            $channel->basic_publish($message, $exchange, $routeKey, true);
 
             if ($ack === 1) {
                 $channel->wait_for_pending_acks_returns();
-                $this->driver->con->releaseChannel($channel,true);
+                $this->driver->con->releaseChannel($channel, true);
                 //  $this->driver->close();
                 //   $this->driver->reconnect();
             }
             $this->ack = false;
             //    unset($message);
         } catch (\Throwable $ex) {
-            Log::error(sprintf('message publish: %s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));
-            throw new Exception($ex);
+            sleep(3);
+            $this->driver = new Driver(
+                $this->host,
+                $this->port,
+                $this->username,
+                $this->password,
+                $this->vhost,
+                $this->ch,
+            );
+            $status = $this->publish($messageBody, $exchange, $routeKey, $head, $ack = 0, $gzip, $retry);
+            Log::error(sprintf('message publish: %s in %s on line %d 重试status %d', $ex->getMessage(), $ex->getFile(), $ex->getLine(),$status));
         }
         // 响应ack
         //  unset($messageBody);
@@ -120,7 +129,6 @@ class Rabbitmq
         );
 
     }
-
 
 
     /**

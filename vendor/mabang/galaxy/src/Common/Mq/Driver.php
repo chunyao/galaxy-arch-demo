@@ -94,9 +94,11 @@ class Driver
         $config['user'] = $this->username;
         $config['password'] = $this->password;
         $config['vhost'] = $this->vhost;
-        $config['read_write_timeout'] = 600;
-        $config['heartbeat'] = 300;
-        $config['keepalive'] = true;
+        $config['params']['read_write_timeout'] =  600;
+        $config['params']['channel_rpc_timeout'] = 600;
+        $config['params']['heartbeat'] = 20;
+        $config['params']['keepalive'] = true;
+        $config['params']['maxIdleChannels'] = 10;
         $this->config = $config;
         $this->con = (new ConnectionFactory($this->config))->getConnection('rabbitProduce');
        // $this->connect();

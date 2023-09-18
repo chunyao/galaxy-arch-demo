@@ -3,7 +3,7 @@
 namespace Mabang\Galaxy\Common\HttpClient;
 
 use Mix\ObjectPool\ObjectTrait;
-use GuzzleHttp\Client;
+
 /**
  * Class Driver
  * @package Mabang\Galaxy\Common\HttpClient
@@ -28,7 +28,7 @@ class Driver
      * Get instance
      * @return Client
      */
-    public function instance(): Client
+    public function instance(): Http
     {
         return $this->client;
     }
@@ -39,7 +39,7 @@ class Driver
      */
     public function connect()
     {
-        $this->client = new Client();
+        $this->client = new Http();
     }
 
     /**
@@ -47,7 +47,7 @@ class Driver
      */
     public function close()
     {
-        $this->client = null;
+        $this->client->close;
     }
 
 }

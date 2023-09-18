@@ -130,7 +130,8 @@ function dintval($int, $allowarray = false)
 
     return $ret;
 }
-if (! function_exists('parallel')) {
+
+if (!function_exists('parallel')) {
     /**
      * @param callable[] $callables
      * @param int $concurrent if $concurrent is equal to 0, that means unlimited
@@ -148,7 +149,7 @@ if (! function_exists('parallel')) {
 function rest_curl($url, $method, $header = array(), $data = null)
 {
     $headers = array("Expect :");
-    $headers = array_merge($headers,$header);
+    $headers = array_merge($headers, $header);
     $handle = curl_init();
     if ($header) {
         curl_setopt($handle, CURLOPT_HTTPHEADER, $headers);
@@ -258,26 +259,36 @@ function rest_post_use($url, $data, $type, $cookie)
 }
 
 
-function rest_post($url, $data, $timeout = 10)
+function rest_post($url, $data, $timeout = 10, $keeplive = false)
 {
 
     $data_string = json_encode($data);
 
-    $ch = curl_init($url);
+    $ch = curl_setopt($url);
+    if ($keeplive) {
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt(curl, CURLOPT_TCP_KEEPALIVE, 1);
+        /* keep-alive idle time to 120 seconds */
+        curl_setopt(curl, CURLOPT_TCP_KEEPIDLE, $timeout);
+        /* interval time between keep-alive probes: 60 seconds */
+        curl_setopt(curl, CURLOPT_TCP_KEEPINTVL, 60);
+
+    }
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
     curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
     curl_setopt($ch, CURLOPT_HTTPHEADER, array(
             'Content-Type: application/json')
     );
-    $data = curl_exec($ch);
+    $data = curl_easy_exec($ch);
     curl_close($ch);
     //	print_r($data);
     return $data;
 }
 
-function httpRequest($url, $data, $method = 'POST', $timeout = 60, $isRetry = false, $debug=false)
+function httpRequest($url, $data, $method = 'POST', $timeout = 60, $isRetry = false, $debug = false)
 {
     $urlarr = parse_url($url);
     $ch = curl_init();

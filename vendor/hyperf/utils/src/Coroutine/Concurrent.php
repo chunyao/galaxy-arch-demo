@@ -11,13 +11,10 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\Coroutine;
 
-use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Engine\Channel;
-use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Coroutine;
 use Swoole\Runtime;
-
+use Mabang\Galaxy\Core\Log;
 /**
  * @method bool isFull()
  * @method bool isEmpty()
@@ -80,14 +77,9 @@ class Concurrent
             try {
                 $callable();
             } catch (\Throwable $exception) {
-                if (ApplicationContext::hasContainer()) {
-                    $container = ApplicationContext::getContainer();
-                    if ($container->has(StdoutLoggerInterface::class) && $container->has(FormatterInterface::class)) {
-                        $logger = $container->get(StdoutLoggerInterface::class);
-                        $formatter = $container->get(FormatterInterface::class);
-                        $logger->error($formatter->format($exception));
-                    }
-                }
+                $this->channel->pop();
+                throw $exception;
+
             } finally {
                 $this->channel->pop();
             }

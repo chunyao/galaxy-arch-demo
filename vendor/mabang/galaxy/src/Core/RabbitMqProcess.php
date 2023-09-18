@@ -2,6 +2,7 @@
 
 namespace Mabang\Galaxy\Core;
 
+use App\Config\HttpClient;
 use Mabang\Galaxy\Core\ConsumerRabbit;
 use Mabang\Galaxy\Core\Log;
 use Mabang\Galaxy\Core\RobbitMqListener;
@@ -31,18 +32,30 @@ class RabbitMqProcess
     public function createProcess($ch, $queue)
     {
 
-        $process = new Swoole\Process(function ($worker) use ( $ch, $queue) {
-         //   while (1) {
+        $process = new Swoole\Process(function ($worker) use ($ch, $queue) {
+    
+            $child = null;
+            Log::info("消息进程ID:" . posix_getpid() . "\n");
+            try {
+                $consumer = new ConsumerRabbit($this->config, $this->url);
+                $child = $consumer->initQueues($ch, $queue);
+            } catch (\Throwable $e) {
+                Log::error(sprintf('%s in %s on line %d', $e->getMessage(), $e->getFile(), $e->getLine()));
+            }
+            while (1) {
                 sleep(5);
-                Log::info("消息进程ID:" . posix_getpid() . "\n");
-                try {
-                    $consumer = new ConsumerRabbit($this->config,$this->url);
-                    $consumer->initQueues($ch, $queue);
-                } catch (\Throwable $e) {
-                    Log::error(sprintf('%s in %s on line %d', $e->getMessage(), $e->getFile(), $e->getLine()));
+              //  echo $child->getRunningCoroutineCount().PHP_EOL;
+                if ($child != null && $child->getRunningCoroutineCount()==0) {
+                    Log::info("消息进程ID:" . posix_getpid() . "\n");
+                    try {
+                        $consumer = new ConsumerRabbit($this->config, $this->url);
+                        $child = $consumer->initQueues($ch, $queue);
+                    } catch (\Throwable $e) {
+                        Log::error(sprintf('%s in %s on line %d', $e->getMessage(), $e->getFile(), $e->getLine()));
+                    }
                 }
 
-          //  }
+            }
         }, false, 0, true);
 
         $pid = $process->start();
@@ -68,7 +81,7 @@ class RabbitMqProcess
 
     public function handler()
     {
-        if (empty($this->config['rabbitmq.enable'])) return ;
+        if (empty($this->config['rabbitmq.enable'])) return;
         $channel_step = 0;
         for ($worker = 0; $worker < $this->workers; $worker++) {
 
@@ -79,7 +92,7 @@ class RabbitMqProcess
 
                     foreach (RobbitMqListener::rabbitQueueload($this->config['app.name']) as $key => $val) {
                         if (isset($this->config['rabbitmq.queue.num'][$i])) {
-                            for ($k = 0; $k <2; $k++) {
+                            for ($k = 0; $k < 1; $k++) {
                                 if ($val::getQueue() == $this->config['rabbitmq.queue'][$i]) $this->createProcess($this->channel_start + $channel_step, $i);
                             }
                         } else {
@@ -92,6 +105,6 @@ class RabbitMqProcess
                 $channel_step++;
             }
         }
-         // $this->watchProcess();
+        // $this->watchProcess();
     }
 }

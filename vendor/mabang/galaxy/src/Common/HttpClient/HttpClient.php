@@ -34,17 +34,7 @@ class HttpClient implements ConnectionInterface
 
     public function __construct()
     {
-
-
-        $this->driver = new Driver(
-            $this->host,
-            $this->port,
-            $this->password,
-            $this->database,
-            $this->timeout,
-            $this->retryInterval,
-            $this->readTimeout
-        );
+        $this->driver = new Driver();
     }
 
     protected function createPool()

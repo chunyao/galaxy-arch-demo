@@ -23,10 +23,10 @@ class HttpClient
     /**
      * @return void
      */
-    public static function init(array $config): void
+    public static function init(array $config=null): void
     {
         self::$once = new Once();
-        self::$config = $config;
+
     }
 
     /**

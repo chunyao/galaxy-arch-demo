@@ -3,6 +3,7 @@
 namespace Mabang\Galaxy\Common\Mq;
 
 use App;
+use App\Config\HttpClient;
 use Mabang\Galaxy\Common\Configur\Cache;
 use Mabang\Galaxy\Core\Log;
 
@@ -27,6 +28,8 @@ class Consumer
     public function consumeMessage(int $i, $url, AMQPConnection $connect)
     {
         try {
+            HttpClient::init();
+            HttpClient::enableCoroutine();
             // 创建通道
             $channel = $connect->getChannel();
             $channel->basic_qos(null, 20, false);
@@ -113,34 +116,36 @@ class Consumer
 
             echo $this->config['rabbitmq.queue'][$i] . " 开始消费" . "Worker 进程ID:" . posix_getpid() . PHP_EOL;
             Log::info($this->config['rabbitmq.queue'][$i] . " 开始消费" . "Worker 进程ID:" . posix_getpid());
-            $concurrent = $this->getConcurrent(100);
+            $concurrent = $this->getConcurrent(50);
             $channel->basic_consume($queueName, "",
                 false,
                 false,
                 false,
                 false,
                 function (AMQPMessage $msg) use ($concurrent, $i, $url) {
-                    $callback = $this->getCallback($i, $url, $msg);
-                    if (!$concurrent instanceof Concurrent) {
-                        return parallel([$callback]);
-                    }
+                   $callback = $this->getCallback($i, $url, $msg);
+  //                  return    $callback();
+//                    if (!$concurrent instanceof Concurrent) {
+//                        return parallel([$callback]);
+//                    }
                     Runtime::enableCoroutine(SWOOLE_HOOK_NATIVE_CURL);
-                    $concurrent->create($callback);
+                 return   $concurrent->create($callback);
                 }
             );
             //消费
             while ($channel->is_consuming()) {
+
                 $channel->wait(null, true, 0);
-               // usleep( 50000);
+
             }
 
         } catch (\Throwable $ex) {
-              isset($channel) && $channel->close();
+            isset($channel) && $channel->close();
             print_r(sprintf('%s in %s on line %d', $ex->getMessage(), $ex->getFile(), $ex->getLine()));
             throw $ex;
         }
-            $this->waitConcurrentHandled($concurrent);
 
+            $this->waitConcurrentHandled($concurrent);
             $connect->releaseChannel($channel, true);
     }
 
@@ -188,9 +193,9 @@ class Consumer
 
             $channel = $msg->getChannel();
             $deliveryTag = $msg->getDeliveryTag();
-            $client = new Client('127.0.0.1',8081);
-            $client->set([ 'timeout' => 1200,'keeplive' => true]);
-
+        //    $client = new Client('127.0.0.1',8081);
+            $url='http://127.0.0.1:8081/rabbitmq';
+        //    $client->set([ 'timeout' => 1200,'keeplive' => true]);
             $tmp = json_decode($msg->body, true);
             $tmp['queue'] = App::$innerConfig['rabbitmq.queue'][$i];
 
@@ -219,11 +224,15 @@ class Consumer
                 }
                 try {
                     //    $data =  $client->request('POST','/rabbitmq',[],json_encode($msgBody));
-                    $data = (string)(new \GuzzleHttp\Client())->request('POST', $req, ['timeout' => 120, 'json' => $msgBody])->getBody();
-                    // $resp = json_decode($data->body);
+
+//                    $resp = json_decode((string) HttpClient::instance()->request('POST',$url,[
+//                        'options'=>['headers' => ['Connection' => 'keep-alive','Keep-Alive'=>600],'isJson'=>1,'timeOut'=>600],
+//                        'data'=>$msgBody
+//                    ]));
+                    $data = (string)(new \GuzzleHttp\Client())->request('POST', $req, ['timeout' => 600, 'json' => $msgBody])->getBody();
+                    $resp = json_decode($data->body);
                     $resp = json_decode($data);
                     if ($resp->code === 10200) {
-
                         Log::info(sprintf('messageId ack : %s', $msgBody['messageId']));
                         Cache::instance()->del($msgBody['messageId']);
                         return $channel->basic_ack($deliveryTag);
@@ -238,12 +247,16 @@ class Consumer
 
             } else {
                 try {
-                //    $data =  $client->request('POST','/rabbitmq',[],json_encode($msgBody));
-                    $data = (string)(new \GuzzleHttp\Client())->request('POST', $req, ['timeout' => 120, 'json' => $msgBody])->getBody();
-                   // $resp = json_decode($data->body);
-                    $resp = json_decode($data);
-                    if ($resp->code === 10200) {
 
+//                    $resp = json_decode((string) HttpClient::instance()->request('POST',$url,[
+//                        'options'=>['headers' => ['Connection' => 'keep-alive','Keep-Alive'=>600],'isJson'=>1,'timeOut'=>600],
+//                        'data'=>$msgBody
+//                    ]));
+                    $data = (string)(new \GuzzleHttp\Client())->request('POST', $req, ['timeout' => 600, 'json' => $msgBody])->getBody();
+                    $resp = json_decode($data->body);
+                    $resp = json_decode($data);
+
+                    if ($resp->code === 10200) {
                         Log::info(sprintf('messageId ack : %s', $msgBody['messageId']));
                         return $channel->basic_ack($deliveryTag);
                     }
