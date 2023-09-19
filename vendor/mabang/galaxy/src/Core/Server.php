@@ -2,7 +2,6 @@
 
 namespace Mabang\Galaxy\Core;
 
-use App\Config\HttpClient;
 use Mabang\Galaxy\Common\Configur\Cache;
 use Mabang\Galaxy\Common\Configur\TraceRecord;
 use Mabang\Galaxy\Common\Configur\Loggers;
